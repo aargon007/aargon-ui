@@ -7,7 +7,7 @@ export type ScreenNames = ['Home', 'Content'];
 
 export type RootStackParamList = {
     Home: {
-        screen: "Introduction" | "Examples" | "Installation" | "Usage";
+        screen: "Introduction" | "Examples" | "Installation" | "Usage" | "Accordion" | "Alert" | "Badge" | "Button" | "Card" | "Carousel" | "Checkbox" | "Input" | "Modal" | "Toast";
         params?: undefined;
     };
     Content: undefined;

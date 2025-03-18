@@ -5,13 +5,15 @@ import Introduction from "@/screens/Introduction";
 import Examples from "@/screens/Examples";
 import Installation from "@/screens/Installation";
 import Usage from "@/screens/Usage";
+import AccordionPage from "@/screens/Accordion";
 
 export type CScreenNames = [
     "Introduction",
     "Installation",
     "Components",
     "Usage",
-    "Examples"
+    "Examples",
+    "Accordion"
 ];
 
 export type ContentStackParamList = Record<CScreenNames[number], undefined>;
@@ -50,6 +52,11 @@ const ContentNavigator = () => {
             <Stack.Screen
                 name="Usage"
                 component={Usage}
+            />
+
+            <Stack.Screen
+                name="Accordion"
+                component={AccordionPage}
             />
             
         </Stack.Navigator>
