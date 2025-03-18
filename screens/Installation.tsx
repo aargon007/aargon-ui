@@ -49,6 +49,15 @@ const Installation = () => {
                             yarn
                         </Text>
                     </Pressable>
+
+                    <Pressable
+                        style={[styles.methodButton, installMethod === "expo" && styles.methodButtonActive]}
+                        onPress={() => setInstallMethod("expo")}
+                    >
+                        <Text style={[styles.methodButtonText, installMethod === "expo" && styles.methodButtonTextActive]}>
+                            expo
+                        </Text>
+                    </Pressable>
                 </View>
 
                 <Prerequisites />

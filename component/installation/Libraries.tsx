@@ -17,7 +17,7 @@ const Libraries = ({ installMethod }: { installMethod: string }) => {
                     transition={{
                         type: "spring",
                         damping: 18,
-                        delay:  100,
+                        delay: index * 100,
                     }}
                     style={styles.libraryCard}
                 >
@@ -65,7 +65,13 @@ const Libraries = ({ installMethod }: { installMethod: string }) => {
 
                             <View style={styles.installCommand}>
                                 <Text style={styles.installCommandText}>
-                                    {installMethod === "npm" ? library.npm : library.yarn}
+                                    {installMethod === "npm" ?
+                                        library.npm :
+                                        installMethod === "expo" ?
+                                            library.expo
+                                            :
+                                            library.yarn
+                                    }
                                 </Text>
                                 <Pressable style={styles.copyButton}>
                                     <Feather name="copy" size={16} color="#6366F1" />
@@ -119,7 +125,7 @@ const styles = StyleSheet.create({
         alignItems: "center",
         justifyContent: "space-between",
         padding: 16,
-        userSelect:"none"
+        userSelect: "none"
     },
     libraryTitleContainer: {
         flexDirection: "row",
@@ -150,7 +156,7 @@ const styles = StyleSheet.create({
         lineHeight: 20,
         color: "#4B5563",
         marginBottom: 16,
-        marginTop:10
+        marginTop: 10
     },
     installCommand: {
         backgroundColor: "#F9FAFB",
