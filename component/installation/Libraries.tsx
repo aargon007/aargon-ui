@@ -56,7 +56,7 @@ const Libraries = ({ installMethod }: { installMethod: string }) => {
                         <MotiView
                             from={{ opacity: 0, height: 0 }}
                             animate={{ opacity: 1, height: "auto" }}
-                            transition={{ type: "timing", duration: 300 }}
+                            transition={{ type: "timing", duration: 300,delay: index * 100 }}
                             style={styles.libraryContent}
                         >
                             <Text style={styles.libraryDescription}>
@@ -150,6 +150,7 @@ const styles = StyleSheet.create({
         paddingTop: 0,
         borderTopWidth: 1,
         borderTopColor: "#E5E7EB",
+        flex: 1
     },
     libraryDescription: {
         fontSize: 14,

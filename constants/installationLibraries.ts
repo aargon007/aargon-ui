@@ -24,15 +24,22 @@ export const libraries = [
     {
         id: "gesture",
         name: "React Native Gesture Handler",
-        description: "Provides native-driven gesture management APIs for building best possible touch-based experiences.",
+        description: "Gesture Handler provides a declarative API exposing the native platform's touch and gesture system to React Native.",
         npm: "npm install react-native-gesture-handler",
-        expo: "npm install react-native-gesture-handler",
+        expo: "npx expo install react-native-gesture-handler",
         yarn: "yarn add react-native-gesture-handler",
         extraSteps: [
-            "For iOS, run pod install in the ios directory:",
-            "npx pod-install ios",
             "Import at the top of your entry file (e.g. App.js or index.js):",
-            `import 'react-native-gesture-handler';`,
+            `import { GestureHandlerRootView } from 'react-native-gesture-handler';
+            
+export default function App() {
+  return (
+    <GestureHandlerRootView>
+      <ActualApp />
+    </GestureHandlerRootView>
+  );
+}
+            `,
             "Note: This import must be at the top of your entry file, before any other imports.",
         ],
     },
@@ -44,17 +51,15 @@ export const libraries = [
         expo: "npm install @shopify/react-native-skia",
         yarn: "yarn add @shopify/react-native-skia",
         extraSteps: [
-            "For iOS, run pod install in the ios directory:",
-            "npx pod-install ios",
-            "For Android, no additional steps required.",
-            "Note: React Native Skia requires React Native 0.66 or higher.",
+            "Version compatibility: react-native@>=0.71 and react@>=18 are required.",
+            "In addition you should make sure you're on at least iOS 13 and Android API level 21 or above.",
         ],
     },
     {
         id: "moti",
         name: "Moti",
-        description: "The universal animation package for React Native, built on Reanimated 2.",
-        npm: "npm install moti",
+        description: "Moti is the universal animation package for React Native, made by Fernando Rojo.Universal: works on all platforms. 60 FPS animations run on the native thread, Mount/ unmount animations, like Framer Motion, Powered by Reanimated 3, Intuitive API, Variant & keyframe animations, Strong TypeScript support, Highly - configurable animations, Sequence animations, Loop & repeat animations, Web support, Expo support, Next.js support",
+        npm: "npm i moti --legacy-peer-deps",
         expo: "npm install moti",
         yarn: "yarn add moti",
         extraSteps: [
