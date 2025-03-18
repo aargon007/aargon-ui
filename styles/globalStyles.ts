@@ -1,13 +1,6 @@
 import EStyleSheet from 'react-native-extended-stylesheet';
 
 export const globalStyles = EStyleSheet.create({
-    //pos home
-    posContainer: {
-        flex: 1,
-        backgroundColor: '$black',
-        color: '$white',
-        flexDirection: 'row',
-    },
     leftNav: {
         height: '$full',
         '@media (max-width: 2160px)': {

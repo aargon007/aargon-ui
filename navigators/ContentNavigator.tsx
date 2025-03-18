@@ -3,6 +3,7 @@ import { type NavigationProp } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Introduction from "@/component/home/Introduction";
 import Examples from "@/screens/Examples";
+import Installation from "@/screens/Installation";
 
 export type CScreenNames = [
     "Introduction",
@@ -24,26 +25,25 @@ const ContentNavigator = () => {
         <Stack.Navigator
             screenOptions={{
                 headerShown: false,
-                autoHideHomeIndicator: true
+                autoHideHomeIndicator: true,
+                animation:"fade",
+                animationDuration: 150
             }}
             initialRouteName="Introduction"
         >
             <Stack.Screen
                 name="Introduction"
                 component={Introduction}
-                options={{
-                    animation: "fade",
-                    animationDuration: 150
-                }}
             />
 
             <Stack.Screen
                 name="Examples"
                 component={Examples}
-                options={{
-                    animation: "fade",
-                    animationDuration: 150
-                }}
+            />
+
+            <Stack.Screen
+                name="Installation"
+                component={Installation}
             />
             
         </Stack.Navigator>
