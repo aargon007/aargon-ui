@@ -1,7 +1,7 @@
 {
-  "name": "rn-reanimated-components",
+  "name": "aargon-ui",
   "version": "1.0.0",
-  "description": "A React Native ",
+  "description": "A List of Animated Components for React Native",
   "license": "MIT",
   "author": "Md Muhaiminul",
   "main": "index.ts",

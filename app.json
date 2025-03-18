@@ -1,9 +1,9 @@
 {
     "expo": {
-        "name": "Animated",
-        "slug": "animated",
+        "name": "Aargon UI",
+        "slug": "argonui",
         "version": "1.0.0",
-        "scheme": "animated",
+        "scheme": "argonui",
         "newArchEnabled": true,
         "orientation": "portrait",
         "userInterfaceStyle": "automatic",
