@@ -1,18 +1,24 @@
 import { useState } from "react"
-import { View, Text, ScrollView, Pressable, StyleSheet, useWindowDimensions } from "react-native"
-import { MotiView } from "moti"
-import { Feather } from "@expo/vector-icons"
-import { navItems } from "@/constants/navItems"
+import { View, Text, ScrollView, Pressable, StyleSheet, useWindowDimensions, TouchableOpacity, SafeAreaView } from "react-native"
 import ContentNavigator from "@/navigators/ContentNavigator"
+import { type StackNavigation } from "@/navigators/RootNavigator"
+import { useSafeAreaInsets } from "react-native-safe-area-context"
+import { useNavigation } from "@react-navigation/native"
+import { navItems } from "@/constants/navItems"
+import { Feather } from "@expo/vector-icons"
+import { MotiView } from "moti"
 
 export default function Home() {
     const [activeSection, setActiveSection] = useState("introduction");
     const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
+    const { navigate } = useNavigation<StackNavigation>();
     const { width } = useWindowDimensions();
     const isMobile = width < 768;
+    const inset = useSafeAreaInsets();
 
-    const handleNavItemPress = (id: string) => {
-        setActiveSection(id);
+    const handleNavItemPress = (nav: any) => {
+        setActiveSection(nav?.id);
+        navigate("Home", { screen: nav?.label });
 
         if (isMobile) {
             setIsMobileNavOpen(false);
@@ -20,14 +26,27 @@ export default function Home() {
     };
 
     return (
-        <View style={styles.container}>
+        <SafeAreaView style={styles.container}>
             {/* Header for mobile */}
             {isMobile && (
-                <View style={styles.mobileHeader}>
-                    <Pressable onPress={() => setIsMobileNavOpen(!isMobileNavOpen)}>
-                        <Feather name={isMobileNavOpen ? "x" : "menu"} size={24} color="#333" />
-                    </Pressable>
-                    <Text style={styles.mobileHeaderTitle}>Aargon UI</Text>
+                <View
+                    style={[styles.mobileHeader, {
+                        marginTop: inset.top
+                    }]}
+                >
+                    <TouchableOpacity
+                        activeOpacity={.5}
+                        onPress={() => setIsMobileNavOpen(!isMobileNavOpen)}
+                    >
+                        <Feather
+                            name={isMobileNavOpen ? "x" : "menu"}
+                            size={24}
+                            color="#333"
+                        />
+                    </TouchableOpacity>
+                    <Text style={styles.mobileHeaderTitle}>
+                        Aargon UI
+                    </Text>
                 </View>
             )}
 
@@ -43,27 +62,33 @@ export default function Home() {
                         duration: 300,
                     }}
                 >
-                    <View style={styles.logoContainer}>
-                        <MotiView
-                            style={styles.logo}
-                            from={{ scale: 0.8, opacity: 0 }}
-                            animate={{ scale: 1, opacity: 1 }}
-                            transition={{ type: "spring" }}
-                        >
-                            <Text style={styles.logoText}>
-                                AUI
+                    {!isMobile && (
+                        <View style={styles.logoContainer}>
+                            <MotiView
+                                style={styles.logo}
+                                from={{ scale: 0.8, opacity: 0 }}
+                                animate={{ scale: 1, opacity: 1 }}
+                                transition={{ type: "spring" }}
+                            >
+                                <Text style={styles.logoText}>
+                                    AUI
+                                </Text>
+                            </MotiView>
+                            <Text style={styles.logoTitle}>
+                                Aargon UI
                             </Text>
-                        </MotiView>
-                        <Text style={styles.logoTitle}>
-                            Aargon UI
-                        </Text>
-                    </View>
+                        </View>
+                    )}
 
-                    <ScrollView style={styles.navItems}>
+                    <ScrollView
+                        style={[styles.navItems, {
+                            marginTop: inset.top
+                        }]}
+                    >
                         {navItems.map((item) => (
                             <Pressable
                                 key={item.id}
-                                onPress={() => handleNavItemPress(item.id)}
+                                onPress={() => handleNavItemPress(item)}
                                 style={({ pressed }) => [
                                     styles.navItem,
                                     activeSection === item.id && styles.activeNavItem,
@@ -107,7 +132,7 @@ export default function Home() {
             >
                 <ContentNavigator />
             </MotiView>
-        </View>
+        </SafeAreaView>
     )
 }
 
@@ -116,6 +141,7 @@ const styles = StyleSheet.create({
         flex: 1,
         flexDirection: "row",
         backgroundColor: "#F9FAFB",
+        position: "relative"
     },
     mobileHeader: {
         position: "absolute",
@@ -124,8 +150,9 @@ const styles = StyleSheet.create({
         right: 0,
         height: 60,
         backgroundColor: "#fff",
-        zIndex: 10,
+        zIndex: 9999,
         flexDirection: "row",
+        justifyContent: "flex-start",
         alignItems: "center",
         paddingHorizontal: 16,
         borderBottomWidth: 1,

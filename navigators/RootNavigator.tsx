@@ -3,10 +3,14 @@ import Home from '@/screens/Home';
 import { type NavigationProp } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
-export type ScreenNames = ['Home'];
+export type ScreenNames = ['Home', 'Content'];
 
 export type RootStackParamList = {
-    Home: undefined;
+    Home: {
+        screen: "Introduction" | "Examples";
+        params?: undefined;
+    };
+    Content: undefined;
 }
 
 export type StackNavigation = NavigationProp<RootStackParamList>;

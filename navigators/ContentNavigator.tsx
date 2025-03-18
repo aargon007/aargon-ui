@@ -2,8 +2,9 @@ import * as React from "react";
 import { type NavigationProp } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Introduction from "@/component/home/Introduction";
+import Examples from "@/screens/Examples";
 
-export type ScreenNames = [
+export type CScreenNames = [
     "Introduction",
     "Installation",
     "Components",
@@ -11,7 +12,7 @@ export type ScreenNames = [
     "Examples"
 ];
 
-export type ContentStackParamList = Record<ScreenNames[number], undefined>;
+export type ContentStackParamList = Record<CScreenNames[number], undefined>;
 
 export type ContentStackNavigation = NavigationProp<ContentStackParamList>;
 
@@ -36,6 +37,14 @@ const ContentNavigator = () => {
                 }}
             />
 
+            <Stack.Screen
+                name="Examples"
+                component={Examples}
+                options={{
+                    animation: "slide_from_bottom",
+                    animationDuration: 150
+                }}
+            />
             
         </Stack.Navigator>
     );
