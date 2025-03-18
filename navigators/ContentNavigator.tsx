@@ -1,7 +1,7 @@
 import * as React from "react";
 import { type NavigationProp } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import Introduction from "@/component/home/Introduction";
+import Introduction from "@/screens/Introduction";
 import Examples from "@/screens/Examples";
 import Installation from "@/screens/Installation";
 
