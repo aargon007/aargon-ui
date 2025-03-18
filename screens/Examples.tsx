@@ -1,11 +1,13 @@
 import React from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { MotiView } from "moti";
 
 const Examples = () => {
+    const inset = useSafeAreaInsets();
 
     return (
-        <ScrollView style={styles.contentScroll}>
+        <ScrollView style={[styles.contentScroll, { paddingTop: inset.top }]}>
             <MotiView
                 from={{ translateY: 20, opacity: 0 }}
                 animate={{ translateY: 0, opacity: 1 }}

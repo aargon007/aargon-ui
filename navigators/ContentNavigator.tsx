@@ -32,7 +32,7 @@ const ContentNavigator = () => {
                 name="Introduction"
                 component={Introduction}
                 options={{
-                    animation: "slide_from_bottom",
+                    animation: "fade",
                     animationDuration: 150
                 }}
             />
@@ -41,7 +41,7 @@ const ContentNavigator = () => {
                 name="Examples"
                 component={Examples}
                 options={{
-                    animation: "slide_from_bottom",
+                    animation: "fade",
                     animationDuration: 150
                 }}
             />
