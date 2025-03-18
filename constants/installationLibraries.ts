@@ -58,7 +58,7 @@ export default function App() {
     {
         id: "moti",
         name: "Moti",
-        description: "Moti is the universal animation package for React Native, made by Fernando Rojo.Universal: works on all platforms. 60 FPS animations run on the native thread, Mount/ unmount animations, like Framer Motion, Powered by Reanimated 3, Intuitive API, Variant & keyframe animations, Strong TypeScript support, Highly - configurable animations, Sequence animations, Loop & repeat animations, Web support, Expo support, Next.js support",
+        description: "Moti is the universal animation package for React Native, made by Fernando Rojo. Universal works on all platforms. 60 FPS animations run on the native thread, Mount/ unmount animations like Framer Motion, Powered by Reanimated 3, Intuitive API, Variant & keyframe animations, Strong TypeScript support, Highly - configurable animations, Sequence animations, Loop & repeat animations, Web support, Expo support, Next.js support",
         npm: "npm i moti --legacy-peer-deps",
         expo: "npm install moti",
         yarn: "yarn add moti",
@@ -68,15 +68,15 @@ export default function App() {
             "Basic usage example:",
             `import { MotiView } from 'moti';
 
-            export default function App() {
-                return (
-                    <MotiView
-                    from={{ opacity: 0, scale: 0.5 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ type: 'timing' }}
-                    />
-                );
-            }`,
+export default function App() {
+    return (
+        <MotiView
+            from={{ opacity: 0, scale: 0.5 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ type: 'timing' }}
+        />
+    );
+}`,
         ],
     },
 ]

@@ -1,12 +1,12 @@
 import { useState } from "react"
-import { View, Text, ScrollView, Pressable, StyleSheet, useWindowDimensions, TouchableOpacity, SafeAreaView } from "react-native"
+import { View, Text, Pressable, StyleSheet, useWindowDimensions, TouchableOpacity, SafeAreaView } from "react-native"
 import ContentNavigator from "@/navigators/ContentNavigator"
 import { type StackNavigation } from "@/navigators/RootNavigator"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 import { useNavigation } from "@react-navigation/native"
-import { navItems } from "@/constants/navItems"
 import { Feather } from "@expo/vector-icons"
 import { MotiView } from "moti"
+import SideBar from "@/component/common/SideBar"
 
 export default function Home() {
     const [activeSection, setActiveSection] = useState("introduction");
@@ -80,37 +80,10 @@ export default function Home() {
                         </View>
                     )}
 
-                    <ScrollView
-                        style={[styles.navItems, {
-                            marginTop: inset.top
-                        }]}
-                    >
-                        {navItems.map((item) => (
-                            <Pressable
-                                key={item.id}
-                                onPress={() => handleNavItemPress(item)}
-                                style={({ pressed }) => [
-                                    styles.navItem,
-                                    activeSection === item.id && styles.activeNavItem,
-                                    pressed && styles.pressedNavItem,
-                                ]}
-                            >
-                                <MotiView
-                                    animate={{
-                                        scale: activeSection === item.id ? 1.1 : 1,
-                                        translateX: activeSection === item.id ? 5 : 0,
-                                    }}
-                                    transition={{ type: "spring", stiffness: 300 }}
-                                    style={styles.navItemContent}
-                                >
-                                    <Feather name={item.icon as any} size={18} color={activeSection === item.id ? "#6366F1" : "#666"} />
-                                    <Text style={[styles.navItemText, activeSection === item.id && styles.activeNavItemText]}>
-                                        {item.label}
-                                    </Text>
-                                </MotiView>
-                            </Pressable>
-                        ))}
-                    </ScrollView>
+                    <SideBar
+                        activeSection={activeSection}
+                        onNavItemPress={handleNavItemPress}
+                    />
 
                     <View style={styles.sidebarFooter}>
                         <Text style={styles.footerText}>
@@ -210,35 +183,6 @@ const styles = StyleSheet.create({
         fontWeight: "600",
         color: "#111827",
     },
-    navItems: {
-        flex: 1,
-    },
-    navItem: {
-        paddingVertical: 12,
-        paddingHorizontal: 16,
-        borderRadius: 8,
-        marginBottom: 4,
-    },
-    activeNavItem: {
-        backgroundColor: "#EEF2FF",
-    },
-    pressedNavItem: {
-        opacity: 0.7,
-    },
-    navItemContent: {
-        flexDirection: "row",
-        alignItems: "center",
-    },
-    navItemText: {
-        marginLeft: 12,
-        fontSize: 15,
-        color: "#4B5563",
-        fontWeight: "500",
-    },
-    activeNavItemText: {
-        color: "#6366F1",
-        fontWeight: "600",
-    },
     sidebarFooter: {
         marginTop: 24,
         paddingTop: 16,
@@ -266,28 +210,3 @@ const styles = StyleSheet.create({
         padding: 20,
     },
 });
-
-// const styles = EStyleSheet.create({
-//     container: {
-//         flex: 1,
-//         backgroundColor: '$white',
-//         // '@media (max-width: 599px)': {
-//         //     backgroundColor: '$gray',
-//         // },
-//         // '@media (min-width: 600px) and (max-width: 1199px)': {
-//         //     backgroundColor: '$secondary',
-//         // },
-//         // '@media (min-width: 1200px)': {
-//         //     backgroundColor: '$primary',
-//         // },
-//     },
-//     title: {
-//         fontSize: '$text_lg',
-//         color: '$gray',
-//         fontWeight: '$font_bold',
-//         borderWidth: '$border',
-//         borderColor: '$border_primary',
-//     },
-// });
-
-// export default Home;
