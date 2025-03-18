@@ -1,5 +1,4 @@
 import { TouchableOpacity, View } from 'react-native';
-import { Avatar, Text } from '../ui';
 import { useNavigation } from '@react-navigation/native';
 import type { StackNavigation } from '@/navigators/RootNavigator';
 
@@ -18,8 +17,7 @@ export default function Header() {
             }}
             onPress={() => navigate('Profile')}
         >
-            <Avatar size={44} />
-            <Text variant="heading">Hi, James 👋</Text>
+            
         </TouchableOpacity>
     );
 }

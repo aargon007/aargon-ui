@@ -1,6 +1,5 @@
 import * as React from 'react';
 import Home from '@/screens/Home';
-import Profile from '@/screens/Profile';
 import { type NavigationProp } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
@@ -32,7 +31,7 @@ const RootNavigator = () => {
                 }}
             />
 
-            <Stack.Screen
+            {/* <Stack.Screen
                 name="Profile"
                 component={Profile}
                 options={{
@@ -41,7 +40,7 @@ const RootNavigator = () => {
                     gestureEnabled: false,
                     autoHideHomeIndicator: true
                 }}
-            />
+            /> */}
         </Stack.Navigator>
     );
 };
