@@ -4,6 +4,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Introduction from "@/screens/Introduction";
 import Examples from "@/screens/Examples";
 import Installation from "@/screens/Installation";
+import Usage from "@/screens/Usage";
 
 export type CScreenNames = [
     "Introduction",
@@ -44,6 +45,11 @@ const ContentNavigator = () => {
             <Stack.Screen
                 name="Installation"
                 component={Installation}
+            />
+
+            <Stack.Screen
+                name="Usage"
+                component={Usage}
             />
             
         </Stack.Navigator>
