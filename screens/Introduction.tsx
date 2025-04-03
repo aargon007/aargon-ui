@@ -3,10 +3,17 @@ import { ScrollView, StyleSheet, Text, View, Pressable } from "react-native"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 import { MotiView, MotiText } from "moti"
 import { Feather } from "@expo/vector-icons"
+import { useNavigation } from "@react-navigation/native"
+import type { StackNavigation } from "@/navigators/RootNavigator"
 
 const Introduction = () => {
     const inset = useSafeAreaInsets()
-    const [setupMethod, setSetupMethod] = useState("expo")
+    const [setupMethod, setSetupMethod] = useState("expo");
+    const { navigate } = useNavigation<StackNavigation>();
+
+    const onNavigateToInstallation = () => {
+        navigate("Home", { screen: "Installation" });
+    };
 
     return (
         <ScrollView
@@ -190,7 +197,7 @@ const Introduction = () => {
                                     <Text style={styles.stepTitle}>Create a new React Native project</Text>
                                     <View style={styles.codeBlock}>
                                         <Text style={styles.codeText}>
-                                                npx @react-native-community/cli@latest init MyAnimatedApp
+                                            npx @react-native-community/cli@latest init MyAnimatedApp
                                         </Text>
                                     </View>
                                 </View>
@@ -321,10 +328,12 @@ export default function App() {
                     </Text>
                     <Pressable
                         style={styles.nextStepsButton}
-                        // onPress={onNavigateToInstallation}
+                        onPress={onNavigateToInstallation}
                         android_ripple={{ color: "rgba(255, 255, 255, 0.2)", radius: 20 }}
                     >
-                        <Text style={styles.nextStepsButtonText}>Go to Installation</Text>
+                        <Text style={styles.nextStepsButtonText}>
+                            Go to Installation
+                        </Text>
                         <Feather name="arrow-right" size={16} color="#FFFFFF" />
                     </Pressable>
                 </View>

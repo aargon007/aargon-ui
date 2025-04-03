@@ -7,6 +7,7 @@ import { Feather } from "@expo/vector-icons"
 interface ComponentPageProps {
     title: string
     description: string
+    installation?: string
     usage: string
     examples: Array<{
         title: string
@@ -22,7 +23,7 @@ interface ComponentPageProps {
     }>
 }
 
-const ComponentPage = ({ title, description, usage, examples, props }: ComponentPageProps) => {
+const ComponentPage = ({ title, description, installation, usage, examples, props }: ComponentPageProps) => {
     const inset = useSafeAreaInsets()
 
     return (
@@ -35,23 +36,35 @@ const ComponentPage = ({ title, description, usage, examples, props }: Component
                 animate={{ translateY: 0, opacity: 1 }}
                 transition={{ type: "spring", damping: 18 }}
             >
-                <Text style={styles.contentTitle}>{title}</Text>
-                <Text style={styles.contentText}>{description}</Text>
+                <Text style={styles.contentTitle}>
+                    {title}
+                </Text>
+                <Text style={styles.contentText}>
+                    {description}
+                </Text>
 
                 {/* Installation */}
                 <View style={styles.section}>
-                    <Text style={styles.sectionTitle}>Installation</Text>
+                    <Text style={styles.sectionTitle}>
+                        Installation
+                    </Text>
                     <Text style={styles.contentText}>
-                        This component is included in the core package. You don't need to install any additional dependencies.
+                        {installation || "This component is included in the core package. You don't need to install any additional dependencies."}
                     </Text>
                 </View>
 
                 {/* Usage */}
                 <View style={styles.section}>
-                    <Text style={styles.sectionTitle}>Usage</Text>
-                    <Text style={styles.contentText}>Import the component from the package:</Text>
+                    <Text style={styles.sectionTitle}>
+                        Usage
+                    </Text>
+                    <Text style={styles.contentText}>
+                        Import the component from the package:
+                    </Text>
                     <View style={styles.codeBlock}>
-                        <Text style={styles.codeText}>{usage}</Text>
+                        <Text style={styles.codeText}>
+                            {usage}
+                        </Text>
                     </View>
                 </View>
 
@@ -82,8 +95,12 @@ const ComponentPage = ({ title, description, usage, examples, props }: Component
 
                             {example.preview && (
                                 <View style={styles.previewContainer}>
-                                    <Text style={styles.previewTitle}>Preview</Text>
-                                    <View style={styles.preview}>{example.preview}</View>
+                                    <Text style={styles.previewTitle}>
+                                        Preview
+                                    </Text>
+                                    <View style={styles.preview}>
+                                        {example.preview}
+                                    </View>
                                 </View>
                             )}
                         </MotiView>
