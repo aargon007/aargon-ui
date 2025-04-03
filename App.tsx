@@ -41,9 +41,7 @@ export default function App() {
       <ThemeProvider value={DarkTheme}>
             <NavigationContainer>
               <GestureHandlerRootView style={{ flex: 1 }}>
-                {/* <Host> portalize */}
                 <RootNavigator />
-                {/* </Host> */}
               </GestureHandlerRootView>
             </NavigationContainer>
       </ThemeProvider>

@@ -5,7 +5,7 @@ import Introduction from "@/screens/Introduction";
 import Examples from "@/screens/Examples";
 import Installation from "@/screens/Installation";
 import Usage from "@/screens/Usage";
-import AccordionPage from "@/screens/Accordion";
+import AccordionPage from "@/screens/AccordionPage";
 
 export type CScreenNames = [
     "Introduction",

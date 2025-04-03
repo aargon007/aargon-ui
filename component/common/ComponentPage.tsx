@@ -234,7 +234,8 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: "#E5E7EB",
         alignItems: "center",
-        justifyContent: "center",
+        justifyContent: "flex-start",
+        minHeight: 400,
     },
     propsTable: {
         borderWidth: 1,
