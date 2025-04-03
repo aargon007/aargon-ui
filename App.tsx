@@ -1,14 +1,11 @@
 import { useEffect } from 'react';
 import { View } from "react-native";
-import { Provider } from 'react-redux';
 import { DarkTheme, NavigationContainer, ThemeProvider } from '@react-navigation/native';
 import { configureReanimatedLogger, ReanimatedLogLevel } from 'react-native-reanimated';
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { PersistGate } from 'redux-persist/integration/react';
 import EStyleSheet from 'react-native-extended-stylesheet';
 import RootNavigator from '@/navigators/RootNavigator';
 import * as SplashScreen from 'expo-splash-screen';
-import { persistor, store } from '@/redux/store';
 import styleGuide from './styles/styleGuide';
 import { useFonts } from "expo-font";
 
@@ -42,8 +39,6 @@ export default function App() {
   return (
     <View style={{ flex: 1 }}>
       <ThemeProvider value={DarkTheme}>
-        <Provider store={store}>
-          <PersistGate loading={null} persistor={persistor}>
             <NavigationContainer>
               <GestureHandlerRootView style={{ flex: 1 }}>
                 {/* <Host> portalize */}
@@ -51,8 +46,6 @@ export default function App() {
                 {/* </Host> */}
               </GestureHandlerRootView>
             </NavigationContainer>
-          </PersistGate>
-        </Provider>
       </ThemeProvider>
     </View>
   );
