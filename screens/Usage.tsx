@@ -1,61 +1,47 @@
-import { useState } from "react"
-import { ScrollView, StyleSheet, Text, View, Pressable } from "react-native"
-import { useSafeAreaInsets } from "react-native-safe-area-context"
-import { MotiView, AnimatePresence } from "moti"
-import { Feather } from "@expo/vector-icons"
+import { useState } from 'react';
+import { ScrollView, StyleSheet, Text, View, Pressable } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { MotiView, AnimatePresence } from 'moti';
+import { Feather } from '@expo/vector-icons';
 
 const Usage = () => {
-    const inset = useSafeAreaInsets()
-    const [activeTab, setActiveTab] = useState("basic")
-    const [showCard, setShowCard] = useState(true)
-    const [expandedExample, setExpandedExample] = useState("fadeIn")
+    const inset = useSafeAreaInsets();
+    const [activeTab, setActiveTab] = useState('basic');
+    const [showCard, setShowCard] = useState(true);
+    const [expandedExample, setExpandedExample] = useState('fadeIn');
 
     // Toggle animation for demo
     const toggleCard = () => {
-        setShowCard(!showCard)
-    }
+        setShowCard(!showCard);
+    };
 
     return (
-        <ScrollView
-            style={[styles.contentScroll, { paddingTop: inset.top }]}
-            contentContainerStyle={styles.contentContainer}
-        >
+        <ScrollView style={[styles.contentScroll, { paddingTop: inset.top }]} contentContainerStyle={styles.contentContainer}>
             <MotiView
                 from={{ translateY: 20, opacity: 0 }}
                 animate={{ translateY: 0, opacity: 1 }}
-                transition={{ type: "spring", damping: 18 }}
-            >
+                transition={{ type: 'spring', damping: 18 }}>
                 <Text style={styles.contentTitle}>Usage</Text>
                 <Text style={styles.contentText}>
-                    Learn how to use our UI library components to create beautiful, animated interfaces in your React Native
-                    applications.
+                    Learn how to use our UI library components to create beautiful, animated interfaces in your React Native applications.
                 </Text>
 
                 {/* Tab Navigation */}
                 <View style={styles.tabContainer}>
-                    <Pressable
-                        style={[styles.tab, activeTab === "basic" && styles.activeTab]}
-                        onPress={() => setActiveTab("basic")}
-                    >
-                        <Text style={[styles.tabText, activeTab === "basic" && styles.activeTabText]}>Basic Usage</Text>
+                    <Pressable style={[styles.tab, activeTab === 'basic' && styles.activeTab]} onPress={() => setActiveTab('basic')}>
+                        <Text style={[styles.tabText, activeTab === 'basic' && styles.activeTabText]}>Basic Usage</Text>
                     </Pressable>
-                    <Pressable
-                        style={[styles.tab, activeTab === "advanced" && styles.activeTab]}
-                        onPress={() => setActiveTab("advanced")}
-                    >
-                        <Text style={[styles.tabText, activeTab === "advanced" && styles.activeTabText]}>Advanced</Text>
+                    <Pressable style={[styles.tab, activeTab === 'advanced' && styles.activeTab]} onPress={() => setActiveTab('advanced')}>
+                        <Text style={[styles.tabText, activeTab === 'advanced' && styles.activeTabText]}>Advanced</Text>
                     </Pressable>
-                    <Pressable
-                        style={[styles.tab, activeTab === "patterns" && styles.activeTab]}
-                        onPress={() => setActiveTab("patterns")}
-                    >
-                        <Text style={[styles.tabText, activeTab === "patterns" && styles.activeTabText]}>Patterns</Text>
+                    <Pressable style={[styles.tab, activeTab === 'patterns' && styles.activeTab]} onPress={() => setActiveTab('patterns')}>
+                        <Text style={[styles.tabText, activeTab === 'patterns' && styles.activeTabText]}>Patterns</Text>
                     </Pressable>
                 </View>
 
                 {/* Basic Usage Tab Content */}
-                {activeTab === "basic" && (
-                    <MotiView from={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ type: "timing", duration: 300 }}>
+                {activeTab === 'basic' && (
+                    <MotiView from={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ type: 'timing', duration: 300 }}>
                         <View style={styles.section}>
                             <Text style={styles.sectionTitle}>Getting Started</Text>
                             <Text style={styles.contentText}>
@@ -65,27 +51,25 @@ const Usage = () => {
 
                             {/* Example 1: Fade In */}
                             <Pressable
-                                style={[styles.exampleCard, expandedExample === "fadeIn" && styles.expandedCard]}
-                                onPress={() => setExpandedExample(expandedExample === "fadeIn" ? "" : "fadeIn")}
-                            >
+                                style={[styles.exampleCard, expandedExample === 'fadeIn' && styles.expandedCard]}
+                                onPress={() => setExpandedExample(expandedExample === 'fadeIn' ? '' : 'fadeIn')}>
                                 <View style={styles.exampleHeader}>
                                     <View style={styles.exampleIconContainer}>
                                         <Feather name="eye" size={18} color="#6366F1" />
                                     </View>
                                     <Text style={styles.exampleTitle}>Fade In Animation</Text>
                                     <Feather
-                                        name={expandedExample === "fadeIn" ? "chevron-up" : "chevron-down"}
+                                        name={expandedExample === 'fadeIn' ? 'chevron-up' : 'chevron-down'}
                                         size={20}
                                         color="#6B7280"
                                     />
                                 </View>
 
-                                {expandedExample === "fadeIn" && (
+                                {expandedExample === 'fadeIn' && (
                                     <MotiView
                                         from={{ opacity: 0, height: 0 }}
-                                        animate={{ opacity: 1, height: "auto" }}
-                                        transition={{ type: "timing", duration: 300 }}
-                                    >
+                                        animate={{ opacity: 1, height: 'auto' }}
+                                        transition={{ type: 'timing', duration: 300 }}>
                                         <View style={styles.exampleContent}>
                                             <Text style={styles.exampleDescription}>
                                                 The FadeIn component makes elements appear with a smooth fade-in animation. It's perfect for
@@ -120,7 +104,7 @@ export default function WelcomeScreen() {
                                             <View style={styles.demoContainer}>
                                                 <Text style={styles.demoTitle}>Live Demo:</Text>
                                                 <Pressable style={styles.demoButton} onPress={toggleCard}>
-                                                    <Text style={styles.demoButtonText}>{showCard ? "Hide" : "Show"} Element</Text>
+                                                    <Text style={styles.demoButtonText}>{showCard ? 'Hide' : 'Show'} Element</Text>
                                                 </Pressable>
 
                                                 <View style={styles.demoPreview}>
@@ -130,9 +114,8 @@ export default function WelcomeScreen() {
                                                                 from={{ opacity: 0 }}
                                                                 animate={{ opacity: 1 }}
                                                                 exit={{ opacity: 0 }}
-                                                                transition={{ type: "timing", duration: 800 }}
-                                                                style={styles.demoCard}
-                                                            >
+                                                                transition={{ type: 'timing', duration: 800 }}
+                                                                style={styles.demoCard}>
                                                                 <Text style={styles.demoCardText}>Hello, Animation!</Text>
                                                             </MotiView>
                                                         )}
@@ -145,7 +128,9 @@ export default function WelcomeScreen() {
                                                 <View style={styles.propItem}>
                                                     <Text style={styles.propName}>delay</Text>
                                                     <Text style={styles.propType}>number</Text>
-                                                    <Text style={styles.propDescription}>Milliseconds to wait before starting the animation</Text>
+                                                    <Text style={styles.propDescription}>
+                                                        Milliseconds to wait before starting the animation
+                                                    </Text>
                                                 </View>
                                                 <View style={styles.propItem}>
                                                     <Text style={styles.propName}>duration</Text>
@@ -170,31 +155,29 @@ export default function WelcomeScreen() {
 
                             {/* Example 2: Slide In */}
                             <Pressable
-                                style={[styles.exampleCard, expandedExample === "slideIn" && styles.expandedCard]}
-                                onPress={() => setExpandedExample(expandedExample === "slideIn" ? "" : "slideIn")}
-                            >
+                                style={[styles.exampleCard, expandedExample === 'slideIn' && styles.expandedCard]}
+                                onPress={() => setExpandedExample(expandedExample === 'slideIn' ? '' : 'slideIn')}>
                                 <View style={styles.exampleHeader}>
                                     <View style={styles.exampleIconContainer}>
                                         <Feather name="arrow-right" size={18} color="#6366F1" />
                                     </View>
                                     <Text style={styles.exampleTitle}>Slide In Animation</Text>
                                     <Feather
-                                        name={expandedExample === "slideIn" ? "chevron-up" : "chevron-down"}
+                                        name={expandedExample === 'slideIn' ? 'chevron-up' : 'chevron-down'}
                                         size={20}
                                         color="#6B7280"
                                     />
                                 </View>
 
-                                {expandedExample === "slideIn" && (
+                                {expandedExample === 'slideIn' && (
                                     <MotiView
                                         from={{ opacity: 0, height: 0 }}
-                                        animate={{ opacity: 1, height: "auto" }}
-                                        transition={{ type: "timing", duration: 300 }}
-                                    >
+                                        animate={{ opacity: 1, height: 'auto' }}
+                                        transition={{ type: 'timing', duration: 300 }}>
                                         <View style={styles.exampleContent}>
                                             <Text style={styles.exampleDescription}>
-                                                The SlideIn component makes elements enter the screen from a specified direction. It's great for
-                                                sequential animations or revealing new content.
+                                                The SlideIn component makes elements enter the screen from a specified direction. It's great
+                                                for sequential animations or revealing new content.
                                             </Text>
 
                                             <View style={styles.codeBlock}>
@@ -255,7 +238,9 @@ export default function FeaturesList() {
                                                 <View style={styles.propItem}>
                                                     <Text style={styles.propName}>delay</Text>
                                                     <Text style={styles.propType}>number</Text>
-                                                    <Text style={styles.propDescription}>Milliseconds to wait before starting the animation</Text>
+                                                    <Text style={styles.propDescription}>
+                                                        Milliseconds to wait before starting the animation
+                                                    </Text>
                                                 </View>
                                             </View>
                                         </View>
@@ -265,31 +250,25 @@ export default function FeaturesList() {
 
                             {/* Example 3: Scale */}
                             <Pressable
-                                style={[styles.exampleCard, expandedExample === "scale" && styles.expandedCard]}
-                                onPress={() => setExpandedExample(expandedExample === "scale" ? "" : "scale")}
-                            >
+                                style={[styles.exampleCard, expandedExample === 'scale' && styles.expandedCard]}
+                                onPress={() => setExpandedExample(expandedExample === 'scale' ? '' : 'scale')}>
                                 <View style={styles.exampleHeader}>
                                     <View style={styles.exampleIconContainer}>
                                         <Feather name="maximize" size={18} color="#6366F1" />
                                     </View>
                                     <Text style={styles.exampleTitle}>Scale Animation</Text>
-                                    <Feather
-                                        name={expandedExample === "scale" ? "chevron-up" : "chevron-down"}
-                                        size={20}
-                                        color="#6B7280"
-                                    />
+                                    <Feather name={expandedExample === 'scale' ? 'chevron-up' : 'chevron-down'} size={20} color="#6B7280" />
                                 </View>
 
-                                {expandedExample === "scale" && (
+                                {expandedExample === 'scale' && (
                                     <MotiView
                                         from={{ opacity: 0, height: 0 }}
-                                        animate={{ opacity: 1, height: "auto" }}
-                                        transition={{ type: "timing", duration: 300 }}
-                                    >
+                                        animate={{ opacity: 1, height: 'auto' }}
+                                        transition={{ type: 'timing', duration: 300 }}>
                                         <View style={styles.exampleContent}>
                                             <Text style={styles.exampleDescription}>
-                                                The Scale component allows elements to grow or shrink with a smooth animation. It's perfect for
-                                                buttons, cards, and other interactive elements.
+                                                The Scale component allows elements to grow or shrink with a smooth animation. It's perfect
+                                                for buttons, cards, and other interactive elements.
                                             </Text>
 
                                             <View style={styles.codeBlock}>
@@ -333,13 +312,11 @@ export default function InteractiveButton() {
                                                 <View style={styles.demoPreview}>
                                                     <MotiView
                                                         animate={{ scale: showCard ? 1 : 0.8 }}
-                                                        transition={{ type: "spring", damping: 15 }}
-                                                    >
+                                                        transition={{ type: 'spring', damping: 15 }}>
                                                         <Pressable
                                                             onPressIn={() => setShowCard(true)}
                                                             onPressOut={() => setShowCard(false)}
-                                                            style={styles.scaleButton}
-                                                        >
+                                                            style={styles.scaleButton}>
                                                             <Text style={styles.scaleButtonText}>Press and Hold</Text>
                                                         </Pressable>
                                                     </MotiView>
@@ -365,8 +342,8 @@ export default function InteractiveButton() {
                 )}
 
                 {/* Advanced Usage Tab Content */}
-                {activeTab === "advanced" && (
-                    <MotiView from={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ type: "timing", duration: 300 }}>
+                {activeTab === 'advanced' && (
+                    <MotiView from={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ type: 'timing', duration: 300 }}>
                         <View style={styles.section}>
                             <Text style={styles.sectionTitle}>Advanced Animations</Text>
                             <Text style={styles.contentText}>
@@ -512,8 +489,8 @@ export default function AnimatedList() {
                 )}
 
                 {/* Patterns Tab Content */}
-                {activeTab === "patterns" && (
-                    <MotiView from={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ type: "timing", duration: 300 }}>
+                {activeTab === 'patterns' && (
+                    <MotiView from={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ type: 'timing', duration: 300 }}>
                         <View style={styles.section}>
                             <Text style={styles.sectionTitle}>Common Animation Patterns</Text>
                             <Text style={styles.contentText}>
@@ -577,7 +554,7 @@ export default function LoadingCard() {
                                                 from={{ opacity: 0.5 }}
                                                 animate={{ opacity: 1 }}
                                                 transition={{
-                                                    type: "timing",
+                                                    type: 'timing',
                                                     duration: 1000,
                                                     loop: true,
                                                     repeatReverse: true,
@@ -591,7 +568,7 @@ export default function LoadingCard() {
                                                     from={{ opacity: 0.5 }}
                                                     animate={{ opacity: 1 }}
                                                     transition={{
-                                                        type: "timing",
+                                                        type: 'timing',
                                                         duration: 1000,
                                                         loop: true,
                                                         repeatReverse: true,
@@ -604,7 +581,7 @@ export default function LoadingCard() {
                                                     from={{ opacity: 0.5 }}
                                                     animate={{ opacity: 1 }}
                                                     transition={{
-                                                        type: "timing",
+                                                        type: 'timing',
                                                         duration: 1000,
                                                         loop: true,
                                                         repeatReverse: true,
@@ -790,8 +767,8 @@ export default App;`}
             <View style={styles.nextStepsCard}>
                 <Text style={styles.nextStepsTitle}>Next Steps</Text>
                 <Text style={styles.nextStepsText}>
-                    Now that you understand how to use our UI components, check out the Examples section to see complete
-                    implementations of common UI patterns and screens.
+                    Now that you understand how to use our UI components, check out the Examples section to see complete implementations of
+                    common UI patterns and screens.
                 </Text>
                 <Pressable style={styles.nextStepsButton}>
                     <Text style={styles.nextStepsButtonText}>View Examples</Text>
@@ -799,13 +776,13 @@ export default App;`}
                 </Pressable>
             </View>
         </ScrollView>
-    )
-}
+    );
+};
 
 const styles = StyleSheet.create({
     contentScroll: {
         flex: 1,
-        backgroundColor: "#F9FAFB",
+        backgroundColor: '#F9FAFB',
     },
     contentContainer: {
         padding: 24,
@@ -813,19 +790,19 @@ const styles = StyleSheet.create({
     },
     contentTitle: {
         fontSize: 32,
-        fontWeight: "bold",
-        color: "#111827",
+        fontWeight: 'bold',
+        color: '#111827',
         marginBottom: 16,
     },
     contentText: {
         fontSize: 16,
         lineHeight: 24,
-        color: "#4B5563",
+        color: '#4B5563',
         marginBottom: 24,
     },
     tabContainer: {
-        flexDirection: "row",
-        backgroundColor: "#F3F4F6",
+        flexDirection: 'row',
+        backgroundColor: '#F3F4F6',
         borderRadius: 8,
         padding: 4,
         marginBottom: 24,
@@ -835,11 +812,11 @@ const styles = StyleSheet.create({
         paddingVertical: 8,
         paddingHorizontal: 12,
         borderRadius: 6,
-        alignItems: "center",
+        alignItems: 'center',
     },
     activeTab: {
-        backgroundColor: "#FFFFFF",
-        shadowColor: "#000",
+        backgroundColor: '#FFFFFF',
+        shadowColor: '#000',
         shadowOffset: { width: 0, height: 1 },
         shadowOpacity: 0.05,
         shadowRadius: 2,
@@ -847,79 +824,79 @@ const styles = StyleSheet.create({
     },
     tabText: {
         fontSize: 14,
-        fontWeight: "500",
-        color: "#6B7280",
+        fontWeight: '500',
+        color: '#6B7280',
     },
     activeTabText: {
-        color: "#111827",
-        fontWeight: "600",
+        color: '#111827',
+        fontWeight: '600',
     },
     section: {
         marginBottom: 32,
     },
     sectionTitle: {
         fontSize: 22,
-        fontWeight: "bold",
-        color: "#111827",
+        fontWeight: 'bold',
+        color: '#111827',
         marginBottom: 16,
     },
     exampleCard: {
-        backgroundColor: "#FFFFFF",
+        backgroundColor: '#FFFFFF',
         borderRadius: 12,
         marginBottom: 16,
-        overflow: "hidden",
+        overflow: 'hidden',
         borderWidth: 1,
-        borderColor: "#E5E7EB",
+        borderColor: '#E5E7EB',
     },
     expandedCard: {
-        shadowColor: "#000",
+        shadowColor: '#000',
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.05,
         shadowRadius: 5,
         elevation: 2,
     },
     exampleHeader: {
-        flexDirection: "row",
-        alignItems: "center",
+        flexDirection: 'row',
+        alignItems: 'center',
         padding: 16,
     },
     exampleIconContainer: {
         width: 36,
         height: 36,
         borderRadius: 8,
-        backgroundColor: "#EEF2FF",
-        justifyContent: "center",
-        alignItems: "center",
+        backgroundColor: '#EEF2FF',
+        justifyContent: 'center',
+        alignItems: 'center',
         marginRight: 12,
     },
     exampleTitle: {
         fontSize: 16,
-        fontWeight: "600",
-        color: "#111827",
+        fontWeight: '600',
+        color: '#111827',
         flex: 1,
     },
     exampleContent: {
         padding: 16,
         paddingTop: 0,
         borderTopWidth: 1,
-        borderTopColor: "#E5E7EB",
+        borderTopColor: '#E5E7EB',
     },
     exampleDescription: {
         fontSize: 14,
         lineHeight: 20,
-        color: "#4B5563",
+        color: '#4B5563',
         marginBottom: 16,
     },
     codeBlock: {
-        backgroundColor: "#1F2937",
+        backgroundColor: '#1F2937',
         borderRadius: 8,
         padding: 16,
         marginBottom: 16,
     },
     codeText: {
         fontSize: 13,
-        fontFamily: "monospace",
-        color: "#E5E7EB",
+        fontFamily: 'monospace',
+        color: '#E5E7EB',
         lineHeight: 20,
     },
     demoContainer: {
@@ -927,65 +904,65 @@ const styles = StyleSheet.create({
     },
     demoTitle: {
         fontSize: 14,
-        fontWeight: "600",
-        color: "#111827",
+        fontWeight: '600',
+        color: '#111827',
         marginBottom: 12,
     },
     demoButton: {
-        backgroundColor: "#6366F1",
+        backgroundColor: '#6366F1',
         paddingVertical: 8,
         paddingHorizontal: 16,
         borderRadius: 6,
-        alignSelf: "flex-start",
+        alignSelf: 'flex-start',
         marginBottom: 16,
     },
     demoButtonText: {
-        color: "#FFFFFF",
+        color: '#FFFFFF',
         fontSize: 14,
-        fontWeight: "500",
+        fontWeight: '500',
     },
     demoPreview: {
-        backgroundColor: "#FFFFFF",
+        backgroundColor: '#FFFFFF',
         borderRadius: 8,
         padding: 24,
-        alignItems: "center",
-        justifyContent: "center",
+        alignItems: 'center',
+        justifyContent: 'center',
         borderWidth: 1,
-        borderColor: "#E5E7EB",
+        borderColor: '#E5E7EB',
         minHeight: 100,
     },
     demoCard: {
-        backgroundColor: "#EEF2FF",
+        backgroundColor: '#EEF2FF',
         borderRadius: 8,
         padding: 16,
         width: 200,
-        alignItems: "center",
+        alignItems: 'center',
     },
     demoCardText: {
         fontSize: 18,
-        fontWeight: "600",
-        color: "#6366F1",
+        fontWeight: '600',
+        color: '#6366F1',
     },
     scaleButton: {
-        backgroundColor: "#6366F1",
+        backgroundColor: '#6366F1',
         paddingVertical: 12,
         paddingHorizontal: 24,
         borderRadius: 8,
     },
     scaleButtonText: {
-        color: "#FFFFFF",
+        color: '#FFFFFF',
         fontSize: 16,
-        fontWeight: "600",
+        fontWeight: '600',
     },
     propsList: {
-        backgroundColor: "#F9FAFB",
+        backgroundColor: '#F9FAFB',
         borderRadius: 8,
         padding: 16,
     },
     propsTitle: {
         fontSize: 14,
-        fontWeight: "600",
-        color: "#111827",
+        fontWeight: '600',
+        color: '#111827',
         marginBottom: 12,
     },
     propItem: {
@@ -993,112 +970,112 @@ const styles = StyleSheet.create({
     },
     propName: {
         fontSize: 14,
-        fontWeight: "600",
-        color: "#111827",
+        fontWeight: '600',
+        color: '#111827',
     },
     propType: {
         fontSize: 12,
-        color: "#6366F1",
-        fontFamily: "monospace",
+        color: '#6366F1',
+        fontFamily: 'monospace',
         marginBottom: 4,
     },
     propDescription: {
         fontSize: 14,
-        color: "#4B5563",
+        color: '#4B5563',
     },
     tipCard: {
-        backgroundColor: "#EEF2FF",
+        backgroundColor: '#EEF2FF',
         borderRadius: 12,
         padding: 16,
         marginBottom: 24,
     },
     tipHeader: {
-        flexDirection: "row",
-        alignItems: "center",
+        flexDirection: 'row',
+        alignItems: 'center',
         marginBottom: 12,
     },
     tipTitle: {
         fontSize: 16,
-        fontWeight: "600",
-        color: "#111827",
+        fontWeight: '600',
+        color: '#111827',
         marginLeft: 8,
     },
     tipText: {
         fontSize: 14,
         lineHeight: 20,
-        color: "#4B5563",
+        color: '#4B5563',
     },
     advancedCard: {
-        backgroundColor: "#FFFFFF",
+        backgroundColor: '#FFFFFF',
         borderRadius: 12,
         padding: 16,
         marginBottom: 16,
         borderWidth: 1,
-        borderColor: "#E5E7EB",
+        borderColor: '#E5E7EB',
     },
     advancedTitle: {
         fontSize: 16,
-        fontWeight: "600",
-        color: "#111827",
+        fontWeight: '600',
+        color: '#111827',
         marginBottom: 8,
     },
     advancedDescription: {
         fontSize: 14,
         lineHeight: 20,
-        color: "#4B5563",
+        color: '#4B5563',
         marginBottom: 16,
     },
     patternCard: {
-        backgroundColor: "#FFFFFF",
+        backgroundColor: '#FFFFFF',
         borderRadius: 12,
         padding: 16,
         marginBottom: 16,
         borderWidth: 1,
-        borderColor: "#E5E7EB",
+        borderColor: '#E5E7EB',
     },
     patternHeader: {
-        flexDirection: "row",
-        alignItems: "center",
+        flexDirection: 'row',
+        alignItems: 'center',
         marginBottom: 8,
     },
     patternTitle: {
         fontSize: 16,
-        fontWeight: "600",
-        color: "#111827",
+        fontWeight: '600',
+        color: '#111827',
         flex: 1,
     },
     patternTag: {
-        backgroundColor: "#EEF2FF",
+        backgroundColor: '#EEF2FF',
         paddingVertical: 4,
         paddingHorizontal: 8,
         borderRadius: 4,
     },
     patternTagText: {
         fontSize: 12,
-        fontWeight: "500",
-        color: "#6366F1",
+        fontWeight: '500',
+        color: '#6366F1',
     },
     patternDescription: {
         fontSize: 14,
         lineHeight: 20,
-        color: "#4B5563",
+        color: '#4B5563',
         marginBottom: 16,
     },
     skeletonDemo: {
-        flexDirection: "row",
-        alignItems: "center",
+        flexDirection: 'row',
+        alignItems: 'center',
         padding: 16,
-        backgroundColor: "#FFFFFF",
+        backgroundColor: '#FFFFFF',
         borderRadius: 8,
         borderWidth: 1,
-        borderColor: "#E5E7EB",
+        borderColor: '#E5E7EB',
     },
     skeletonCircle: {
         width: 48,
         height: 48,
         borderRadius: 24,
-        backgroundColor: "#E5E7EB",
-        overflow: "hidden",
+        backgroundColor: '#E5E7EB',
+        overflow: 'hidden',
     },
     skeletonContent: {
         marginLeft: 12,
@@ -1107,33 +1084,33 @@ const styles = StyleSheet.create({
     skeletonLine1: {
         height: 16,
         width: 120,
-        backgroundColor: "#E5E7EB",
+        backgroundColor: '#E5E7EB',
         borderRadius: 4,
         marginBottom: 8,
-        overflow: "hidden",
+        overflow: 'hidden',
     },
     skeletonLine2: {
         height: 12,
         width: 180,
-        backgroundColor: "#E5E7EB",
+        backgroundColor: '#E5E7EB',
         borderRadius: 4,
-        overflow: "hidden",
+        overflow: 'hidden',
     },
     bestPracticesCard: {
-        backgroundColor: "#F0FDF4",
+        backgroundColor: '#F0FDF4',
         borderRadius: 12,
         padding: 16,
         marginBottom: 24,
     },
     bestPracticesTitle: {
         fontSize: 18,
-        fontWeight: "600",
-        color: "#111827",
+        fontWeight: '600',
+        color: '#111827',
         marginBottom: 16,
     },
     bestPracticesList: {},
     bestPracticeItem: {
-        flexDirection: "row",
+        flexDirection: 'row',
         marginBottom: 12,
     },
     bestPracticeIcon: {
@@ -1143,47 +1120,46 @@ const styles = StyleSheet.create({
     bestPracticeText: {
         fontSize: 14,
         lineHeight: 20,
-        color: "#4B5563",
+        color: '#4B5563',
         flex: 1,
     },
     nextStepsCard: {
-        backgroundColor: "#FFFFFF",
+        backgroundColor: '#FFFFFF',
         borderRadius: 12,
         padding: 24,
         marginTop: 8,
         marginBottom: 16,
         borderWidth: 1,
-        borderColor: "#E5E7EB",
+        borderColor: '#E5E7EB',
     },
     nextStepsTitle: {
         fontSize: 20,
-        fontWeight: "600",
-        color: "#111827",
+        fontWeight: '600',
+        color: '#111827',
         marginBottom: 12,
     },
     nextStepsText: {
         fontSize: 15,
         lineHeight: 24,
-        color: "#4B5563",
+        color: '#4B5563',
         marginBottom: 20,
     },
     nextStepsButton: {
-        backgroundColor: "#6366F1",
+        backgroundColor: '#6366F1',
         borderRadius: 8,
         paddingVertical: 12,
         paddingHorizontal: 20,
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "center",
-        alignSelf: "flex-start",
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        alignSelf: 'flex-start',
     },
     nextStepsButtonText: {
         fontSize: 15,
-        fontWeight: "600",
-        color: "#FFFFFF",
+        fontWeight: '600',
+        color: '#FFFFFF',
         marginRight: 8,
     },
-})
+});
 
-export default Usage
-
+export default Usage;

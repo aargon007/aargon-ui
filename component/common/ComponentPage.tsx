@@ -1,70 +1,55 @@
-import type React from "react"
-import { ScrollView, StyleSheet, Text, View } from "react-native"
-import { useSafeAreaInsets } from "react-native-safe-area-context"
-import { MotiView } from "moti"
-import { Feather } from "@expo/vector-icons"
+import type React from 'react';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { MotiView } from 'moti';
+import { Feather } from '@expo/vector-icons';
 
 interface ComponentPageProps {
-    title: string
-    description: string
-    installation?: string
-    usage: string
+    title: string;
+    description: string;
+    installation?: string;
+    usage: string;
     examples: Array<{
-        title: string
-        description: string
-        code: string
-        preview?: React.ReactNode
-    }>
+        title: string;
+        description: string;
+        code: string;
+        preview?: React.ReactNode;
+    }>;
     props: Array<{
-        name: string
-        type: string
-        default?: string
-        description: string
-    }>
+        name: string;
+        type: string;
+        default?: string;
+        description: string;
+    }>;
 }
 
 const ComponentPage = ({ title, description, installation, usage, examples, props }: ComponentPageProps) => {
-    const inset = useSafeAreaInsets()
+    const inset = useSafeAreaInsets();
 
     return (
-        <ScrollView
-            style={[styles.contentScroll, { paddingTop: inset.top }]}
-            contentContainerStyle={styles.contentContainer}
-        >
+        <ScrollView style={[styles.contentScroll, { paddingTop: inset.top }]} contentContainerStyle={styles.contentContainer}>
             <MotiView
                 from={{ translateY: 20, opacity: 0 }}
                 animate={{ translateY: 0, opacity: 1 }}
-                transition={{ type: "spring", damping: 18 }}
-            >
-                <Text style={styles.contentTitle}>
-                    {title}
-                </Text>
-                <Text style={styles.contentText}>
-                    {description}
-                </Text>
+                transition={{ type: 'spring', damping: 18 }}>
+                <Text style={styles.contentTitle}>{title}</Text>
+                <Text style={styles.contentText}>{description}</Text>
 
                 {/* Installation */}
                 <View style={styles.section}>
-                    <Text style={styles.sectionTitle}>
-                        Installation
-                    </Text>
+                    <Text style={styles.sectionTitle}>Installation</Text>
                     <Text style={styles.contentText}>
-                        {installation || "This component is included in the core package. You don't need to install any additional dependencies."}
+                        {installation ||
+                            "This component is included in the core package. You don't need to install any additional dependencies."}
                     </Text>
                 </View>
 
                 {/* Usage */}
                 <View style={styles.section}>
-                    <Text style={styles.sectionTitle}>
-                        Usage
-                    </Text>
-                    <Text style={styles.contentText}>
-                        Import the component from the package:
-                    </Text>
+                    <Text style={styles.sectionTitle}>Usage</Text>
+                    <Text style={styles.contentText}>Import the component from the package:</Text>
                     <View style={styles.codeBlock}>
-                        <Text style={styles.codeText}>
-                            {usage}
-                        </Text>
+                        <Text style={styles.codeText}>{usage}</Text>
                     </View>
                 </View>
 
@@ -78,12 +63,11 @@ const ComponentPage = ({ title, description, installation, usage, examples, prop
                             from={{ opacity: 0, translateY: 10 }}
                             animate={{ opacity: 1, translateY: 0 }}
                             transition={{
-                                type: "spring",
+                                type: 'spring',
                                 damping: 18,
                                 delay: index * 100,
                             }}
-                            style={styles.exampleCard}
-                        >
+                            style={styles.exampleCard}>
                             <View style={styles.exampleHeader}>
                                 <Text style={styles.exampleTitle}>{example.title}</Text>
                             </View>
@@ -95,12 +79,8 @@ const ComponentPage = ({ title, description, installation, usage, examples, prop
 
                             {example.preview && (
                                 <View style={styles.previewContainer}>
-                                    <Text style={styles.previewTitle}>
-                                        Preview
-                                    </Text>
-                                    <View style={styles.preview}>
-                                        {example.preview}
-                                    </View>
+                                    <Text style={styles.previewTitle}>Preview</Text>
+                                    <View style={styles.preview}>{example.preview}</View>
                                 </View>
                             )}
                         </MotiView>
@@ -122,7 +102,7 @@ const ComponentPage = ({ title, description, installation, usage, examples, prop
                             <View key={index} style={[styles.propRow, index % 2 === 0 && styles.propRowEven]}>
                                 <Text style={[styles.propCell, styles.propName, { flex: 1 }]}>{prop.name}</Text>
                                 <Text style={[styles.propCell, styles.propType, { flex: 1 }]}>{prop.type}</Text>
-                                <Text style={[styles.propCell, { flex: 0.8 }]}>{prop.default || "-"}</Text>
+                                <Text style={[styles.propCell, { flex: 0.8 }]}>{prop.default || '-'}</Text>
                                 <Text style={[styles.propCell, { flex: 2 }]}>{prop.description}</Text>
                             </View>
                         ))}
@@ -150,13 +130,13 @@ const ComponentPage = ({ title, description, installation, usage, examples, prop
                 </View>
             </MotiView>
         </ScrollView>
-    )
-}
+    );
+};
 
 const styles = StyleSheet.create({
     contentScroll: {
         flex: 1,
-        backgroundColor: "#F9FAFB",
+        backgroundColor: '#F9FAFB',
     },
     contentContainer: {
         padding: 24,
@@ -164,14 +144,14 @@ const styles = StyleSheet.create({
     },
     contentTitle: {
         fontSize: 32,
-        fontWeight: "bold",
-        color: "#111827",
+        fontWeight: 'bold',
+        color: '#111827',
         marginBottom: 16,
     },
     contentText: {
         fontSize: 16,
         lineHeight: 24,
-        color: "#4B5563",
+        color: '#4B5563',
         marginBottom: 24,
     },
     section: {
@@ -179,29 +159,29 @@ const styles = StyleSheet.create({
     },
     sectionTitle: {
         fontSize: 22,
-        fontWeight: "bold",
-        color: "#111827",
+        fontWeight: 'bold',
+        color: '#111827',
         marginBottom: 16,
     },
     codeBlock: {
-        backgroundColor: "#1F2937",
+        backgroundColor: '#1F2937',
         borderRadius: 8,
         padding: 16,
         marginBottom: 24,
     },
     codeText: {
         fontSize: 13,
-        fontFamily: "monospace",
-        color: "#E5E7EB",
+        fontFamily: 'monospace',
+        color: '#E5E7EB',
         lineHeight: 20,
     },
     exampleCard: {
-        backgroundColor: "#FFFFFF",
+        backgroundColor: '#FFFFFF',
         borderRadius: 12,
         marginBottom: 24,
-        overflow: "hidden",
+        overflow: 'hidden',
         borderWidth: 1,
-        borderColor: "#E5E7EB",
+        borderColor: '#E5E7EB',
         padding: 16,
     },
     exampleHeader: {
@@ -209,13 +189,13 @@ const styles = StyleSheet.create({
     },
     exampleTitle: {
         fontSize: 18,
-        fontWeight: "600",
-        color: "#111827",
+        fontWeight: '600',
+        color: '#111827',
     },
     exampleDescription: {
         fontSize: 14,
         lineHeight: 20,
-        color: "#4B5563",
+        color: '#4B5563',
         marginBottom: 16,
     },
     previewContainer: {
@@ -223,68 +203,68 @@ const styles = StyleSheet.create({
     },
     previewTitle: {
         fontSize: 16,
-        fontWeight: "600",
-        color: "#111827",
+        fontWeight: '600',
+        color: '#111827',
         marginBottom: 12,
     },
     preview: {
-        backgroundColor: "#F9FAFB",
+        backgroundColor: '#F9FAFB',
         borderRadius: 8,
-        padding: 24,
+        padding: 15,
         borderWidth: 1,
-        borderColor: "#E5E7EB",
-        alignItems: "center",
-        justifyContent: "flex-start",
-        minHeight: 400,
+        borderColor: '#E5E7EB',
+        alignItems: 'center',
+        justifyContent: 'flex-start',
+        minHeight: 300,
     },
     propsTable: {
         borderWidth: 1,
-        borderColor: "#E5E7EB",
+        borderColor: '#E5E7EB',
         borderRadius: 8,
-        overflow: "hidden",
+        overflow: 'hidden',
     },
     propsHeader: {
-        flexDirection: "row",
-        backgroundColor: "#F9FAFB",
+        flexDirection: 'row',
+        backgroundColor: '#F9FAFB',
         borderBottomWidth: 1,
-        borderBottomColor: "#E5E7EB",
+        borderBottomColor: '#E5E7EB',
         paddingVertical: 12,
         paddingHorizontal: 16,
     },
     propHeaderCell: {
         fontSize: 14,
-        fontWeight: "600",
-        color: "#111827",
+        fontWeight: '600',
+        color: '#111827',
     },
     propRow: {
-        flexDirection: "row",
+        flexDirection: 'row',
         paddingVertical: 12,
         paddingHorizontal: 16,
         borderBottomWidth: 1,
-        borderBottomColor: "#E5E7EB",
+        borderBottomColor: '#E5E7EB',
     },
     propRowEven: {
-        backgroundColor: "#F9FAFB",
+        backgroundColor: '#F9FAFB',
     },
     propCell: {
         fontSize: 14,
-        color: "#4B5563",
+        color: '#4B5563',
         paddingRight: 8,
     },
     propName: {
-        fontWeight: "500",
-        color: "#111827",
+        fontWeight: '500',
+        color: '#111827',
     },
     propType: {
-        fontFamily: "monospace",
-        color: "#6366F1",
+        fontFamily: 'monospace',
+        color: '#6366F1',
     },
     accessibilityList: {
         marginTop: 8,
     },
     accessibilityItem: {
-        flexDirection: "row",
-        alignItems: "flex-start",
+        flexDirection: 'row',
+        alignItems: 'flex-start',
         marginBottom: 12,
     },
     accessibilityIcon: {
@@ -294,10 +274,9 @@ const styles = StyleSheet.create({
     accessibilityText: {
         fontSize: 14,
         lineHeight: 20,
-        color: "#4B5563",
+        color: '#4B5563',
         flex: 1,
     },
-})
+});
 
-export default ComponentPage
-
+export default ComponentPage;

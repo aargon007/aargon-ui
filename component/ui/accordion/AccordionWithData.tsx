@@ -1,51 +1,39 @@
-import { useState } from "react"
-import { Text, View, ActivityIndicator } from "react-native"
-// import { Accordion } from "@animatereactnative/accordion"
-import { Accordion } from "./Accordion"
-import Animated, { FadeInDown, FadeIn, FadeInUp } from "react-native-reanimated"
-import { Feather } from "@expo/vector-icons"
+import { useState } from 'react';
+import { Text, View, ActivityIndicator } from 'react-native';
+import { Accordion } from '@animatereactnative/accordion';
+// import { Accordion } from "./Accordion"
+import Animated, { FadeInDown } from 'react-native-reanimated';
+import { Feather } from '@expo/vector-icons';
 
 interface AccordionWithDataProps {
-    title: string
-    desc?: string
-    summary?: string
-    isLoading?: boolean
+    title: string;
+    desc?: string;
+    summary?: string;
+    isLoading?: boolean;
 }
 
-const AccordionWithData = ({
-    title,
-    desc,
-    summary = "Lorem ipsum dolor sit amet.",
-    isLoading = false,
-}: AccordionWithDataProps) => {
-    const _spacing = 20
-    const [isActive, setIsActive] = useState(false)
+const AccordionWithData = ({ title, desc, summary, isLoading = false }: AccordionWithDataProps) => {
+    const _spacing = 20;
+    const [isActive, setIsActive] = useState(false);
 
     return (
-        <Accordion.Accordion
-            onChange={(value) => setIsActive(value)}
-            style={{ gap: _spacing / 2, marginBottom: _spacing }}
-        >
+        <Accordion.Accordion onChange={value => setIsActive(value)} style={{ gap: _spacing / 2, marginBottom: _spacing }}>
             <Accordion.Header>
                 <View
                     style={{
-                        backgroundColor: "gold",
+                        backgroundColor: 'gold',
                         padding: _spacing / 2,
                         borderRadius: _spacing / 2,
-                        flexDirection: "row",
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                    }}
-                >
-                    <Text style={{ color: "#111", flexShrink: 1, fontWeight: "600" }}>
-                        {title}
-                    </Text>
+                        flexDirection: 'row',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                    }}>
+                    <Text style={{ color: '#111', flexShrink: 1, fontWeight: '600' }}>{title}</Text>
                     <Accordion.HeaderIcon>
                         <Animated.View
                             style={{
-                                transform: [{ rotate: isActive ? "0deg" : "180deg" }],
-                            }}
-                        >
+                                transform: [{ rotate: isActive ? '0deg' : '180deg' }],
+                            }}>
                             <Feather name="chevron-up" size={20} color="#333" />
                         </Animated.View>
                     </Accordion.HeaderIcon>
@@ -64,40 +52,31 @@ const AccordionWithData = ({
 
             <Accordion.Expanded
                 style={{
-                    backgroundColor: "#333",
-                    width: "100%",
+                    backgroundColor: '#333',
+                    width: '100%',
                     borderRadius: _spacing / 2,
                     padding: _spacing / 2,
-                }}
-            >
+                }}>
                 {isLoading ? (
-                    <ActivityIndicator color={"white"} />
+                    <ActivityIndicator color={'white'} />
                 ) : (
                     <View style={{ gap: _spacing / 2 }}>
-                        <Animated.View
-                            entering={FadeInDown.springify().damping(80).stiffness(200)}
-                            // exiting={FadeInDown.springify().damping(80).stiffness(200).duration(200)}
-                        >
+                        <Animated.View entering={FadeInDown.springify().damping(80).stiffness(200)}>
                             <Text
                                 style={{
-                                    color: "#fff",
+                                    color: '#fff',
                                     opacity: 0.7,
                                     fontSize: 12,
-                                    fontFamily: "Menlo",
-                                }}
-                            >
+                                    fontFamily: 'Menlo',
+                                }}>
                                 {desc}
-                            </Text>
-                            <Text style={{ color: "#fff", marginTop: 8 }}>
-                                {summary}
                             </Text>
                         </Animated.View>
                     </View>
                 )}
             </Accordion.Expanded>
         </Accordion.Accordion>
-    )
-}
+    );
+};
 
-export default AccordionWithData
-
+export default AccordionWithData;
