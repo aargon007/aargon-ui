@@ -1,7 +1,8 @@
+// custom built accordion
 import type { PropsWithChildren } from 'react';
 import { createContext, useContext, useState } from 'react';
-import type { ViewProps } from 'react-native';
 import { Pressable } from 'react-native';
+import type { ViewProps } from 'react-native';
 import type { AnimatedProps } from 'react-native-reanimated';
 import Animated, { FadeIn, FadeOut, LinearTransition, useAnimatedStyle, useDerivedValue, withSpring } from 'react-native-reanimated';
 
