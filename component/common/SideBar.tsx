@@ -204,37 +204,3 @@ const styles = StyleSheet.create({
 });
 
 export default SideBar;
-
-{
-    /* <ScrollView
-                        style={[styles.navItems, {
-                            marginTop: inset.top
-                        }]}
-                    >
-                        {navItems.map((item) => (
-                            <Pressable
-                                key={item.id}
-                                onPress={() => handleNavItemPress(item)}
-                                style={({ pressed }) => [
-                                    styles.navItem,
-                                    activeSection === item.id && styles.activeNavItem,
-                                    pressed && styles.pressedNavItem,
-                                ]}
-                            >
-                                <MotiView
-                                    animate={{
-                                        scale: activeSection === item.id ? 1.1 : 1,
-                                        translateX: activeSection === item.id ? 5 : 0,
-                                    }}
-                                    transition={{ type: "spring", stiffness: 300 }}
-                                    style={styles.navItemContent}
-                                >
-                                    <Feather name={item.icon as any} size={18} color={activeSection === item.id ? "#6366F1" : "#666"} />
-                                    <Text style={[styles.navItemText, activeSection === item.id && styles.activeNavItemText]}>
-                                        {item.label}
-                                    </Text>
-                                </MotiView>
-                            </Pressable>
-                        ))}
-                    </ScrollView> */
-}

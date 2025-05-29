@@ -2,12 +2,14 @@ import * as React from 'react';
 import { type NavigationProp } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Introduction from '@/screens/Introduction';
-import Examples from '@/screens/Examples';
 import Installation from '@/screens/Installation';
+import Examples from '@/screens/Examples';
 import Usage from '@/screens/Usage';
-import AccordionPage from '@/screens/AccordionPage';
 
-export type CScreenNames = ['Introduction', 'Installation', 'Components', 'Usage', 'Examples', 'Accordion'];
+import AccordionPage from '@/screens/AccordionPage';
+import Switch from '@/screens/SwitchPage';
+
+export type CScreenNames = ['Introduction', 'Installation', 'Components', 'Usage', 'Examples', 'Accordion', "Switch"];
 
 export type ContentStackParamList = Record<CScreenNames[number], undefined>;
 
@@ -24,7 +26,8 @@ const ContentNavigator = () => {
                 animation: 'fade',
                 animationDuration: 150,
             }}
-            initialRouteName="Introduction">
+            initialRouteName="Introduction"
+        >
             <Stack.Screen name="Introduction" component={Introduction} />
 
             <Stack.Screen name="Examples" component={Examples} />
@@ -34,6 +37,8 @@ const ContentNavigator = () => {
             <Stack.Screen name="Usage" component={Usage} />
 
             <Stack.Screen name="Accordion" component={AccordionPage} />
+
+            <Stack.Screen name="Switch" component={Switch} />
         </Stack.Navigator>
     );
 };

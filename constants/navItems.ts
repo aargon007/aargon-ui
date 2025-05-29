@@ -17,6 +17,7 @@ export const navItems = [
             { id: 'checkbox', label: 'Checkbox', icon: 'check-square' },
             { id: 'input', label: 'Input', icon: 'type' },
             { id: 'modal', label: 'Modal', icon: 'maximize' },
+            {id:'switch', label: 'Switch', icon: 'toggle-right'},
             { id: 'toast', label: 'Toast', icon: 'message-square' },
         ],
     },
