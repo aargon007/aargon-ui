@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, ScrollView } from "react-native"
+import { View, Text, StyleSheet, ScrollView, useWindowDimensions } from "react-native"
 import { useSharedValue } from "react-native-reanimated"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 import AnimatedSwitch from "@/component/ui/switch/AnimatedSwitch"
@@ -8,6 +8,8 @@ import { switchExample } from "@/component/ui/switch/example";
 import { globalStyles } from "@/styles/globalStyles";
 
 export default function SwitchDemoPage() {
+    const { width } = useWindowDimensions();
+    const isMobile = width < 768;
     const inset = useSafeAreaInsets();
 
     // Switch states

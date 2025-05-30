@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { View, Text, Pressable, StyleSheet, useWindowDimensions, TouchableOpacity, SafeAreaView } from 'react-native';
+import { View, Text, Pressable, StyleSheet, useWindowDimensions, TouchableOpacity, SafeAreaView, StatusBar } from 'react-native';
 import ContentNavigator from '@/navigators/ContentNavigator';
 import { type StackNavigation } from '@/navigators/RootNavigator';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -29,22 +29,29 @@ export default function Home() {
         <SafeAreaView style={styles.container}>
             {/* Header for mobile */}
             {isMobile && (
-                <View
-                    style={[
-                        styles.mobileHeader,
-                        {
-                            marginTop: inset.top,
-                        },
-                    ]}>
-                    <TouchableOpacity
-                        activeOpacity={0.5}
-                        style={styles.mobileHeaderButton}
-                        hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
-                        onPress={() => setIsMobileNavOpen(!isMobileNavOpen)}>
-                        <Feather name={isMobileNavOpen ? 'x' : 'menu'} size={24} color="#333" />
-                    </TouchableOpacity>
-                    <Text style={styles.mobileHeaderTitle}>Aargon UI</Text>
-                </View>
+                <>
+                    <StatusBar barStyle="default" />
+                    <View
+                        style={[
+                            styles.mobileHeader,
+                            {
+                                marginTop: inset.top,
+                            },
+                        ]}
+                    >
+                        <TouchableOpacity
+                            activeOpacity={0.5}
+                            style={styles.mobileHeaderButton}
+                            hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
+                            onPress={() => setIsMobileNavOpen(!isMobileNavOpen)}>
+                            <Feather name={isMobileNavOpen ? 'x' : 'menu'} size={24} color="#333" />
+                        </TouchableOpacity>
+                        <Text style={styles.mobileHeaderTitle}>
+                            Aargon UI
+                        </Text>
+                    </View>
+                </>
+
             )}
 
             {/* Navigation sidebar */}
@@ -57,7 +64,8 @@ export default function Home() {
                     transition={{
                         type: 'timing',
                         duration: 300,
-                    }}>
+                    }}
+                >
                     {!isMobile && (
                         <View style={styles.logoContainer}>
                             <MotiView
@@ -65,13 +73,20 @@ export default function Home() {
                                 from={{ scale: 0.8, opacity: 0 }}
                                 animate={{ scale: 1, opacity: 1 }}
                                 transition={{ type: 'spring' }}>
-                                <Text style={styles.logoText}>AUI</Text>
+                                <Text style={styles.logoText}>
+                                    AUI
+                                </Text>
                             </MotiView>
-                            <Text style={styles.logoTitle}>Aargon UI</Text>
+                            <Text style={styles.logoTitle}>
+                                Aargon UI
+                            </Text>
                         </View>
                     )}
 
-                    <SideBar activeSection={activeSection} onNavItemPress={handleNavItemPress} />
+                    <SideBar
+                        activeSection={activeSection}
+                        onNavItemPress={handleNavItemPress}
+                    />
 
                     <View style={styles.sidebarFooter}>
                         <Text style={styles.footerText}>v1.0.0</Text>
@@ -130,8 +145,6 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
         borderRightWidth: 1,
         borderRightColor: '#E5E7EB',
-        paddingVertical: 24,
-        paddingHorizontal: 16,
         height: '100%',
         flexDirection: 'column',
     },
@@ -150,7 +163,13 @@ const styles = StyleSheet.create({
     logoContainer: {
         flexDirection: 'row',
         alignItems: 'center',
-        marginBottom: 32,
+        paddingVertical: 15,
+        paddingHorizontal: 15,
+        shadowColor: '#000',
+        shadowOffset: { width: 2, height: 0 },
+        shadowOpacity: 0.1,
+        shadowRadius: 10,
+        elevation: 5,
     },
     logo: {
         width: 40,
@@ -172,7 +191,6 @@ const styles = StyleSheet.create({
         color: '#111827',
     },
     sidebarFooter: {
-        marginTop: 24,
         paddingTop: 16,
         borderTopWidth: 1,
         borderTopColor: '#E5E7EB',
@@ -194,7 +212,6 @@ const styles = StyleSheet.create({
     },
     mobileContent: {
         marginTop: 60,
-        paddingVertical: 10,
         paddingHorizontal: 5,
     },
 });

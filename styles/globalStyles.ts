@@ -1,4 +1,6 @@
-import { StyleSheet } from "react-native";
+import { Dimensions, StyleSheet } from "react-native";
+
+const {width} = Dimensions.get('window');
 
 export const globalStyles = StyleSheet.create({
     // common styles for component screen
@@ -7,7 +9,7 @@ export const globalStyles = StyleSheet.create({
         backgroundColor: "#F3F4F6",
     },
     contentContainer: {
-        padding: 64,
+        padding: width < 768 ? 16 : 64,
         paddingBottom: 40,
     },
     demoSection: {

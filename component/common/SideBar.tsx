@@ -42,7 +42,11 @@ const SideBar = ({ activeSection, onNavItemPress }: NavigationProps) => {
     };
 
     return (
-        <ScrollView style={[styles.navItems, { marginTop: inset.top }]} showsVerticalScrollIndicator={false}>
+        <ScrollView
+            style={[styles.navItems, { marginTop: inset.top }]}
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={{ paddingBottom: 20 }}
+        >
             {navItems.map(item => (
                 <View key={item.id}>
                     <Pressable
