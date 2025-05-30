@@ -1,27 +1,20 @@
-import { View, Text, StyleSheet, ScrollView, useWindowDimensions } from "react-native"
+import { View, Text, StyleSheet, ScrollView } from "react-native"
 import { useSharedValue } from "react-native-reanimated"
-import { useSafeAreaInsets } from "react-native-safe-area-context"
 import AnimatedSwitch from "@/component/ui/switch/AnimatedSwitch"
 import CodeExample from "@/component/common/CodeExample";
 import { switchCode } from "@/component/ui/switch/code";
 import { switchExample } from "@/component/ui/switch/example";
 import { globalStyles } from "@/styles/globalStyles";
+import ComponentPage from "@/component/common/ComponentPage";
 
 export default function SwitchDemoPage() {
-    const { width } = useWindowDimensions();
-    const isMobile = width < 768;
-    const inset = useSafeAreaInsets();
-
     // Switch states
     const switch1 = useSharedValue(false);
     const switch3 = useSharedValue(true);
     const switch5 = useSharedValue(false);
 
     return (
-        <ScrollView
-            style={[globalStyles.container, { paddingTop: inset.top }]}
-            contentContainerStyle={globalStyles.contentContainer}
-        >
+        <ComponentPage>
             {/* UI Demo */}
             <View style={globalStyles.demoSection}>
                 <Text style={globalStyles.title}>
@@ -82,7 +75,7 @@ export default function SwitchDemoPage() {
                 code={switchExample}
                 filename="Example.ts"
             />
-        </ScrollView>
+        </ComponentPage>
     )
 }
 
