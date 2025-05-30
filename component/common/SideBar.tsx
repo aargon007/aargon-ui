@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import type { ContentStackNavigation } from '@/navigators/ContentNavigator';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Feather } from '@expo/vector-icons';
 import { navItems } from '@/constants/navItems';
@@ -13,6 +15,7 @@ interface NavigationProps {
 const SideBar = ({ activeSection, onNavItemPress }: NavigationProps) => {
     const inset = useSafeAreaInsets();
     const [expandedSections, setExpandedSections] = useState<string[]>(['components']);
+    const { navigate } = useNavigation<ContentStackNavigation>();
 
     const toggleSection = (sectionId: string) => {
         if (expandedSections.includes(sectionId)) {
@@ -22,7 +25,7 @@ const SideBar = ({ activeSection, onNavItemPress }: NavigationProps) => {
         }
     };
 
-    const handleItemPress = (item: any) => {
+    const handleItemPress = (item: { id: string; label: string; icon: string; hasChildren?: boolean; }) => {
         // If the item has children, toggle expansion
         if (item.hasChildren) {
             toggleSection(item.id);
@@ -30,6 +33,7 @@ const SideBar = ({ activeSection, onNavItemPress }: NavigationProps) => {
         }
 
         // Otherwise navigate to the item
+        navigate(item.label as any);
         onNavItemPress(item);
     };
 
@@ -55,14 +59,16 @@ const SideBar = ({ activeSection, onNavItemPress }: NavigationProps) => {
                             styles.navItem,
                             isItemActive(item.id) && !item.hasChildren && styles.activeNavItem,
                             pressed && styles.pressedNavItem,
-                        ]}>
+                        ]}
+                    >
                         <MotiView
                             animate={{
                                 scale: isItemActive(item.id) && !item.hasChildren ? 1.1 : 1,
                                 translateX: isItemActive(item.id) && !item.hasChildren ? 5 : 0,
                             }}
                             transition={{ type: 'spring', stiffness: 300 }}
-                            style={styles.navItemContent}>
+                            style={styles.navItemContent}
+                        >
                             <Feather
                                 name={item.icon as any}
                                 size={18}
@@ -81,7 +87,8 @@ const SideBar = ({ activeSection, onNavItemPress }: NavigationProps) => {
                                         type: 'timing',
                                         duration: 300,
                                     }}
-                                    style={styles.chevronIcon}>
+                                    style={styles.chevronIcon}
+                                >
                                     <Feather name="chevron-down" size={16} color="#666" />
                                 </MotiView>
                             )}
@@ -101,23 +108,26 @@ const SideBar = ({ activeSection, onNavItemPress }: NavigationProps) => {
                                     damping: 15,
                                 },
                             }}
-                            style={styles.childrenContainer}>
+                            style={styles.childrenContainer}
+                        >
                             {item.children?.map(child => (
                                 <Pressable
                                     key={child.id}
-                                    onPress={() => onNavItemPress(child)}
+                                    onPress={() => handleItemPress(child)}
                                     style={({ pressed }) => [
                                         styles.childNavItem,
                                         isChildActive(item.id, child.id) && styles.activeChildNavItem,
                                         pressed && styles.pressedNavItem,
-                                    ]}>
+                                    ]}
+                                >
                                     <MotiView
                                         animate={{
                                             scale: isChildActive(item.id, child.id) ? 1.05 : 1,
                                             translateX: isChildActive(item.id, child.id) ? 3 : 0,
                                         }}
                                         transition={{ type: 'spring', stiffness: 300 }}
-                                        style={styles.childNavItemContent}>
+                                        style={styles.childNavItemContent}
+                                    >
                                         <Feather
                                             name={child.icon as any}
                                             size={16}
@@ -127,7 +137,8 @@ const SideBar = ({ activeSection, onNavItemPress }: NavigationProps) => {
                                             style={[
                                                 styles.childNavItemText,
                                                 isChildActive(item.id, child.id) && styles.activeChildNavItemText,
-                                            ]}>
+                                            ]}
+                                        >
                                             {child.label}
                                         </Text>
                                     </MotiView>

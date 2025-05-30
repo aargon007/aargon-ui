@@ -1,24 +1,21 @@
 import { useState } from 'react';
 import { View, Text, Pressable, StyleSheet, useWindowDimensions, TouchableOpacity, SafeAreaView, StatusBar } from 'react-native';
 import ContentNavigator from '@/navigators/ContentNavigator';
-import { type StackNavigation } from '@/navigators/RootNavigator';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useNavigation } from '@react-navigation/native';
 import { Feather } from '@expo/vector-icons';
 import { MotiView } from 'moti';
 import SideBar from '@/component/common/SideBar';
 
-export default function Home() {
+export default function RootLayout() {
     const [activeSection, setActiveSection] = useState('introduction');
     const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
-    const { navigate } = useNavigation<StackNavigation>();
+
     const { width } = useWindowDimensions();
     const isMobile = width < 768;
     const inset = useSafeAreaInsets();
 
     const handleNavItemPress = (nav: any) => {
         setActiveSection(nav?.id);
-        navigate('Home', { screen: nav?.label });
 
         if (isMobile) {
             setIsMobileNavOpen(false);
@@ -191,7 +188,7 @@ const styles = StyleSheet.create({
         color: '#111827',
     },
     sidebarFooter: {
-        paddingTop: 16,
+        padding: 15,
         borderTopWidth: 1,
         borderTopColor: '#E5E7EB',
         flexDirection: 'row',
@@ -204,7 +201,7 @@ const styles = StyleSheet.create({
     },
     themeToggle: {
         padding: 8,
-        borderRadius: 4,
+        borderRadius: 100,
         backgroundColor: '#F3F4F6',
     },
     content: {
