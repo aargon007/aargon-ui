@@ -206,7 +206,7 @@ const HighlightedCode = ({ code }: { code: string }) => {
     )
 }
 
-const CodeExample = ({ title, code }: { title: string; code: string }) => {
+const CodeExample = ({ title, code, filename }: { title: string; code: string; filename: string }) => {
     const [copied, setCopied] = useState(false)
 
     const copyToClipboard = async () => {
@@ -236,7 +236,7 @@ const CodeExample = ({ title, code }: { title: string; code: string }) => {
                         <View style={[styles.windowControl, styles.maximizeButton]} />
                     </View>
                     <Text style={styles.fileName}>
-                        example.tsx
+                        {filename}
                     </Text>
                     <View style={styles.copyContainer}>
                         <Pressable onPress={copyToClipboard} style={styles.copyButton}>

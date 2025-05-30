@@ -5,6 +5,7 @@ import AnimatedSwitch from "@/component/ui/switch/AnimatedSwitch"
 import CodeExample from "@/component/common/CodeExample";
 import { switchCode } from "@/component/ui/switch/code";
 import { switchExample } from "@/component/ui/switch/example";
+import { globalStyles } from "@/styles/globalStyles";
 
 export default function SwitchDemoPage() {
     const inset = useSafeAreaInsets();
@@ -16,19 +17,19 @@ export default function SwitchDemoPage() {
 
     return (
         <ScrollView
-            style={[styles.container, { paddingTop: inset.top }]}
-            contentContainerStyle={styles.contentContainer}
+            style={[globalStyles.container, { paddingTop: inset.top }]}
+            contentContainerStyle={globalStyles.contentContainer}
         >
             {/* UI Demo */}
-            <View style={styles.demoSection}>
-                <Text style={styles.title}>
+            <View style={globalStyles.demoSection}>
+                <Text style={globalStyles.title}>
                     Switch Component
                 </Text>
-                <Text>
-                    A switch component that can be used to toggle a boolean value.
+                <Text style={globalStyles.description}>
+                    A performant and customizable switch component built with Reanimated, ideal for toggling boolean states with smooth animations.
                 </Text>
 
-                <View style={styles.switchContainer}>
+                <View style={globalStyles.previewContainer}>
                     <View style={styles.switchRow}>
                         <Text style={styles.switchLabel}>
                             Default Switch
@@ -70,43 +71,20 @@ export default function SwitchDemoPage() {
             <CodeExample
                 title="Code"
                 code={switchCode}
+                filename="AnimatedSwitch.tsx"
             />
 
             {/* implementation section */}
             <CodeExample
                 title="Implementation"
                 code={switchExample}
+                filename="Example.ts"
             />
         </ScrollView>
     )
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: "#F3F4F6",
-    },
-    contentContainer: {
-        padding: 64,
-        paddingBottom: 40,
-    },
-    demoSection: {
-        marginBottom: 32,
-    },
-    title: {
-        fontSize: 32,
-        fontWeight: "bold",
-        color: "#111827",
-        marginBottom: 24,
-        textAlign: "center",
-    },
-    switchContainer: {
-        backgroundColor: "#FFFFFF",
-        borderRadius: 12,
-        padding: 24,
-        borderWidth: 1,
-        borderColor: "#E5E7EB",
-    },
     switchRow: {
         flexDirection: "row",
         justifyContent: "space-between",
