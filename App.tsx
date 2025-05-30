@@ -3,16 +3,12 @@ import { View } from "react-native";
 import { DarkTheme, NavigationContainer, ThemeProvider } from '@react-navigation/native';
 import { configureReanimatedLogger, ReanimatedLogLevel } from 'react-native-reanimated';
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import EStyleSheet from 'react-native-extended-stylesheet';
 import RootNavigator from '@/navigators/RootNavigator';
 import * as SplashScreen from 'expo-splash-screen';
-import styleGuide from './styles/styleGuide';
 import { useFonts } from "expo-font";
 
 // Keep the splash screen visible while we fetch resources
 SplashScreen.preventAutoHideAsync();
-
-EStyleSheet.build(styleGuide);
 
 configureReanimatedLogger({
   level: ReanimatedLogLevel.warn,
@@ -39,11 +35,11 @@ export default function App() {
   return (
     <View style={{ flex: 1 }}>
       <ThemeProvider value={DarkTheme}>
-            <NavigationContainer>
-              <GestureHandlerRootView style={{ flex: 1 }}>
-                <RootNavigator />
-              </GestureHandlerRootView>
-            </NavigationContainer>
+        <NavigationContainer>
+          <GestureHandlerRootView style={{ flex: 1 }}>
+            <RootNavigator />
+          </GestureHandlerRootView>
+        </NavigationContainer>
       </ThemeProvider>
     </View>
   );
