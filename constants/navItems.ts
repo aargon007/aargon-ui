@@ -9,7 +9,6 @@ export const navItems = [
         hasChildren: true,
         children: [
             { id: 'accordion', label: 'Accordion', icon: 'chevrons-down' },
-            { id: 'alert', label: 'Alert', icon: 'alert-circle' },
             { id: 'badge', label: 'Badge', icon: 'tag' },
             { id: 'button', label: 'Button', icon: 'square' },
             { id: 'card', label: 'Card', icon: 'credit-card' },

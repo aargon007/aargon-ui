@@ -8,8 +8,19 @@ import Usage from '@/screens/Usage';
 
 import AccordionPage from '@/screens/AccordionPage';
 import Switch from '@/screens/SwitchPage';
+import ButtonPage from '@/screens/ButtonPage';
 
-export type CScreenNames = ['Introduction', 'Installation', 'Components', 'Usage', 'Examples', 'Accordion', "Switch"];
+export type CScreenNames = [
+    'Introduction',
+    'Installation',
+    'Components',
+    'Usage',
+    'Examples',
+    'Accordion',
+    'Badge',
+    'Button',
+    "Switch"
+];
 
 export type ContentStackParamList = Record<CScreenNames[number], undefined>;
 
@@ -37,6 +48,8 @@ const ContentNavigator = () => {
             <Stack.Screen name="Usage" component={Usage} />
 
             <Stack.Screen name="Accordion" component={AccordionPage} />
+
+            <Stack.Screen name="Button" component={ButtonPage} />
 
             <Stack.Screen name="Switch" component={Switch} />
         </Stack.Navigator>

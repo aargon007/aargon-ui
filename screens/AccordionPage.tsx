@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, } from "react-native"
+import { View, Text } from "react-native"
 import CodeExample from "@/component/common/CodeExample";
 import ComponentPage from "@/component/common/ComponentPage";
 import { globalStyles } from "@/styles/globalStyles";
@@ -49,22 +49,3 @@ export default function AccordionPage() {
         </ComponentPage>
     )
 }
-
-const styles = StyleSheet.create({
-    switchRow: {
-        flexDirection: "row",
-        justifyContent: "space-between",
-        alignItems: "center",
-        paddingVertical: 16,
-        borderBottomWidth: 1,
-        borderBottomColor: "#F3F4F6",
-    },
-    switchLabel: {
-        fontSize: 16,
-        fontWeight: "500",
-        color: "#111827",
-    },
-    disabledLabel: {
-        color: "#9CA3AF",
-    },
-})
