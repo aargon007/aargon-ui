@@ -1,3 +1,4 @@
+export const accordionCode = `
 import React, { useState, useRef } from 'react';
 import { StyleSheet, View, TouchableOpacity, type LayoutChangeEvent, Text } from 'react-native';
 import Animated, { useAnimatedStyle, useSharedValue, withTiming, } from 'react-native-reanimated';
@@ -90,3 +91,4 @@ const styles = StyleSheet.create({
         marginTop: 4,
     },
 });
+`

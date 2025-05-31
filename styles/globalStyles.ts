@@ -31,6 +31,7 @@ export const globalStyles = StyleSheet.create({
     },
     previewContainer: {
         backgroundColor: "#FFFFFF",
+        minHeight:300,
         borderRadius: 12,
         padding: 24,
         borderWidth: 1,

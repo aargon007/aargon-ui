@@ -68,7 +68,6 @@ const CodeExample = ({ title, code, filename }: { title: string; code: string; f
                                 padding: 25
                             },
                         }}
-                        wrapLines
                     >
                         {code}
                     </CodeHighlighter>
