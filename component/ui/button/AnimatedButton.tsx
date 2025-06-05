@@ -1,7 +1,7 @@
 import { useEffect } from "react"
 import { Pressable, Text, StyleSheet } from "react-native"
 import Animated, { useAnimatedStyle, useSharedValue, withSpring, withTiming, interpolate, runOnJS, withSequence, withRepeat, Easing, } from "react-native-reanimated"
-import { getSizeStyles, getVariantStyles, type AnimatedButtonProps, type AnimationType, type ButtonTheme } from "./animatedButtonUtils"
+import { getSizeStyles, getVariantStyles, type AnimatedButtonProps, type AnimationType, type ButtonTheme } from "./utils"
 import { Feather } from "@expo/vector-icons"
 
 const defaultTheme: ButtonTheme = {

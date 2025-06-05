@@ -1,8 +1,8 @@
+import { useEffect } from "react"
 import { Text, StyleSheet } from "react-native"
 import Animated, { useAnimatedStyle, useSharedValue, withSpring, withTiming, withSequence, withRepeat, runOnJS, Easing, } from "react-native-reanimated"
+import { getBadgeSizeStyles, getBadgeVariantStyles, type AnimatedBadgeProps, type BadgeTheme } from "./utils"
 import { Feather } from "@expo/vector-icons"
-import { useEffect } from "react"
-import { getBadgeSizeStyles, getBadgeVariantStyles, type AnimatedBadgeProps, type BadgeTheme } from "./badgeUtils"
 
 const defaultTheme: BadgeTheme = {
     colors: {
