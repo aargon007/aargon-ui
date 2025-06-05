@@ -1,48 +1,168 @@
-import { View, Text, StyleSheet, } from "react-native"
-import ComponentPage from "@/component/common/ComponentPage";
-import CodeExample from "@/component/common/CodeExample";
-import { globalStyles } from "@/styles/globalStyles";
-import { AnimatedButton } from "@/component/ui/button/AnimatedButton";
+import { View, Text, StyleSheet } from "react-native"
+import ComponentPage from "@/component/common/ComponentPage"
+import CodeExample from "@/component/common/CodeExample"
+import { globalStyles } from "@/styles/globalStyles"
+import { AnimatedButton } from "@/component/ui/button/AnimatedButton"
 
 export default function ButtonPage() {
+    const customTheme = {
+        colors: {
+            primary: "#8B5CF6",
+            text: {
+                primary: "#FFFFFF",
+            }
+        },
+        borderRadius: 12,
+    }
 
     return (
         <ComponentPage>
             {/* UI Demo */}
             <View style={globalStyles.demoSection}>
                 <Text style={globalStyles.title}>
-                    Button Component
+                    Enhanced Button Component
                 </Text>
                 <Text style={globalStyles.description}>
-                    Highly customizable button component with smooth animations
+                    Highly customizable button component with smooth animations and theming
                 </Text>
 
-                <View style={globalStyles.previewContainer}>
-                    <AnimatedButton title="Primary" variant="primary" onPress={() => console.log("Primary pressed")} />
-                    <AnimatedButton title="Secondary" variant="secondary" onPress={() => console.log("Secondary pressed")} />
-                    <AnimatedButton title="Outline" variant="outline" onPress={() => console.log("Outline pressed")} />
-                    <AnimatedButton title="Ghost" variant="ghost" onPress={() => console.log("Ghost pressed")} />
-                    <AnimatedButton
-                        title="Destructive"
-                        variant="destructive"
-                        onPress={() => console.log("Destructive pressed")}
-                    />
+                <View style={[globalStyles.previewContainer, { rowGap: 15 }]}>
+                    {/* Basic Variants */}
+                    <Text style={styles.sectionTitle}>Basic Variants</Text>
+                    <View style={styles.row}>
+                        <AnimatedButton
+                            title="Primary"
+                            variant="primary"
+                            onPress={() => console.log("Primary pressed")}
+                        />
+                        <AnimatedButton
+                            title="Secondary"
+                            variant="secondary"
+                            onPress={() => console.log("Secondary pressed")}
+                        />
+                    </View>
+
+                    <View style={styles.row}>
+                        <AnimatedButton
+                            title="Success"
+                            variant="success"
+                            onPress={() => console.log("Success pressed")}
+                        />
+                        <AnimatedButton
+                            title="Warning"
+                            variant="warning"
+                            onPress={() => console.log("Warning pressed")}
+                        />
+                    </View>
+
+                    {/* Sizes */}
+                    <Text style={styles.sectionTitle}>Sizes</Text>
+                    <View style={styles.column}>
+                        <AnimatedButton title="Extra Small" size="xs" />
+                        <AnimatedButton title="Small" size="sm" />
+                        <AnimatedButton title="Medium" size="md" />
+                        <AnimatedButton title="Large" size="lg" />
+                        <AnimatedButton title="Extra Large" size="xl" />
+                    </View>
+
+                    {/* With Icons */}
+                    <Text style={styles.sectionTitle}>With Icons</Text>
+                    <View style={styles.row}>
+                        <AnimatedButton
+                            title="Download"
+                            leftIcon="download"
+                            variant="primary"
+                        />
+                        <AnimatedButton
+                            title="Share"
+                            rightIcon="share"
+                            variant="outline"
+                        />
+                    </View>
+
+                    {/* Animation Types */}
+                    <Text style={styles.sectionTitle}>Animation Types</Text>
+                    <View style={styles.column}>
+                        <AnimatedButton
+                            title="Scale Animation"
+                            animationType="scale"
+                            variant="primary"
+                        />
+                        <AnimatedButton
+                            title="Bounce Animation"
+                            animationType="bounce"
+                            variant="secondary"
+                        />
+                        <AnimatedButton
+                            title="Pulse Animation"
+                            animationType="pulse"
+                            variant="success"
+                        />
+                        <AnimatedButton
+                            title="Shake Animation"
+                            animationType="shake"
+                            variant="warning"
+                        />
+                    </View>
+
+                    {/* States */}
+                    <Text style={styles.sectionTitle}>States</Text>
+                    <View style={styles.column}>
+                        <AnimatedButton
+                            title="Loading"
+                            loading={true}
+                            variant="primary"
+                        />
+                        <AnimatedButton
+                            title="Disabled"
+                            disabled={true}
+                            variant="secondary"
+                        />
+                    </View>
+
+                    {/* Custom Styling */}
+                    <Text style={styles.sectionTitle}>Custom Styling</Text>
+                    <View style={styles.column}>
+                        <AnimatedButton
+                            title="Full Width"
+                            fullWidth={true}
+                            variant="primary"
+                        />
+                        <AnimatedButton
+                            title="Rounded"
+                            rounded={true}
+                            variant="success"
+                        />
+                        <AnimatedButton
+                            title="With Shadow"
+                            shadow={true}
+                            variant="warning"
+                        />
+                        {/* <AnimatedButton
+                            title="Custom Theme"
+                            theme={customTheme}
+                            variant="primary"
+                        /> */}
+                    </View>
                 </View>
             </View>
-
-            {/* Code Display */}
-            {/* <CodeExample
-                title="Code"
-                code={accordionCode}
-                filename="AnimatedAccordion.tsx"
-            /> */}
-
-            {/* implementation section */}
-            {/* <CodeExample
-                title="Implementation"
-                code={accordionExample}
-                filename="Example.ts"
-            /> */}
         </ComponentPage>
     )
 }
+
+const styles = StyleSheet.create({
+    sectionTitle: {
+        fontSize: 16,
+        fontWeight: "600",
+        marginVertical: 8,
+        color: "#374151",
+    },
+    row: {
+        flexDirection: "row",
+        gap: 10,
+        flexWrap: "wrap",
+    },
+    column: {
+        gap: 10,
+    },
+})
