@@ -1,19 +1,10 @@
 import { View, Text, StyleSheet } from "react-native"
 import ComponentPage from "@/component/common/ComponentPage"
-import CodeExample from "@/component/common/CodeExample"
-import { globalStyles } from "@/styles/globalStyles"
 import { AnimatedButton } from "@/component/ui/button/AnimatedButton"
+import { globalStyles } from "@/styles/globalStyles"
+import CodeExample from "@/component/common/CodeExample"
 
 export default function ButtonPage() {
-    const customTheme = {
-        colors: {
-            primary: "#8B5CF6",
-            text: {
-                primary: "#FFFFFF",
-            }
-        },
-        borderRadius: 12,
-    }
 
     return (
         <ComponentPage>
@@ -40,9 +31,6 @@ export default function ButtonPage() {
                             variant="secondary"
                             onPress={() => console.log("Secondary pressed")}
                         />
-                    </View>
-
-                    <View style={styles.row}>
                         <AnimatedButton
                             title="Success"
                             variant="success"
@@ -138,11 +126,6 @@ export default function ButtonPage() {
                             shadow={true}
                             variant="warning"
                         />
-                        {/* <AnimatedButton
-                            title="Custom Theme"
-                            theme={customTheme}
-                            variant="primary"
-                        /> */}
                     </View>
                 </View>
             </View>

@@ -1,103 +1,8 @@
-"use client"
-import { Pressable, Text, StyleSheet, type ViewStyle, type TextStyle } from "react-native"
-import Animated, {
-    useAnimatedStyle,
-    useSharedValue,
-    withSpring,
-    withTiming,
-    interpolate,
-    runOnJS,
-    withSequence,
-    withDelay,
-} from "react-native-reanimated"
+import { useEffect } from "react"
+import { Pressable, Text, StyleSheet } from "react-native"
+import Animated, { useAnimatedStyle, useSharedValue, withSpring, withTiming, interpolate, runOnJS, withSequence, withRepeat, Easing, } from "react-native-reanimated"
+import { getSizeStyles, getVariantStyles, type AnimatedButtonProps, type AnimationType, type ButtonTheme } from "./animatedButtonUtils"
 import { Feather } from "@expo/vector-icons"
-
-export type ButtonVariant = "primary" | "secondary" | "outline" | "ghost" | "destructive" | "success" | "warning"
-export type ButtonSize = "xs" | "sm" | "md" | "lg" | "xl"
-export type AnimationType = "scale" | "bounce" | "pulse" | "shake" | "none"
-
-export interface ButtonTheme {
-    colors: {
-        primary: string
-        secondary: string
-        outline: string
-        ghost: string
-        destructive: string
-        success: string
-        warning: string
-        text: {
-            primary: string
-            secondary: string
-            outline: string
-            ghost: string
-            destructive: string
-            success: string
-            warning: string
-        }
-        border: {
-            primary: string
-            secondary: string
-            outline: string
-            ghost: string
-            destructive: string
-            success: string
-            warning: string
-        }
-    }
-    borderRadius: number
-    fontFamily?: string
-}
-
-export interface AnimatedButtonProps {
-    /** The text to display on the button */
-    title?: string
-    /** Custom content to render instead of title */
-    children?: React.ReactNode
-    /** The variant of the button */
-    variant?: ButtonVariant
-    /** The size of the button */
-    size?: ButtonSize
-    /** Whether the button is disabled */
-    disabled?: boolean
-    /** Whether the button is in loading state */
-    loading?: boolean
-    /** Icon to display before the text */
-    leftIcon?: keyof typeof Feather.glyphMap
-    /** Icon to display after the text */
-    rightIcon?: keyof typeof Feather.glyphMap
-    /** Custom loading component */
-    loadingComponent?: React.ReactNode
-    /** Callback when the button is pressed */
-    onPress?: () => void
-    /** Callback when the button is long pressed */
-    onLongPress?: () => void
-    /** Additional styles for the button container */
-    style?: ViewStyle
-    /** Additional styles for the button text */
-    textStyle?: TextStyle
-    /** Animation type */
-    animationType?: AnimationType
-    /** Animation duration in milliseconds */
-    animationDuration?: number
-    /** Whether to use haptic feedback */
-    hapticFeedback?: boolean
-    /** Custom theme */
-    theme?: Partial<ButtonTheme>
-    /** Whether the button should take full width */
-    fullWidth?: boolean
-    /** Accessibility label */
-    accessibilityLabel?: string
-    /** Test ID for testing */
-    testID?: string
-    /** Whether the button should be rounded */
-    rounded?: boolean
-    /** Custom border radius */
-    borderRadius?: number
-    /** Shadow configuration */
-    shadow?: boolean
-    /** Ripple effect on Android */
-    ripple?: boolean
-}
 
 const defaultTheme: ButtonTheme = {
     colors: {
@@ -131,6 +36,20 @@ const defaultTheme: ButtonTheme = {
     fontFamily: undefined,
 }
 
+// Smooth spring configuration
+const smoothSpringConfig = {
+    damping: 20,
+    stiffness: 400,
+    mass: 0.8,
+}
+
+// Ultra smooth spring for subtle animations
+const ultraSmoothSpringConfig = {
+    damping: 25,
+    stiffness: 300,
+    mass: 0.6,
+}
+
 export const AnimatedButton = ({
     title,
     children,
@@ -145,8 +64,8 @@ export const AnimatedButton = ({
     onLongPress,
     style,
     textStyle,
-    animationType = "scale",
-    animationDuration = 150,
+    animationType = "smooth",
+    animationDuration = 200,
     hapticFeedback = true,
     theme,
     fullWidth = false,
@@ -165,75 +84,140 @@ export const AnimatedButton = ({
     const opacity = useSharedValue(1)
     const rotation = useSharedValue(0)
     const translateX = useSharedValue(0)
+    const translateY = useSharedValue(0)
+    const spinRotation = useSharedValue(0)
+    const loadingScale = useSharedValue(0)
+    const buttonOpacity = useSharedValue(1)
 
     // Get variant and size styles
-    const variantStyles = getVariantStyles(variant, mergedTheme)
-    const sizeStyles = getSizeStyles(size)
+    const variantStyles = getVariantStyles(variant, mergedTheme);
+    const sizeStyles = getSizeStyles(size);
 
-    // Animation handlers
+    // Start loading spinner animation
+    useEffect(() => {
+        if (loading) {
+            // Smooth scale in for loading state
+            loadingScale.value = withSpring(1, ultraSmoothSpringConfig)
+            buttonOpacity.value = withTiming(0.8, {
+                duration: 300,
+                easing: Easing.out(Easing.cubic)
+            })
+
+            // Continuous smooth spinning
+            spinRotation.value = withRepeat(
+                withTiming(360, {
+                    duration: 1000,
+                    easing: Easing.linear
+                }),
+                -1,
+                false
+            )
+        } else {
+            // Smooth scale out
+            loadingScale.value = withSpring(0, ultraSmoothSpringConfig)
+            buttonOpacity.value = withTiming(1, {
+                duration: 200,
+                easing: Easing.out(Easing.cubic)
+            })
+            spinRotation.value = 0
+        }
+    }, [loading]);
+
+    // Enhanced animation handlers with smoother transitions
     const getAnimationForType = (type: AnimationType, isPressed: boolean) => {
         switch (type) {
+            case "smooth":
+                return isPressed
+                    ? withSpring(0.96, ultraSmoothSpringConfig)
+                    : withSpring(1, ultraSmoothSpringConfig)
             case "scale":
                 return isPressed
-                    ? withSpring(0.95, { damping: 15, stiffness: 300 })
-                    : withSpring(1, { damping: 15, stiffness: 300 })
+                    ? withSpring(0.94, smoothSpringConfig)
+                    : withSpring(1, smoothSpringConfig)
             case "bounce":
                 return isPressed
                     ? withSequence(
-                        withSpring(0.9, { damping: 15, stiffness: 300 }),
-                        withSpring(1.05, { damping: 15, stiffness: 300 }),
-                        withSpring(1, { damping: 15, stiffness: 300 })
+                        withSpring(0.88, { damping: 12, stiffness: 400 }),
+                        withSpring(1.04, { damping: 15, stiffness: 350 }),
+                        withSpring(1, ultraSmoothSpringConfig)
                     )
-                    : withSpring(1, { damping: 15, stiffness: 300 })
+                    : withSpring(1, ultraSmoothSpringConfig)
             case "pulse":
                 return isPressed
                     ? withSequence(
-                        withTiming(1.1, { duration: animationDuration / 2 }),
-                        withTiming(1, { duration: animationDuration / 2 })
+                        withTiming(1.08, {
+                            duration: animationDuration / 3,
+                            easing: Easing.out(Easing.cubic)
+                        }),
+                        withTiming(0.96, {
+                            duration: animationDuration / 3,
+                            easing: Easing.inOut(Easing.cubic)
+                        }),
+                        withSpring(1, ultraSmoothSpringConfig)
                     )
-                    : withSpring(1, { damping: 15, stiffness: 300 })
+                    : withSpring(1, ultraSmoothSpringConfig)
             case "shake":
                 if (isPressed) {
                     translateX.value = withSequence(
-                        withTiming(-5, { duration: 50 }),
-                        withTiming(5, { duration: 50 }),
-                        withTiming(-5, { duration: 50 }),
-                        withTiming(0, { duration: 50 })
+                        withTiming(-3, { duration: 40, easing: Easing.out(Easing.cubic) }),
+                        withTiming(3, { duration: 40, easing: Easing.inOut(Easing.cubic) }),
+                        withTiming(-2, { duration: 40, easing: Easing.inOut(Easing.cubic) }),
+                        withTiming(0, { duration: 40, easing: Easing.out(Easing.cubic) })
                     )
                 }
-                return withSpring(1, { damping: 15, stiffness: 300 })
+                return withSpring(1, ultraSmoothSpringConfig)
             case "none":
                 return 1
             default:
                 return isPressed
-                    ? withSpring(0.95, { damping: 15, stiffness: 300 })
-                    : withSpring(1, { damping: 15, stiffness: 300 })
+                    ? withSpring(0.96, ultraSmoothSpringConfig)
+                    : withSpring(1, ultraSmoothSpringConfig)
         }
     }
 
-    // Handle press in
+    // Handle press in with smoother opacity transition
     const handlePressIn = () => {
+        if (disabled || loading) return
+
         if (animationType !== "none") {
             scale.value = getAnimationForType(animationType, true)
-            opacity.value = withTiming(0.8, { duration: animationDuration })
+            opacity.value = withTiming(0.85, {
+                duration: animationDuration / 2,
+                easing: Easing.out(Easing.cubic)
+            })
+
+            // Subtle vertical movement for enhanced feedback
+            if (animationType === "smooth") {
+                translateY.value = withSpring(1, ultraSmoothSpringConfig)
+            }
         }
     }
 
-    // Handle press out
+    // Handle press out with smoother transitions
     const handlePressOut = () => {
         if (animationType !== "none") {
             scale.value = getAnimationForType(animationType, false)
-            opacity.value = withTiming(1, { duration: animationDuration })
+            opacity.value = withTiming(1, {
+                duration: animationDuration,
+                easing: Easing.out(Easing.cubic)
+            })
+
+            if (animationType === "smooth") {
+                translateY.value = withSpring(0, ultraSmoothSpringConfig)
+            }
         }
     }
 
-    // Handle press
+    // Handle press with success feedback
     const handlePress = () => {
         if (disabled || loading) return
 
-        // Success animation
-        if (animationType === "bounce") {
-            rotation.value = withSpring(360, { damping: 20 }, () => {
+        // Success animation with smooth rotation
+        if (animationType === "bounce" || animationType === "smooth") {
+            rotation.value = withSpring(360, {
+                damping: 18,
+                stiffness: 200
+            }, () => {
                 rotation.value = 0
             })
         }
@@ -257,25 +241,48 @@ export const AnimatedButton = ({
         }
     }
 
-    // Animated styles
+    // Enhanced animated styles with smoother interpolations
     const animatedStyle = useAnimatedStyle(() => {
-        const disabledOpacity = interpolate(Number(disabled), [0, 1], [1, 0.5])
-        const loadingOpacity = interpolate(Number(loading), [0, 1], [1, 0.7])
+        const disabledOpacity = interpolate(
+            Number(disabled),
+            [0, 1],
+            [1, 0.4],
+            'clamp'
+        )
 
         return {
             transform: [
                 { scale: scale.value },
-                { rotate: `${rotation.value}deg` },
-                { translateX: translateX.value }
+                // { rotate: `${rotation.value}deg` },
+                { translateX: translateX.value },
+                { translateY: translateY.value }
             ],
-            opacity: opacity.value * disabledOpacity * loadingOpacity,
+            opacity: opacity.value * disabledOpacity * buttonOpacity.value,
         }
     })
 
-    const loadingAnimatedStyle = useAnimatedStyle(() => {
+    // Smooth loading spinner animation
+    const loadingSpinnerStyle = useAnimatedStyle(() => {
         return {
-            opacity: interpolate(Number(loading), [0, 1], [0, 1]),
-            transform: [{ scale: interpolate(Number(loading), [0, 1], [0.5, 1]) }],
+            transform: [
+                { rotate: `${spinRotation.value}deg` },
+                { scale: loadingScale.value }
+            ],
+            opacity: loadingScale.value,
+        }
+    })
+
+    // Smooth content transition during loading
+    const contentStyle = useAnimatedStyle(() => {
+        const contentOpacity = interpolate(
+            loadingScale.value,
+            [0, 0.5, 1],
+            [1, 0.7, 0.3],
+            'clamp'
+        )
+
+        return {
+            opacity: contentOpacity,
         }
     })
 
@@ -301,29 +308,21 @@ export const AnimatedButton = ({
                     width: fullWidth ? "100%" : undefined,
                 },
                 shadow && styles.shadow,
-                pressed && styles.pressed,
                 style,
             ]}
         >
             <Animated.View style={[styles.buttonContent, animatedStyle]}>
-                {leftIcon && !loading && (
-                    <Feather
-                        name={leftIcon}
-                        size={sizeStyles.iconSize}
-                        color={variantStyles.text.color}
-                        style={styles.leftIcon}
-                    />
-                )}
-
+                {/* Loading Spinner */}
                 {loading && (
-                    <Animated.View style={[styles.loadingContainer, loadingAnimatedStyle]}>
+                    <Animated.View style={[styles.loadingContainer, loadingSpinnerStyle]}>
                         {loadingComponent || (
                             <Animated.View
                                 style={[
                                     styles.loadingSpinner,
                                     {
-                                        borderColor: variantStyles.text.color,
-                                        borderTopColor: "transparent",
+                                        borderColor: `${variantStyles.text.color}30`,
+                                        borderTopColor: variantStyles.text.color,
+                                        borderRightColor: variantStyles.text.color,
                                         width: sizeStyles.iconSize,
                                         height: sizeStyles.iconSize,
                                     },
@@ -333,122 +332,43 @@ export const AnimatedButton = ({
                     </Animated.View>
                 )}
 
-                {children || (
-                    <Text
-                        style={[
-                            styles.buttonText,
-                            variantStyles.text,
-                            sizeStyles.text,
-                            { fontFamily: mergedTheme.fontFamily },
-                            textStyle
-                        ]}
-                    >
-                        {title}
-                    </Text>
-                )}
+                {/* Button Content */}
+                <Animated.View style={[styles.contentContainer, contentStyle]}>
+                    {leftIcon && !loading && (
+                        <Feather
+                            name={leftIcon}
+                            size={sizeStyles.iconSize}
+                            color={variantStyles.text.color}
+                            style={styles.leftIcon}
+                        />
+                    )}
 
-                {rightIcon && !loading && (
-                    <Feather
-                        name={rightIcon}
-                        size={sizeStyles.iconSize}
-                        color={variantStyles.text.color}
-                        style={styles.rightIcon}
-                    />
-                )}
+                    {children || (
+                        <Text
+                            style={[
+                                styles.buttonText,
+                                variantStyles.text,
+                                sizeStyles.text,
+                                { fontFamily: mergedTheme.fontFamily },
+                                textStyle
+                            ]}
+                        >
+                            {title}
+                        </Text>
+                    )}
+
+                    {rightIcon && !loading && (
+                        <Feather
+                            name={rightIcon}
+                            size={sizeStyles.iconSize}
+                            color={variantStyles.text.color}
+                            style={styles.rightIcon}
+                        />
+                    )}
+                </Animated.View>
             </Animated.View>
         </Pressable>
     )
-}
-
-// Helper functions for variant styles
-const getVariantStyles = (variant: ButtonVariant, theme: ButtonTheme) => {
-    return {
-        container: {
-            backgroundColor: theme.colors[variant],
-            borderColor: theme.colors.border[variant],
-        },
-        text: {
-            color: theme.colors.text[variant],
-        },
-    }
-}
-
-// Helper functions for size styles
-const getSizeStyles = (size: ButtonSize) => {
-    switch (size) {
-        case "xs":
-            return {
-                container: {
-                    paddingVertical: 6,
-                    paddingHorizontal: 10,
-                    minHeight: 32,
-                },
-                text: {
-                    fontSize: 12,
-                },
-                iconSize: 14,
-            }
-        case "sm":
-            return {
-                container: {
-                    paddingVertical: 8,
-                    paddingHorizontal: 12,
-                    minHeight: 36,
-                },
-                text: {
-                    fontSize: 14,
-                },
-                iconSize: 16,
-            }
-        case "md":
-            return {
-                container: {
-                    paddingVertical: 10,
-                    paddingHorizontal: 16,
-                    minHeight: 40,
-                },
-                text: {
-                    fontSize: 16,
-                },
-                iconSize: 18,
-            }
-        case "lg":
-            return {
-                container: {
-                    paddingVertical: 12,
-                    paddingHorizontal: 20,
-                    minHeight: 44,
-                },
-                text: {
-                    fontSize: 18,
-                },
-                iconSize: 20,
-            }
-        case "xl":
-            return {
-                container: {
-                    paddingVertical: 16,
-                    paddingHorizontal: 24,
-                    minHeight: 52,
-                },
-                text: {
-                    fontSize: 20,
-                },
-                iconSize: 22,
-            }
-        default:
-            return {
-                container: {
-                    paddingVertical: 10,
-                    paddingHorizontal: 16,
-                    minHeight: 40,
-                },
-                text: {
-                    fontSize: 16,
-                },
-                iconSize: 18,
-            }
-    }
 }
 
 const styles = StyleSheet.create({
@@ -457,11 +377,15 @@ const styles = StyleSheet.create({
         alignItems: "center",
         justifyContent: "center",
         flexDirection: "row",
-    },
-    pressed: {
-        opacity: 0.8,
+        overflow: 'hidden',
     },
     buttonContent: {
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "center",
+        position: 'relative',
+    },
+    contentContainer: {
         flexDirection: "row",
         alignItems: "center",
         justifyContent: "center",
@@ -477,7 +401,12 @@ const styles = StyleSheet.create({
         marginLeft: 8,
     },
     loadingContainer: {
-        marginRight: 8,
+        position: 'absolute',
+        left: 0,
+        right: 0,
+        alignItems: 'center',
+        justifyContent: 'center',
+        zIndex: 1,
     },
     loadingSpinner: {
         borderWidth: 2,
@@ -487,10 +416,10 @@ const styles = StyleSheet.create({
         shadowColor: "#000",
         shadowOffset: {
             width: 0,
-            height: 2,
+            height: 4,
         },
-        shadowOpacity: 0.1,
-        shadowRadius: 3.84,
-        elevation: 5,
+        shadowOpacity: 0.12,
+        shadowRadius: 6,
+        elevation: 8,
     },
 })
