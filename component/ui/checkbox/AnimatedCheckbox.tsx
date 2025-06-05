@@ -1,107 +1,8 @@
-"use client"
 import React, { useEffect } from 'react'
-import {
-    StyleSheet,
-    View,
-    TouchableOpacity,
-    Text,
-    type ViewStyle,
-    type TextStyle
-} from 'react-native'
-import Animated, {
-    useAnimatedStyle,
-    useSharedValue,
-    withSpring,
-    withTiming,
-    interpolate,
-    interpolateColor,
-    runOnJS,
-    withSequence,
-    Easing,
-} from 'react-native-reanimated'
+import { StyleSheet, View, TouchableOpacity, Text, } from 'react-native'
+import Animated, { useAnimatedStyle, useSharedValue, withSpring, withTiming, interpolate, interpolateColor, runOnJS, withSequence, withDelay, Easing, } from 'react-native-reanimated'
+import { getColorStyles, getSizeStyles, getVariantStyles, type AnimatedCheckboxProps, type CheckboxTheme } from './utils'
 import { Feather } from "@expo/vector-icons"
-
-export type CheckboxVariant = "default" | "filled" | "outline" | "ghost" | "rounded"
-export type CheckboxSize = "xs" | "sm" | "md" | "lg" | "xl"
-export type CheckboxState = "unchecked" | "checked" | "indeterminate"
-export type AnimationType = "scale" | "bounce" | "slide" | "fade" | "rotate" | "elastic"
-
-export interface CheckboxTheme {
-    colors: {
-        primary: string
-        secondary: string
-        success: string
-        warning: string
-        error: string
-        background: string
-        backgroundChecked: string
-        border: string
-        borderChecked: string
-        borderFocused: string
-        text: string
-        textDisabled: string
-        checkmark: string
-        indeterminate: string
-    }
-    borderRadius: number
-    borderWidth: number
-    fontFamily?: string
-}
-
-export interface AnimatedCheckboxProps {
-    /** Current checked state */
-    checked?: boolean
-    /** Checkbox state (unchecked, checked, indeterminate) */
-    state?: CheckboxState
-    /** Callback when checkbox state changes */
-    onPress?: (checked: boolean) => void
-    /** Label text */
-    label?: string
-    /** Description text */
-    description?: string
-    /** Custom label content */
-    labelContent?: React.ReactNode
-    /** Checkbox variant */
-    variant?: CheckboxVariant
-    /** Size of the checkbox */
-    size?: CheckboxSize
-    /** Color scheme */
-    colorScheme?: "primary" | "secondary" | "success" | "warning" | "error"
-    /** Whether the checkbox is disabled */
-    disabled?: boolean
-    /** Animation type */
-    animationType?: AnimationType
-    /** Animation duration in milliseconds */
-    animationDuration?: number
-    /** Custom checkmark icon */
-    checkIcon?: keyof typeof Feather.glyphMap
-    /** Custom indeterminate icon */
-    indeterminateIcon?: keyof typeof Feather.glyphMap
-    /** Label position */
-    labelPosition?: "right" | "left"
-    /** Custom theme */
-    theme?: Partial<CheckboxTheme>
-    /** Additional container styles */
-    style?: ViewStyle
-    /** Additional checkbox styles */
-    checkboxStyle?: ViewStyle
-    /** Additional label styles */
-    labelStyle?: TextStyle
-    /** Additional description styles */
-    descriptionStyle?: TextStyle
-    /** Whether to show focus ring */
-    showFocusRing?: boolean
-    /** Accessibility label */
-    accessibilityLabel?: string
-    /** Test ID for testing */
-    testID?: string
-    /** Whether checkbox should take full width */
-    fullWidth?: boolean
-    /** Custom border radius */
-    borderRadius?: number
-    /** Whether to use haptic feedback */
-    hapticFeedback?: boolean
-}
 
 const defaultTheme: CheckboxTheme = {
     colors: {
@@ -110,6 +11,7 @@ const defaultTheme: CheckboxTheme = {
         success: "#10B981",
         warning: "#F59E0B",
         error: "#EF4444",
+        info: "#3B82F6",
         background: "#FFFFFF",
         backgroundChecked: "#6366F1",
         border: "#D1D5DB",
@@ -119,8 +21,9 @@ const defaultTheme: CheckboxTheme = {
         textDisabled: "#9CA3AF",
         checkmark: "#FFFFFF",
         indeterminate: "#FFFFFF",
+        shadow: "#000000",
     },
-    borderRadius: 4,
+    borderRadius: 6,
     borderWidth: 2,
     fontFamily: undefined,
 }
@@ -144,6 +47,12 @@ const elasticConfig = {
     mass: 1,
 }
 
+const smoothConfig = {
+    damping: 25,
+    stiffness: 250,
+    mass: 0.6,
+}
+
 export const AnimatedCheckbox = ({
     checked = false,
     state,
@@ -156,7 +65,7 @@ export const AnimatedCheckbox = ({
     colorScheme = "primary",
     disabled = false,
     animationType = "scale",
-    animationDuration = 200,
+    animationDuration = 250,
     checkIcon = "check",
     indeterminateIcon = "minus",
     labelPosition = "right",
@@ -166,34 +75,42 @@ export const AnimatedCheckbox = ({
     labelStyle,
     descriptionStyle,
     showFocusRing = false,
+    showRipple = true,
     accessibilityLabel,
     testID,
     fullWidth = false,
     borderRadius,
     hapticFeedback = true,
+    shadow = false,
 }: AnimatedCheckboxProps) => {
     // Merge theme with default
-    const mergedTheme = { ...defaultTheme, ...theme }
+    const mergedTheme = { ...defaultTheme, ...theme };
 
     // Determine current state
-    const currentState = state || (checked ? "checked" : "unchecked")
-    const isChecked = currentState === "checked"
-    const isIndeterminate = currentState === "indeterminate"
-    const isActive = isChecked || isIndeterminate
+    const currentState = state || (checked ? "checked" : "unchecked");
+    const isChecked = currentState === "checked";
+    const isIndeterminate = currentState === "indeterminate";
+    const isActive = isChecked || isIndeterminate;
 
     // Animation values
-    const scale = useSharedValue(1)
-    const checkmarkScale = useSharedValue(0)
-    const checkmarkOpacity = useSharedValue(0)
-    const rotation = useSharedValue(0)
-    const slideX = useSharedValue(-20)
-    const borderWidth = useSharedValue(mergedTheme.borderWidth)
-    const focusRingScale = useSharedValue(0)
-    const pressScale = useSharedValue(1)
+    const scale = useSharedValue(1);
+    const checkmarkScale = useSharedValue(0);
+    const checkmarkOpacity = useSharedValue(0);
+    const rotation = useSharedValue(0);
+    const slideX = useSharedValue(-20);
+    const slideY = useSharedValue(-10);
+    const borderWidth = useSharedValue(mergedTheme.borderWidth);
+    const focusRingScale = useSharedValue(0);
+    const pressScale = useSharedValue(1);
+    const rippleScale = useSharedValue(0);
+    const rippleOpacity = useSharedValue(0);
+    const morphProgress = useSharedValue(0);
+    const pulseScale = useSharedValue(1);
+    const backgroundOpacity = useSharedValue(0);
 
     // Get styles
-    const sizeStyles = getSizeStyles(size)
-    const colorStyles = getColorStyles(colorScheme, mergedTheme)
+    const sizeStyles = getSizeStyles(size);
+    const colorStyles = getColorStyles(colorScheme, mergedTheme);
 
     // Initialize animation values
     useEffect(() => {
@@ -205,7 +122,16 @@ export const AnimatedCheckbox = ({
         const targetScale = active ? 1 : 0
         const targetOpacity = active ? 1 : 0
         const targetSlideX = active ? 0 : -20
+        const targetSlideY = active ? 0 : -10
         const targetRotation = active ? 0 : -90
+        const targetMorph = active ? 1 : 0
+        const targetBackgroundOpacity = active ? 1 : 0
+
+        // Background animation
+        backgroundOpacity.value = withTiming(targetBackgroundOpacity, {
+            duration: animationDuration,
+            easing: Easing.out(Easing.cubic)
+        })
 
         switch (animationType) {
             case "scale":
@@ -219,16 +145,22 @@ export const AnimatedCheckbox = ({
             case "bounce":
                 checkmarkScale.value = active
                     ? withSequence(
-                        withSpring(1.3, bounceConfig),
+                        withSpring(1.4, bounceConfig),
+                        withSpring(0.9, bounceConfig),
                         withSpring(1, springConfig)
                     )
                     : withSpring(0, springConfig)
-                checkmarkOpacity.value = withTiming(targetOpacity, { duration: animationDuration / 2 })
+                checkmarkOpacity.value = withTiming(targetOpacity, {
+                    duration: animationDuration / 2
+                })
                 break
 
             case "slide":
                 slideX.value = withSpring(targetSlideX, springConfig)
-                checkmarkOpacity.value = withTiming(targetOpacity, { duration: animationDuration })
+                slideY.value = withSpring(targetSlideY, smoothConfig)
+                checkmarkOpacity.value = withTiming(targetOpacity, {
+                    duration: animationDuration
+                })
                 checkmarkScale.value = withSpring(targetScale, springConfig)
                 break
 
@@ -237,35 +169,72 @@ export const AnimatedCheckbox = ({
                     duration: animationDuration,
                     easing: active ? Easing.out(Easing.cubic) : Easing.in(Easing.cubic)
                 })
-                checkmarkScale.value = 1
+                checkmarkScale.value = withSpring(targetScale, smoothConfig)
                 break
 
             case "rotate":
                 rotation.value = withSpring(targetRotation, springConfig)
                 checkmarkScale.value = withSpring(targetScale, springConfig)
-                checkmarkOpacity.value = withTiming(targetOpacity, { duration: animationDuration })
+                checkmarkOpacity.value = withTiming(targetOpacity, {
+                    duration: animationDuration
+                })
                 break
 
             case "elastic":
                 checkmarkScale.value = active
                     ? withSequence(
-                        withSpring(1.5, elasticConfig),
-                        withSpring(0.9, elasticConfig),
+                        withSpring(1.6, elasticConfig),
+                        withSpring(0.8, elasticConfig),
+                        withSpring(1.1, elasticConfig),
                         withSpring(1, springConfig)
                     )
                     : withSpring(0, springConfig)
-                checkmarkOpacity.value = withTiming(targetOpacity, { duration: animationDuration / 2 })
+                checkmarkOpacity.value = withTiming(targetOpacity, {
+                    duration: animationDuration / 2
+                })
+                break
+
+            case "morph":
+                morphProgress.value = withTiming(targetMorph, {
+                    duration: animationDuration * 1.2,
+                    easing: Easing.bezier(0.4, 0, 0.2, 1)
+                })
+                checkmarkScale.value = withSpring(targetScale, smoothConfig)
+                checkmarkOpacity.value = withTiming(targetOpacity, {
+                    duration: animationDuration
+                })
+                break
+
+            case "pulse":
+                if (active) {
+                    pulseScale.value = withSequence(
+                        withTiming(1.15, { duration: animationDuration / 3 }),
+                        withTiming(0.95, { duration: animationDuration / 3 }),
+                        withSpring(1, springConfig)
+                    )
+                } else {
+                    pulseScale.value = withSpring(1, springConfig)
+                }
+                checkmarkScale.value = withSpring(targetScale, springConfig)
+                checkmarkOpacity.value = withTiming(targetOpacity, {
+                    duration: animationDuration
+                })
                 break
 
             default:
                 checkmarkScale.value = withSpring(targetScale, springConfig)
-                checkmarkOpacity.value = withTiming(targetOpacity, { duration: animationDuration })
+                checkmarkOpacity.value = withTiming(targetOpacity, {
+                    duration: animationDuration
+                })
                 break
         }
 
         // Border animation
-        borderWidth.value = withSpring(active ? 0 : mergedTheme.borderWidth, springConfig)
-    }
+        borderWidth.value = withSpring(
+            active && variant !== "outline" ? 0 : mergedTheme.borderWidth,
+            springConfig
+        )
+    };
 
     // Handle press
     const handlePress = () => {
@@ -273,15 +242,30 @@ export const AnimatedCheckbox = ({
 
         // Press feedback animation
         pressScale.value = withSequence(
-            withSpring(0.95, { damping: 15, stiffness: 400 }),
+            withSpring(0.92, { damping: 15, stiffness: 400 }),
             withSpring(1, springConfig)
         )
+
+        // Ripple effect
+        if (showRipple) {
+            rippleScale.value = 0
+            rippleOpacity.value = 0.3
+
+            rippleScale.value = withTiming(1, {
+                duration: 400,
+                easing: Easing.out(Easing.cubic)
+            })
+            rippleOpacity.value = withTiming(0, {
+                duration: 400,
+                easing: Easing.out(Easing.cubic)
+            })
+        }
 
         // Focus ring animation
         if (showFocusRing) {
             focusRingScale.value = withSequence(
-                withSpring(1.2, springConfig),
-                withSpring(0, springConfig)
+                withSpring(1.3, springConfig),
+                withDelay(200, withSpring(0, springConfig))
             )
         }
 
@@ -295,12 +279,12 @@ export const AnimatedCheckbox = ({
             const newChecked = currentState === "unchecked"
             runOnJS(onPress)(newChecked)
         }
-    }
+    };
 
     // Animated styles
     const animatedCheckboxStyle = useAnimatedStyle(() => {
         const backgroundColor = interpolateColor(
-            Number(isActive),
+            backgroundOpacity.value,
             [0, 1],
             [mergedTheme.colors.background, colorStyles.backgroundChecked]
         )
@@ -311,41 +295,55 @@ export const AnimatedCheckbox = ({
             [mergedTheme.colors.border, colorStyles.borderChecked]
         )
 
+        const morphScale = interpolate(
+            morphProgress.value,
+            [0, 0.5, 1],
+            [1, 1.1, 1]
+        )
+
         return {
             backgroundColor,
             borderColor,
             borderWidth: borderWidth.value,
-            transform: [{ scale: pressScale.value }],
+            transform: [
+                { scale: pressScale.value * morphScale * pulseScale.value }
+            ],
             opacity: disabled ? 0.5 : 1,
         }
-    })
+    });
 
     const animatedCheckmarkStyle = useAnimatedStyle(() => {
         return {
             transform: [
                 { scale: checkmarkScale.value },
                 { rotate: `${rotation.value}deg` },
-                { translateX: slideX.value }
             ],
             opacity: checkmarkOpacity.value,
         }
-    })
+    });
 
     const animatedFocusRingStyle = useAnimatedStyle(() => {
         return {
             transform: [{ scale: focusRingScale.value }],
-            opacity: interpolate(focusRingScale.value, [0, 1.2], [0, 0.3]),
+            opacity: interpolate(focusRingScale.value, [0, 1.3], [0, 0.4]),
         }
-    })
+    });
+
+    const animatedRippleStyle = useAnimatedStyle(() => {
+        return {
+            transform: [{ scale: rippleScale.value }],
+            opacity: rippleOpacity.value,
+        }
+    });
 
     const checkboxRadius = variant === "rounded"
         ? sizeStyles.size / 2
-        : (borderRadius ?? mergedTheme.borderRadius)
+        : (borderRadius ?? mergedTheme.borderRadius);
 
-    const currentIcon = isIndeterminate ? indeterminateIcon : checkIcon
+    const currentIcon = isIndeterminate ? indeterminateIcon : checkIcon;
     const iconColor = isIndeterminate
         ? mergedTheme.colors.indeterminate
-        : mergedTheme.colors.checkmark
+        : mergedTheme.colors.checkmark;
 
     return (
         <TouchableOpacity
@@ -371,6 +369,22 @@ export const AnimatedCheckbox = ({
         >
             {/* Checkbox */}
             <View style={[styles.checkboxContainer, sizeStyles.container]}>
+                {/* Ripple Effect */}
+                {showRipple && (
+                    <Animated.View
+                        style={[
+                            styles.ripple,
+                            {
+                                width: sizeStyles.size * 2,
+                                height: sizeStyles.size * 2,
+                                borderRadius: sizeStyles.size,
+                                backgroundColor: colorStyles.backgroundChecked,
+                            },
+                            animatedRippleStyle,
+                        ]}
+                    />
+                )}
+
                 {/* Focus Ring */}
                 {showFocusRing && (
                     <Animated.View
@@ -395,7 +409,7 @@ export const AnimatedCheckbox = ({
                         {
                             borderRadius: checkboxRadius,
                         },
-                        getVariantStyles(variant),
+                        getVariantStyles(variant, mergedTheme, shadow),
                         animatedCheckboxStyle,
                         checkboxStyle,
                     ]}
@@ -469,95 +483,7 @@ export const AnimatedCheckbox = ({
             )}
         </TouchableOpacity>
     )
-}
-
-// Helper functions
-const getColorStyles = (colorScheme: string, theme: CheckboxTheme) => {
-    const colorKey = colorScheme as keyof typeof theme.colors
-    const color = theme.colors[colorKey] || theme.colors.primary
-
-    return {
-        backgroundChecked: color,
-        borderChecked: color,
-    }
-}
-
-const getSizeStyles = (size: CheckboxSize) => {
-    switch (size) {
-        case "xs":
-            return {
-                container: { width: 16, height: 16 },
-                checkbox: { width: 16, height: 16 },
-                size: 16,
-                iconSize: 10,
-                label: { fontSize: 12, lineHeight: 16 },
-                description: { fontSize: 10, lineHeight: 14 },
-            }
-        case "sm":
-            return {
-                container: { width: 18, height: 18 },
-                checkbox: { width: 18, height: 18 },
-                size: 18,
-                iconSize: 12,
-                label: { fontSize: 14, lineHeight: 20 },
-                description: { fontSize: 12, lineHeight: 16 },
-            }
-        case "lg":
-            return {
-                container: { width: 24, height: 24 },
-                checkbox: { width: 24, height: 24 },
-                size: 24,
-                iconSize: 16,
-                label: { fontSize: 18, lineHeight: 28 },
-                description: { fontSize: 16, lineHeight: 24 },
-            }
-        case "xl":
-            return {
-                container: { width: 28, height: 28 },
-                checkbox: { width: 28, height: 28 },
-                size: 28,
-                iconSize: 18,
-                label: { fontSize: 20, lineHeight: 30 },
-                description: { fontSize: 18, lineHeight: 26 },
-            }
-        case "md":
-        default:
-            return {
-                container: { width: 20, height: 20 },
-                checkbox: { width: 20, height: 20 },
-                size: 20,
-                iconSize: 14,
-                label: { fontSize: 16, lineHeight: 24 },
-                description: { fontSize: 14, lineHeight: 20 },
-            }
-    }
-}
-
-const getVariantStyles = (variant: CheckboxVariant) => {
-    switch (variant) {
-        case "filled":
-            return {
-                shadowColor: "#000",
-                shadowOffset: { width: 0, height: 1 },
-                shadowOpacity: 0.1,
-                shadowRadius: 2,
-                elevation: 2,
-            }
-        case "outline":
-            return {
-                borderWidth: 2,
-            }
-        case "ghost":
-            return {
-                backgroundColor: "transparent",
-            }
-        case "rounded":
-            return {}
-        case "default":
-        default:
-            return {}
-    }
-}
+};
 
 const styles = StyleSheet.create({
     container: {
@@ -570,6 +496,10 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
     },
+    ripple: {
+        position: 'absolute',
+        borderRadius: 50,
+    },
     focusRing: {
         position: 'absolute',
         borderWidth: 2,
@@ -579,6 +509,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         borderWidth: 2,
+        position: 'relative',
     },
     checkmarkContainer: {
         alignItems: 'center',
@@ -590,6 +521,7 @@ const styles = StyleSheet.create({
     },
     label: {
         fontWeight: '500',
+        marginTop:-2
     },
     description: {
         opacity: 0.7,

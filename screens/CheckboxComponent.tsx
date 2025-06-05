@@ -5,26 +5,99 @@ import { AnimatedCheckbox } from "@/component/ui/checkbox/AnimatedCheckbox"
 import { useState } from "react"
 
 export default function CheckboxPage() {
-    const [basicChecked, setBasicChecked] = useState(false)
-    const [multipleStates, setMultipleStates] = useState({
-        option1: false,
-        option2: true,
-        option3: false,
+    // State management for different examples
+    const [basicStates, setBasicStates] = useState({
+        simple: false,
+        withDescription: true,
+        disabled: false,
     })
-    const [indeterminateState, setIndeterminateState] = useState<"unchecked" | "checked" | "indeterminate">("indeterminate")
 
-    const customTheme = {
-        colors: {
-            primary: "#8B5CF6",
-            backgroundChecked: "#8B5CF6",
-            borderChecked: "#8B5CF6",
-            borderFocused: "#C4B5FD",
-        },
-        borderRadius: 8,
+    const [variantStates, setVariantStates] = useState({
+        default: false,
+        filled: true,
+        outline: false,
+        ghost: true,
+        rounded: false,
+        soft: true,
+    })
+
+    const [sizeStates, setSizeStates] = useState({
+        xs: true,
+        sm: false,
+        md: true,
+        lg: false,
+        xl: true,
+    })
+
+    const [colorStates, setColorStates] = useState({
+        primary: true,
+        secondary: false,
+        success: true,
+        warning: false,
+        error: true,
+        info: false,
+    })
+
+    const [animationStates, setAnimationStates] = useState({
+        scale: false,
+        bounce: true,
+        slide: false,
+        fade: true,
+        rotate: false,
+        elastic: true,
+        morph: false,
+        pulse: true,
+    })
+
+    const [specialStates, setSpecialStates] = useState({
+        indeterminate: "indeterminate" as "unchecked" | "checked" | "indeterminate",
+        focusRing: false,
+        ripple: true,
+        shadow: false,
+    })
+
+    const [formStates, setFormStates] = useState({
+        newsletter: true,
+        updates: false,
+        marketing: false,
+        terms: false,
+    })
+
+    // Helper functions
+    const handleBasicChange = (key: string) => (checked: boolean) => {
+        setBasicStates(prev => ({ ...prev, [key]: checked }))
     }
 
-    const handleMultipleChange = (key: string) => (checked: boolean) => {
-        setMultipleStates(prev => ({ ...prev, [key]: checked }))
+    const handleVariantChange = (key: string) => (checked: boolean) => {
+        setVariantStates(prev => ({ ...prev, [key]: checked }))
+    }
+
+    const handleSizeChange = (key: string) => (checked: boolean) => {
+        setSizeStates(prev => ({ ...prev, [key]: checked }))
+    }
+
+    const handleColorChange = (key: string) => (checked: boolean) => {
+        setColorStates(prev => ({ ...prev, [key]: checked }))
+    }
+
+    const handleAnimationChange = (key: string) => (checked: boolean) => {
+        setAnimationStates(prev => ({ ...prev, [key]: checked }))
+    }
+
+    const handleSpecialChange = (key: string) => (checked: boolean) => {
+        if (key === 'indeterminate') {
+            setSpecialStates(prev => ({
+                ...prev,
+                indeterminate: prev.indeterminate === "unchecked" ? "checked" :
+                    prev.indeterminate === "checked" ? "indeterminate" : "unchecked"
+            }))
+        } else {
+            setSpecialStates(prev => ({ ...prev, [key]: checked }))
+        }
+    }
+
+    const handleFormChange = (key: string) => (checked: boolean) => {
+        setFormStates(prev => ({ ...prev, [key]: checked }))
     }
 
     return (
@@ -35,234 +108,280 @@ export default function CheckboxPage() {
                         Animated Checkbox Component
                     </Text>
                     <Text style={globalStyles.description}>
-                        Highly customizable checkbox component with smooth animations and modern design
+                        Comprehensive checkbox component with smooth Reanimated animations and modern UI design
                     </Text>
 
                     <View style={[globalStyles.previewContainer, { gap: 24 }]}>
-                        {/* Basic Examples */}
+                        {/* Basic Examples with State */}
                         <View style={styles.section}>
                             <Text style={styles.sectionTitle}>Basic Checkboxes</Text>
                             <View style={styles.checkboxGroup}>
                                 <AnimatedCheckbox
-                                    label="Basic Checkbox"
-                                    checked={basicChecked}
-                                    onPress={setBasicChecked}
-                                />
-                                <AnimatedCheckbox
-                                    label="Checked by Default"
-                                    checked={true}
-                                    onPress={() => { }}
+                                    label="Simple Checkbox"
+                                    checked={basicStates.simple}
+                                    onPress={handleBasicChange('simple')}
                                 />
                                 <AnimatedCheckbox
                                     label="With Description"
-                                    description="This checkbox has additional description text"
-                                    checked={false}
-                                    onPress={() => { }}
+                                    description="This checkbox includes additional description text below the label"
+                                    checked={basicStates.withDescription}
+                                    onPress={handleBasicChange('withDescription')}
+                                />
+                                <AnimatedCheckbox
+                                    label="Disabled State"
+                                    disabled={true}
+                                    checked={basicStates.disabled}
+                                    onPress={handleBasicChange('disabled')}
                                 />
                             </View>
                         </View>
 
-                        {/* Variants */}
+                        {/* Variants with State */}
                         <View style={styles.section}>
                             <Text style={styles.sectionTitle}>Variants</Text>
                             <View style={styles.checkboxGroup}>
                                 <AnimatedCheckbox
                                     label="Default Variant"
                                     variant="default"
-                                    checked={true}
+                                    checked={variantStates.default}
+                                    onPress={handleVariantChange('default')}
                                 />
                                 <AnimatedCheckbox
                                     label="Filled Variant"
                                     variant="filled"
-                                    checked={true}
+                                    shadow={true}
+                                    checked={variantStates.filled}
+                                    onPress={handleVariantChange('filled')}
                                 />
                                 <AnimatedCheckbox
                                     label="Outline Variant"
                                     variant="outline"
-                                    checked={true}
+                                    checked={variantStates.outline}
+                                    onPress={handleVariantChange('outline')}
                                 />
                                 <AnimatedCheckbox
                                     label="Ghost Variant"
                                     variant="ghost"
-                                    checked={true}
+                                    checked={variantStates.ghost}
+                                    onPress={handleVariantChange('ghost')}
                                 />
                                 <AnimatedCheckbox
                                     label="Rounded Variant"
                                     variant="rounded"
-                                    checked={true}
+                                    checked={variantStates.rounded}
+                                    onPress={handleVariantChange('rounded')}
+                                />
+                                <AnimatedCheckbox
+                                    label="Soft Variant"
+                                    variant="soft"
+                                    checked={variantStates.soft}
+                                    onPress={handleVariantChange('soft')}
                                 />
                             </View>
                         </View>
 
-                        {/* Sizes */}
+                        {/* Sizes with State */}
                         <View style={styles.section}>
                             <Text style={styles.sectionTitle}>Sizes</Text>
                             <View style={styles.checkboxGroup}>
                                 <AnimatedCheckbox
-                                    label="Extra Small"
+                                    label="Extra Small (xs)"
                                     size="xs"
-                                    checked={true}
+                                    checked={sizeStates.xs}
+                                    onPress={handleSizeChange('xs')}
                                 />
                                 <AnimatedCheckbox
-                                    label="Small"
+                                    label="Small (sm)"
                                     size="sm"
-                                    checked={true}
+                                    checked={sizeStates.sm}
+                                    onPress={handleSizeChange('sm')}
                                 />
                                 <AnimatedCheckbox
-                                    label="Medium (Default)"
+                                    label="Medium (md) - Default"
                                     size="md"
-                                    checked={true}
+                                    checked={sizeStates.md}
+                                    onPress={handleSizeChange('md')}
                                 />
                                 <AnimatedCheckbox
-                                    label="Large"
+                                    label="Large (lg)"
                                     size="lg"
-                                    checked={true}
+                                    checked={sizeStates.lg}
+                                    onPress={handleSizeChange('lg')}
                                 />
                                 <AnimatedCheckbox
-                                    label="Extra Large"
+                                    label="Extra Large (xl)"
                                     size="xl"
-                                    checked={true}
+                                    checked={sizeStates.xl}
+                                    onPress={handleSizeChange('xl')}
                                 />
                             </View>
                         </View>
 
-                        {/* Color Schemes */}
+                        {/* Color Schemes with State */}
                         <View style={styles.section}>
                             <Text style={styles.sectionTitle}>Color Schemes</Text>
                             <View style={styles.checkboxGroup}>
                                 <AnimatedCheckbox
-                                    label="Primary"
+                                    label="Primary Color"
                                     colorScheme="primary"
-                                    checked={true}
+                                    checked={colorStates.primary}
+                                    onPress={handleColorChange('primary')}
                                 />
                                 <AnimatedCheckbox
-                                    label="Secondary"
+                                    label="Secondary Color"
                                     colorScheme="secondary"
-                                    checked={true}
+                                    checked={colorStates.secondary}
+                                    onPress={handleColorChange('secondary')}
                                 />
                                 <AnimatedCheckbox
-                                    label="Success"
+                                    label="Success Color"
                                     colorScheme="success"
-                                    checked={true}
+                                    checked={colorStates.success}
+                                    onPress={handleColorChange('success')}
                                 />
                                 <AnimatedCheckbox
-                                    label="Warning"
+                                    label="Warning Color"
                                     colorScheme="warning"
-                                    checked={true}
+                                    checked={colorStates.warning}
+                                    onPress={handleColorChange('warning')}
                                 />
                                 <AnimatedCheckbox
-                                    label="Error"
+                                    label="Error Color"
                                     colorScheme="error"
-                                    checked={true}
+                                    checked={colorStates.error}
+                                    onPress={handleColorChange('error')}
+                                />
+                                <AnimatedCheckbox
+                                    label="Info Color"
+                                    colorScheme="info"
+                                    checked={colorStates.info}
+                                    onPress={handleColorChange('info')}
                                 />
                             </View>
                         </View>
 
-                        {/* Animation Types */}
+                        {/* Animation Types with State */}
                         <View style={styles.section}>
                             <Text style={styles.sectionTitle}>Animation Types</Text>
                             <View style={styles.checkboxGroup}>
                                 <AnimatedCheckbox
-                                    label="Scale Animation (Default)"
+                                    label="Scale Animation"
                                     animationType="scale"
-                                    checked={multipleStates.option1}
-                                    onPress={handleMultipleChange('option1')}
+                                    checked={animationStates.scale}
+                                    onPress={handleAnimationChange('scale')}
                                 />
                                 <AnimatedCheckbox
                                     label="Bounce Animation"
                                     animationType="bounce"
-                                    checked={multipleStates.option2}
-                                    onPress={handleMultipleChange('option2')}
+                                    checked={animationStates.bounce}
+                                    onPress={handleAnimationChange('bounce')}
                                 />
                                 <AnimatedCheckbox
                                     label="Slide Animation"
                                     animationType="slide"
-                                    checked={multipleStates.option3}
-                                    onPress={handleMultipleChange('option3')}
+                                    checked={animationStates.slide}
+                                    onPress={handleAnimationChange('slide')}
                                 />
-                            </View>
-                            <View style={styles.checkboxGroup}>
                                 <AnimatedCheckbox
                                     label="Fade Animation"
                                     animationType="fade"
-                                    checked={false}
-                                    onPress={() => { }}
+                                    checked={animationStates.fade}
+                                    onPress={handleAnimationChange('fade')}
                                 />
                                 <AnimatedCheckbox
                                     label="Rotate Animation"
                                     animationType="rotate"
-                                    checked={false}
-                                    onPress={() => { }}
+                                    checked={animationStates.rotate}
+                                    onPress={handleAnimationChange('rotate')}
                                 />
                                 <AnimatedCheckbox
                                     label="Elastic Animation"
                                     animationType="elastic"
-                                    checked={false}
-                                    onPress={() => { }}
+                                    checked={animationStates.elastic}
+                                    onPress={handleAnimationChange('elastic')}
+                                />
+                                <AnimatedCheckbox
+                                    label="Morph Animation"
+                                    animationType="morph"
+                                    checked={animationStates.morph}
+                                    onPress={handleAnimationChange('morph')}
+                                />
+                                <AnimatedCheckbox
+                                    label="Pulse Animation"
+                                    animationType="pulse"
+                                    checked={animationStates.pulse}
+                                    onPress={handleAnimationChange('pulse')}
                                 />
                             </View>
                         </View>
 
-                        {/* States */}
+                        {/* Special Features with State */}
                         <View style={styles.section}>
-                            <Text style={styles.sectionTitle}>States</Text>
+                            <Text style={styles.sectionTitle}>Special Features</Text>
                             <View style={styles.checkboxGroup}>
                                 <AnimatedCheckbox
-                                    label="Unchecked State"
-                                    state="unchecked"
-                                />
-                                <AnimatedCheckbox
-                                    label="Checked State"
-                                    state="checked"
-                                />
-                                <AnimatedCheckbox
                                     label="Indeterminate State"
-                                    state={indeterminateState}
-                                    onPress={() => {
-                                        setIndeterminateState(prev =>
-                                            prev === "unchecked" ? "checked" :
-                                                prev === "checked" ? "indeterminate" : "unchecked"
-                                        )
-                                    }}
+                                    description="Click to cycle: unchecked → checked → indeterminate"
+                                    state={specialStates.indeterminate}
+                                    onPress={handleSpecialChange('indeterminate')}
                                 />
                                 <AnimatedCheckbox
-                                    label="Disabled Unchecked"
-                                    disabled={true}
-                                    checked={false}
+                                    label="With Focus Ring"
+                                    showFocusRing={true}
+                                    checked={specialStates.focusRing}
+                                    onPress={handleSpecialChange('focusRing')}
                                 />
                                 <AnimatedCheckbox
-                                    label="Disabled Checked"
-                                    disabled={true}
-                                    checked={true}
+                                    label="With Ripple Effect"
+                                    showRipple={true}
+                                    checked={specialStates.ripple}
+                                    onPress={handleSpecialChange('ripple')}
+                                />
+                                <AnimatedCheckbox
+                                    label="With Shadow"
+                                    shadow={true}
+                                    variant="filled"
+                                    checked={specialStates.shadow}
+                                    onPress={handleSpecialChange('shadow')}
                                 />
                             </View>
                         </View>
 
-                        {/* Custom Icons */}
+                        {/* Custom Icons with State */}
                         <View style={styles.section}>
                             <Text style={styles.sectionTitle}>Custom Icons</Text>
                             <View style={styles.checkboxGroup}>
                                 <AnimatedCheckbox
-                                    label="Custom Check Icon"
+                                    label="Heart Icon"
                                     checkIcon="heart"
                                     colorScheme="error"
                                     checked={true}
-                                />
-                                <AnimatedCheckbox
-                                    label="Custom Indeterminate Icon"
-                                    indeterminateIcon="x"
-                                    state="indeterminate"
+                                    onPress={() => { }}
                                 />
                                 <AnimatedCheckbox
                                     label="Star Icon"
                                     checkIcon="star"
                                     colorScheme="warning"
                                     checked={true}
+                                    onPress={() => { }}
+                                />
+                                <AnimatedCheckbox
+                                    label="Thumbs Up Icon"
+                                    checkIcon="thumbs-up"
+                                    colorScheme="success"
+                                    checked={true}
+                                    onPress={() => { }}
+                                />
+                                <AnimatedCheckbox
+                                    label="Custom Indeterminate"
+                                    indeterminateIcon="x"
+                                    state="indeterminate"
+                                    colorScheme="error"
                                 />
                             </View>
                         </View>
 
-                        {/* Label Positions */}
+                        {/* Label Positions with State */}
                         <View style={styles.section}>
                             <Text style={styles.sectionTitle}>Label Positions</Text>
                             <View style={styles.checkboxGroup}>
@@ -270,91 +389,127 @@ export default function CheckboxPage() {
                                     label="Label on Right (Default)"
                                     labelPosition="right"
                                     checked={true}
+                                    onPress={() => { }}
                                 />
                                 <AnimatedCheckbox
                                     label="Label on Left"
                                     labelPosition="left"
                                     checked={true}
+                                    onPress={() => { }}
                                 />
                             </View>
                         </View>
 
-                        {/* Custom Styling */}
+                        {/* Form Example with State */}
                         <View style={styles.section}>
-                            <Text style={styles.sectionTitle}>Custom Styling</Text>
-                            <View style={styles.checkboxGroup}>
-                                {/* <AnimatedCheckbox
-                                    label="Custom Theme"
-                                    theme={customTheme}
-                                    checked={true}
-                                    showFocusRing={true}
-                                /> */}
-                                <AnimatedCheckbox
-                                    label="Full Width Checkbox"
-                                    fullWidth={true}
-                                    checked={true}
-                                    variant="filled"
-                                />
-                                <AnimatedCheckbox
-                                    label="Custom Border Radius"
-                                    borderRadius={12}
-                                    checked={true}
-                                    colorScheme="success"
-                                />
-                            </View>
-                        </View>
-
-                        {/* Form Examples */}
-                        <View style={styles.section}>
-                            <Text style={styles.sectionTitle}>Form Examples</Text>
+                            <Text style={styles.sectionTitle}>Form Example</Text>
                             <View style={styles.formContainer}>
                                 <Text style={styles.formTitle}>Newsletter Preferences</Text>
+                                <Text style={styles.formDescription}>
+                                    Choose which emails you'd like to receive from us
+                                </Text>
                                 <View style={styles.checkboxGroup}>
                                     <AnimatedCheckbox
                                         label="Weekly Newsletter"
-                                        description="Receive our weekly digest of the latest updates"
-                                        checked={true}
+                                        description="Get our weekly digest of the latest updates and features"
+                                        checked={formStates.newsletter}
+                                        onPress={handleFormChange('newsletter')}
                                         colorScheme="primary"
-                                        size="sm"
+                                        animationType="bounce"
                                     />
                                     <AnimatedCheckbox
                                         label="Product Updates"
-                                        description="Get notified about new features and improvements"
-                                        checked={false}
-                                        colorScheme="primary"
-                                        size="sm"
+                                        description="Be the first to know about new features and improvements"
+                                        checked={formStates.updates}
+                                        onPress={handleFormChange('updates')}
+                                        colorScheme="info"
+                                        animationType="elastic"
                                     />
                                     <AnimatedCheckbox
                                         label="Marketing Communications"
                                         description="Receive promotional content and special offers"
-                                        checked={false}
-                                        colorScheme="primary"
-                                        size="sm"
+                                        checked={formStates.marketing}
+                                        onPress={handleFormChange('marketing')}
+                                        colorScheme="success"
+                                        animationType="morph"
                                     />
+                                    <AnimatedCheckbox
+                                        label="Terms and Conditions"
+                                        description="I agree to the terms of service and privacy policy"
+                                        checked={formStates.terms}
+                                        onPress={handleFormChange('terms')}
+                                        colorScheme="error"
+                                        animationType="pulse"
+                                        variant="outline"
+                                    />
+                                </View>
+
+                                <View style={styles.formSummary}>
+                                    <Text style={styles.summaryTitle}>Current Selections:</Text>
+                                    <Text style={styles.summaryText}>
+                                        Newsletter: {formStates.newsletter ? '✓' : '✗'} |
+                                        Updates: {formStates.updates ? '✓' : '✗'} |
+                                        Marketing: {formStates.marketing ? '✓' : '✗'} |
+                                        Terms: {formStates.terms ? '✓' : '✗'}
+                                    </Text>
                                 </View>
                             </View>
                         </View>
 
-                        {/* Interactive Examples */}
+                        {/* Advanced Examples */}
                         <View style={styles.section}>
-                            <Text style={styles.sectionTitle}>Interactive Examples</Text>
+                            <Text style={styles.sectionTitle}>Advanced Examples</Text>
                             <View style={styles.checkboxGroup}>
                                 <AnimatedCheckbox
-                                    label="Toggle with Bounce"
-                                    animationType="bounce"
-                                    animationDuration={300}
-                                    checked={false}
+                                    label="Full Width Checkbox"
+                                    description="This checkbox takes the full width of its container"
+                                    fullWidth={true}
+                                    variant="soft"
+                                    checked={true}
                                     onPress={() => { }}
-                                    showFocusRing={true}
+                                    showRipple={true}
                                 />
                                 <AnimatedCheckbox
-                                    label="Elastic Animation"
+                                    label="Custom Border Radius"
+                                    borderRadius={12}
+                                    variant="filled"
+                                    shadow={true}
+                                    checked={true}
+                                    onPress={() => { }}
+                                />
+                                <AnimatedCheckbox
+                                    label="Slow Animation"
                                     animationType="elastic"
-                                    variant="rounded"
-                                    colorScheme="success"
+                                    animationDuration={600}
                                     checked={false}
                                     onPress={() => { }}
                                 />
+                            </View>
+                        </View>
+
+                        {/* State Summary */}
+                        <View style={styles.section}>
+                            <Text style={styles.sectionTitle}>State Summary</Text>
+                            <View style={styles.summaryContainer}>
+                                <Text style={styles.summaryTitle}>Current Component States:</Text>
+                                <View style={styles.summaryGrid}>
+                                    <View style={styles.summaryColumn}>
+                                        <Text style={styles.summaryLabel}>Basic States:</Text>
+                                        <Text style={styles.summaryValue}>
+                                            {Object.entries(basicStates).map(([key, value]) =>
+                                                `${key}: ${value ? '✓' : '✗'}`
+                                            ).join('\n')}
+                                        </Text>
+                                    </View>
+                                    <View style={styles.summaryColumn}>
+                                        <Text style={styles.summaryLabel}>Variant States:</Text>
+                                        <Text style={styles.summaryValue}>
+                                            {Object.entries(variantStates).map(([key, value]) =>
+                                                `${key}: ${value ? '✓' : '✗'}`
+                                            ).join('\n')}
+                                        </Text>
+                                    </View>
+                                </View>
                             </View>
                         </View>
                     </View>
@@ -378,16 +533,66 @@ const styles = StyleSheet.create({
         gap: 12,
     },
     formContainer: {
+        backgroundColor: "#F8FAFC",
+        padding: 20,
+        borderRadius: 12,
+        borderWidth: 1,
+        borderColor: "#E2E8F0",
+    },
+    formTitle: {
+        fontSize: 18,
+        fontWeight: "600",
+        color: "#1E293B",
+        marginBottom: 4,
+    },
+    formDescription: {
+        fontSize: 14,
+        color: "#64748B",
+        marginBottom: 16,
+        lineHeight: 20,
+    },
+    formSummary: {
+        marginTop: 16,
+        padding: 12,
+        backgroundColor: "#EFF6FF",
+        borderRadius: 8,
+        borderWidth: 1,
+        borderColor: "#BFDBFE",
+    },
+    summaryTitle: {
+        fontSize: 14,
+        fontWeight: "600",
+        color: "#1E40AF",
+        marginBottom: 4,
+    },
+    summaryText: {
+        fontSize: 12,
+        color: "#3730A3",
+        lineHeight: 16,
+    },
+    summaryContainer: {
         backgroundColor: "#F9FAFB",
         padding: 16,
         borderRadius: 8,
         borderWidth: 1,
         borderColor: "#E5E7EB",
     },
-    formTitle: {
-        fontSize: 16,
+    summaryGrid: {
+        flexDirection: 'row',
+        gap: 16,
+    },
+    summaryColumn: {
+        flex: 1,
+    },
+    summaryLabel: {
+        fontSize: 12,
         fontWeight: "600",
-        color: "#1F2937",
-        marginBottom: 12,
+        color: "#374151",
+        marginBottom: 4,
+    },
+    summaryValue: {
+        fontSize: 11,
+        color: "#6B7280",
+        lineHeight: 16,
     },
 })
