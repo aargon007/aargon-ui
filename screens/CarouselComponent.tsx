@@ -2,31 +2,23 @@ import { View, Text, StyleSheet, } from "react-native"
 import ComponentPage from "@/component/common/ComponentPage";
 import CodeExample from "@/component/common/CodeExample";
 import { globalStyles } from "@/styles/globalStyles";
-import { AnimatedButton } from "@/component/ui/button/AnimatedButton";
 
-export default function ButtonPage() {
+export default function CarouselComponent() {
 
     return (
         <ComponentPage>
             {/* UI Demo */}
             <View style={globalStyles.demoSection}>
                 <Text style={globalStyles.title}>
-                    Button Component
+                    Carousel Component
                 </Text>
                 <Text style={globalStyles.description}>
                     Highly customizable button component with smooth animations
                 </Text>
 
                 <View style={globalStyles.previewContainer}>
-                    <AnimatedButton title="Primary" variant="primary" onPress={() => console.log("Primary pressed")} />
-                    <AnimatedButton title="Secondary" variant="secondary" onPress={() => console.log("Secondary pressed")} />
-                    <AnimatedButton title="Outline" variant="outline" onPress={() => console.log("Outline pressed")} />
-                    <AnimatedButton title="Ghost" variant="ghost" onPress={() => console.log("Ghost pressed")} />
-                    <AnimatedButton
-                        title="Destructive"
-                        variant="destructive"
-                        onPress={() => console.log("Destructive pressed")}
-                    />
+                    {/* toast prevview here  */}
+
                 </View>
             </View>
 
