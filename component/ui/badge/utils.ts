@@ -1,3 +1,4 @@
+// utils.ts
 import { type ViewStyle, type TextStyle } from "react-native"
 import { Feather } from "@expo/vector-icons"
 

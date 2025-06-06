@@ -19,7 +19,9 @@ export default function ButtonPage() {
 
                 <View style={[globalStyles.previewContainer, { rowGap: 15 }]}>
                     {/* Basic Variants */}
-                    <Text style={styles.sectionTitle}>Basic Variants</Text>
+                    <Text style={styles.sectionTitle}>
+                        Basic Variants
+                    </Text>
                     <View style={styles.row}>
                         <AnimatedButton
                             title="Primary"
@@ -44,17 +46,31 @@ export default function ButtonPage() {
                     </View>
 
                     {/* Sizes */}
-                    <Text style={styles.sectionTitle}>Sizes</Text>
-                    <View style={styles.column}>
-                        <AnimatedButton title="Extra Small" size="xs" />
-                        <AnimatedButton title="Small" size="sm" />
-                        <AnimatedButton title="Medium" size="md" />
-                        <AnimatedButton title="Large" size="lg" />
-                        <AnimatedButton title="Extra Large" size="xl" />
+                    <Text style={styles.sectionTitle}>
+                        Sizes
+                    </Text>
+                    <View style={styles.row}>
+                        <View>
+                            <AnimatedButton title="Extra Small" size="xs" />
+                        </View>
+                        <View>
+                            <AnimatedButton title="Small" size="sm" />
+                        </View>
+                        <View>
+                            <AnimatedButton title="Medium" size="md" />
+                        </View>
+                        <View>
+                            <AnimatedButton title="Large" size="lg" />
+                        </View>
+                        <View>
+                            <AnimatedButton title="Extra Large" size="xl" />
+                        </View>
                     </View>
 
                     {/* With Icons */}
-                    <Text style={styles.sectionTitle}>With Icons</Text>
+                    <Text style={styles.sectionTitle}>
+                        With Icons
+                    </Text>
                     <View style={styles.row}>
                         <AnimatedButton
                             title="Download"
@@ -69,8 +85,10 @@ export default function ButtonPage() {
                     </View>
 
                     {/* Animation Types */}
-                    <Text style={styles.sectionTitle}>Animation Types</Text>
-                    <View style={styles.column}>
+                    <Text style={styles.sectionTitle}>
+                        Animation Types
+                    </Text>
+                    <View style={styles.row}>
                         <AnimatedButton
                             title="Scale Animation"
                             animationType="scale"
@@ -94,8 +112,10 @@ export default function ButtonPage() {
                     </View>
 
                     {/* States */}
-                    <Text style={styles.sectionTitle}>States</Text>
-                    <View style={styles.column}>
+                    <Text style={styles.sectionTitle}>
+                        States
+                    </Text>
+                    <View style={styles.row}>
                         <AnimatedButton
                             title="Loading"
                             loading={true}
