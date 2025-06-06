@@ -1,15 +1,5 @@
 import React, { forwardRef, useImperativeHandle, useRef } from 'react'
-import {
-    TextInput,
-    View,
-    Text,
-    TouchableOpacity,
-    StyleSheet,
-    type TextInputProps,
-    type ViewStyle,
-    type TextStyle,
-    Platform,
-} from 'react-native'
+import { TextInput, View, Text, TouchableOpacity, StyleSheet, Platform, } from 'react-native'
 import Animated, {
     useAnimatedStyle,
     useSharedValue,
@@ -19,33 +9,7 @@ import Animated, {
     interpolate,
 } from 'react-native-reanimated'
 import { Feather } from '@expo/vector-icons'
-
-// Types
-export type InputVariant = 'default' | 'filled' | 'outline'
-export type InputSize = 'sm' | 'md' | 'lg'
-export type InputState = 'default' | 'success' | 'warning' | 'error'
-export type AnimationType = 'none' | 'scale' | 'glow' | 'bounce'
-
-export interface AnimatedInputProps extends Omit<TextInputProps, 'style'> {
-    label?: string
-    helperText?: string
-    errorMessage?: string
-    variant?: InputVariant
-    size?: InputSize
-    state?: InputState
-    animationType?: AnimationType
-    required?: boolean
-    leftIcon?: keyof typeof Feather.glyphMap
-    rightIcon?: keyof typeof Feather.glyphMap
-    showClearButton?: boolean
-    showPasswordToggle?: boolean
-    onClear?: () => void
-    containerStyle?: ViewStyle
-    inputStyle?: TextStyle
-    labelStyle?: TextStyle
-    helperStyle?: TextStyle
-    errorStyle?: TextStyle
-}
+import { getColors, sizeConfig, type AnimatedInputProps } from './utils'
 
 export const AnimatedInput = forwardRef<TextInput, AnimatedInputProps>(({
     label,
@@ -120,51 +84,8 @@ export const AnimatedInput = forwardRef<TextInput, AnimatedInputProps>(({
     // Get current state for colors
     const currentState = errorMessage ? 'error' : state
 
-    // Define colors inline
-    const colors = {
-        default: {
-            border: '#E5E7EB',
-            borderFocus: '#3B82F6',
-            background: variant === 'filled' ? '#F9FAFB' : 'transparent',
-            text: '#1F2937',
-            label: '#374151',
-            helper: '#6B7280',
-        },
-        success: {
-            border: '#10B981',
-            borderFocus: '#059669',
-            background: variant === 'filled' ? '#ECFDF5' : 'transparent',
-            text: '#1F2937',
-            label: '#059669',
-            helper: '#059669',
-        },
-        warning: {
-            border: '#F59E0B',
-            borderFocus: '#D97706',
-            background: variant === 'filled' ? '#FFFBEB' : 'transparent',
-            text: '#1F2937',
-            label: '#D97706',
-            helper: '#D97706',
-        },
-        error: {
-            border: '#EF4444',
-            borderFocus: '#DC2626',
-            background: variant === 'filled' ? '#FEF2F2' : 'transparent',
-            text: '#1F2937',
-            label: '#DC2626',
-            helper: '#DC2626',
-        },
-    }
-
-    // Get size values inline
-    const sizeConfig = {
-        sm: { height: 36, fontSize: 14, padding: 8, iconSize: 16 },
-        md: { height: 44, fontSize: 16, padding: 12, iconSize: 18 },
-        lg: { height: 52, fontSize: 18, padding: 16, iconSize: 20 },
-    }
-
-    const currentColors = colors[currentState]
-    const currentSize = sizeConfig[size]
+    const currentColors = getColors(variant, currentState);
+    const currentSize = sizeConfig[size];
 
     // Animated styles
     const containerAnimatedStyle = useAnimatedStyle(() => {
@@ -212,12 +133,12 @@ export const AnimatedInput = forwardRef<TextInput, AnimatedInputProps>(({
         }
 
         return style
-    })
+    });
 
     // Toggle password visibility
     const togglePasswordVisibility = () => {
         setIsPasswordVisible(!isPasswordVisible)
-    }
+    };
 
     // Clear input
     const handleClear = () => {
@@ -225,13 +146,13 @@ export const AnimatedInput = forwardRef<TextInput, AnimatedInputProps>(({
         onChangeText?.('')
         onClear?.()
         inputRef.current?.focus()
-    }
+    };
 
     // Show clear button
-    const shouldShowClearButton = showClearButton && inputValue && inputValue.length > 0
+    const shouldShowClearButton = showClearButton && inputValue && inputValue.length > 0;
 
     // Show password toggle
-    const shouldShowPasswordToggle = showPasswordToggle || secureTextEntry
+    const shouldShowPasswordToggle = showPasswordToggle || secureTextEntry;
 
     return (
         <View style={[styles.wrapper, containerStyle]}>
@@ -285,6 +206,7 @@ export const AnimatedInput = forwardRef<TextInput, AnimatedInputProps>(({
                             paddingVertical: textInputProps.multiline ? currentSize.padding : 0,
                         },
                         inputStyle,
+                        Platform.OS === 'web' && styles.webInput, // Remove outline for web
                     ]}
                     value={inputValue}
                     secureTextEntry={shouldShowPasswordToggle ? !isPasswordVisible : secureTextEntry}
@@ -371,6 +293,11 @@ const styles = StyleSheet.create({
         flex: 1,
         fontWeight: '400',
         textAlignVertical: 'center',
+    },
+    // Web-specific style to remove outline
+    webInput: {
+        outlineWidth: 0,
+        outlineColor: 'transparent',
     },
     leftIcon: {
         marginLeft: 12,
