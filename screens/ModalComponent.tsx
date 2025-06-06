@@ -3,14 +3,14 @@ import {
     View,
     Text,
     StyleSheet,
-    ScrollView,
     TouchableOpacity,
     TextInput,
     Alert
 } from 'react-native'
-import { SafeAreaView } from 'react-native-safe-area-context'
 import { AnimatedModal, type AnimatedModalRef } from '@/component/ui/modal/AnimatedModal'
 import type { ModalAnimationType, ModalVariant, ModalSize, ModalPosition } from '@/component/ui/modal/utils'
+import ComponentPage from '@/component/common/ComponentPage'
+import { globalStyles } from '@/styles/globalStyles'
 
 export default function ModalPage() {
     // State for different modals
@@ -55,155 +55,160 @@ export default function ModalPage() {
     }
 
     return (
-        <SafeAreaView style={styles.container}>
-            <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
-                <Text style={styles.pageTitle}>Animated Modal Component</Text>
-                <Text style={styles.pageDescription}>
+        <ComponentPage>
+            {/* UI Demo */}
+            <View style={globalStyles.demoSection}>
+                <Text style={globalStyles.title}>
+                    Animated Modal Component
+                </Text>
+                <Text style={globalStyles.description}>
                     Highly customizable modal component with smooth animations and modern design
                 </Text>
 
-                {/* Basic Modal */}
-                <View style={styles.section}>
-                    <Text style={styles.sectionTitle}>Basic Modal</Text>
-                    <TouchableOpacity style={styles.button} onPress={() => setBasicModal(true)}>
-                        <Text style={styles.buttonText}>Show Basic Modal</Text>
-                    </TouchableOpacity>
-                </View>
-
-                {/* Animation Types */}
-                <View style={styles.section}>
-                    <Text style={styles.sectionTitle}>Animation Types</Text>
-                    <View style={styles.optionGrid}>
-                        {animationTypes.map((animation) => (
-                            <TouchableOpacity
-                                key={animation}
-                                style={[
-                                    styles.optionButton,
-                                    currentAnimation === animation && styles.optionButtonActive
-                                ]}
-                                onPress={() => {
-                                    setCurrentAnimation(animation)
-                                    setAnimationModal(true)
-                                }}
-                            >
-                                <Text style={[
-                                    styles.optionButtonText,
-                                    currentAnimation === animation && styles.optionButtonTextActive
-                                ]}>
-                                    {animation}
-                                </Text>
-                            </TouchableOpacity>
-                        ))}
-                    </View>
-                </View>
-
-                {/* Variants */}
-                <View style={styles.section}>
-                    <Text style={styles.sectionTitle}>Variants</Text>
-                    <View style={styles.optionGrid}>
-                        {variants.map((variant) => (
-                            <TouchableOpacity
-                                key={variant}
-                                style={[
-                                    styles.optionButton,
-                                    currentVariant === variant && styles.optionButtonActive
-                                ]}
-                                onPress={() => {
-                                    setCurrentVariant(variant)
-                                    setVariantModal(true)
-                                }}
-                            >
-                                <Text style={[
-                                    styles.optionButtonText,
-                                    currentVariant === variant && styles.optionButtonTextActive
-                                ]}>
-                                    {variant}
-                                </Text>
-                            </TouchableOpacity>
-                        ))}
-                    </View>
-                </View>
-
-                {/* Sizes */}
-                <View style={styles.section}>
-                    <Text style={styles.sectionTitle}>Sizes</Text>
-                    <View style={styles.optionGrid}>
-                        {sizes.map((size) => (
-                            <TouchableOpacity
-                                key={size}
-                                style={[
-                                    styles.optionButton,
-                                    currentSize === size && styles.optionButtonActive
-                                ]}
-                                onPress={() => {
-                                    setCurrentSize(size)
-                                    setSizeModal(true)
-                                }}
-                            >
-                                <Text style={[
-                                    styles.optionButtonText,
-                                    currentSize === size && styles.optionButtonTextActive
-                                ]}>
-                                    {size.toUpperCase()}
-                                </Text>
-                            </TouchableOpacity>
-                        ))}
-                    </View>
-                </View>
-
-                {/* Positions */}
-                <View style={styles.section}>
-                    <Text style={styles.sectionTitle}>Positions</Text>
-                    <View style={styles.optionGrid}>
-                        {positions.map((position) => (
-                            <TouchableOpacity
-                                key={position}
-                                style={[
-                                    styles.optionButton,
-                                    currentPosition === position && styles.optionButtonActive
-                                ]}
-                                onPress={() => {
-                                    setCurrentPosition(position)
-                                    setPositionModal(true)
-                                }}
-                            >
-                                <Text style={[
-                                    styles.optionButtonText,
-                                    currentPosition === position && styles.optionButtonTextActive
-                                ]}>
-                                    {position}
-                                </Text>
-                            </TouchableOpacity>
-                        ))}
-                    </View>
-                </View>
-
-                {/* Advanced Examples */}
-                <View style={styles.section}>
-                    <Text style={styles.sectionTitle}>Advanced Examples</Text>
-                    <View style={styles.buttonRow}>
-                        <TouchableOpacity style={styles.button} onPress={() => setFormModal(true)}>
-                            <Text style={styles.buttonText}>Form Modal</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity style={styles.button} onPress={() => setGestureModal(true)}>
-                            <Text style={styles.buttonText}>Gesture Modal</Text>
+                <View style={globalStyles.previewContainer}>
+                    {/* Basic Modal */}
+                    <View style={styles.section}>
+                        <Text style={styles.sectionTitle}>Basic Modal</Text>
+                        <TouchableOpacity style={styles.button} onPress={() => setBasicModal(true)}>
+                            <Text style={styles.buttonText}>Show Basic Modal</Text>
                         </TouchableOpacity>
                     </View>
-                </View>
 
-                {/* Imperative Control */}
-                <View style={styles.section}>
-                    <Text style={styles.sectionTitle}>Imperative Control</Text>
-                    <View style={styles.buttonRow}>
-                        <TouchableOpacity style={styles.button} onPress={() => modalRef.current?.show()}>
-                            <Text style={styles.buttonText}>Show via Ref</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity style={styles.button} onPress={() => modalRef.current?.toggle()}>
-                            <Text style={styles.buttonText}>Toggle via Ref</Text>
-                        </TouchableOpacity>
+                    {/* Animation Types */}
+                    <View style={styles.section}>
+                        <Text style={styles.sectionTitle}>Animation Types</Text>
+                        <View style={styles.optionGrid}>
+                            {animationTypes.map((animation) => (
+                                <TouchableOpacity
+                                    key={animation}
+                                    style={[
+                                        styles.optionButton,
+                                        currentAnimation === animation && styles.optionButtonActive
+                                    ]}
+                                    onPress={() => {
+                                        setCurrentAnimation(animation)
+                                        setAnimationModal(true)
+                                    }}
+                                >
+                                    <Text style={[
+                                        styles.optionButtonText,
+                                        currentAnimation === animation && styles.optionButtonTextActive
+                                    ]}>
+                                        {animation}
+                                    </Text>
+                                </TouchableOpacity>
+                            ))}
+                        </View>
+                    </View>
+
+                    {/* Variants */}
+                    <View style={styles.section}>
+                        <Text style={styles.sectionTitle}>Variants</Text>
+                        <View style={styles.optionGrid}>
+                            {variants.map((variant) => (
+                                <TouchableOpacity
+                                    key={variant}
+                                    style={[
+                                        styles.optionButton,
+                                        currentVariant === variant && styles.optionButtonActive
+                                    ]}
+                                    onPress={() => {
+                                        setCurrentVariant(variant)
+                                        setVariantModal(true)
+                                    }}
+                                >
+                                    <Text style={[
+                                        styles.optionButtonText,
+                                        currentVariant === variant && styles.optionButtonTextActive
+                                    ]}>
+                                        {variant}
+                                    </Text>
+                                </TouchableOpacity>
+                            ))}
+                        </View>
+                    </View>
+
+                    {/* Sizes */}
+                    <View style={styles.section}>
+                        <Text style={styles.sectionTitle}>Sizes</Text>
+                        <View style={styles.optionGrid}>
+                            {sizes.map((size) => (
+                                <TouchableOpacity
+                                    key={size}
+                                    style={[
+                                        styles.optionButton,
+                                        currentSize === size && styles.optionButtonActive
+                                    ]}
+                                    onPress={() => {
+                                        setCurrentSize(size)
+                                        setSizeModal(true)
+                                    }}
+                                >
+                                    <Text style={[
+                                        styles.optionButtonText,
+                                        currentSize === size && styles.optionButtonTextActive
+                                    ]}>
+                                        {size.toUpperCase()}
+                                    </Text>
+                                </TouchableOpacity>
+                            ))}
+                        </View>
+                    </View>
+
+                    {/* Positions */}
+                    <View style={styles.section}>
+                        <Text style={styles.sectionTitle}>Positions</Text>
+                        <View style={styles.optionGrid}>
+                            {positions.map((position) => (
+                                <TouchableOpacity
+                                    key={position}
+                                    style={[
+                                        styles.optionButton,
+                                        currentPosition === position && styles.optionButtonActive
+                                    ]}
+                                    onPress={() => {
+                                        setCurrentPosition(position)
+                                        setPositionModal(true)
+                                    }}
+                                >
+                                    <Text style={[
+                                        styles.optionButtonText,
+                                        currentPosition === position && styles.optionButtonTextActive
+                                    ]}>
+                                        {position}
+                                    </Text>
+                                </TouchableOpacity>
+                            ))}
+                        </View>
+                    </View>
+
+                    {/* Advanced Examples */}
+                    <View style={styles.section}>
+                        <Text style={styles.sectionTitle}>Advanced Examples</Text>
+                        <View style={styles.buttonRow}>
+                            <TouchableOpacity style={styles.button} onPress={() => setFormModal(true)}>
+                                <Text style={styles.buttonText}>Form Modal</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity style={styles.button} onPress={() => setGestureModal(true)}>
+                                <Text style={styles.buttonText}>Gesture Modal</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+
+                    {/* Imperative Control */}
+                    <View style={styles.section}>
+                        <Text style={styles.sectionTitle}>Imperative Control</Text>
+                        <View style={styles.buttonRow}>
+                            <TouchableOpacity style={styles.button} onPress={() => modalRef.current?.show()}>
+                                <Text style={styles.buttonText}>Show via Ref</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity style={styles.button} onPress={() => modalRef.current?.toggle()}>
+                                <Text style={styles.buttonText}>Toggle via Ref</Text>
+                            </TouchableOpacity>
+                        </View>
                     </View>
                 </View>
-            </ScrollView>
+            </View>
 
             {/* Basic Modal */}
             <AnimatedModal
@@ -361,31 +366,11 @@ export default function ModalPage() {
                     <Text style={styles.modalButtonText}>Hide via Ref</Text>
                 </TouchableOpacity>
             </AnimatedModal>
-        </SafeAreaView>
+        </ComponentPage>
     )
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#F9FAFB'
-    },
-    scrollView: {
-        flex: 1,
-        padding: 20
-    },
-    pageTitle: {
-        fontSize: 28,
-        fontWeight: 'bold',
-        color: '#1F2937',
-        marginBottom: 8
-    },
-    pageDescription: {
-        fontSize: 16,
-        color: '#6B7280',
-        marginBottom: 32,
-        lineHeight: 24
-    },
     section: {
         marginBottom: 32
     },

@@ -30,6 +30,7 @@
     "expo": "53.0.10",
     "expo-clipboard": "~7.1.4",
     "expo-constants": "~17.1.6",
+    "expo-linear-gradient": "~14.1.5",
     "expo-splash-screen": "~0.30.9",
     "moti": "^0.30.0",
     "react": "19.0.0",
