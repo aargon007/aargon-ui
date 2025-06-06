@@ -16,6 +16,7 @@ import CheckboxComponent from '@/screens/CheckboxComponent';
 import InputComponent from '@/screens/InputComponent';
 import ModalComponent from '@/screens/ModalComponent';
 import ToastComponent from '@/screens/ToastComponent';
+import ProgressPage from '@/screens/ProgressBar';
 
 export type CScreenNames = [
     'Introduction',
@@ -31,8 +32,11 @@ export type CScreenNames = [
     'Checkbox',
     'Input',
     'Modal',
+    'Progressbar',
+    'Radio',
     "Switch",
     'Toast',
+    'Snackbar',
 ];
 
 export type ContentStackParamList = Record<CScreenNames[number], undefined>;
@@ -75,6 +79,8 @@ const ContentNavigator = () => {
             <Stack.Screen name="Input" component={InputComponent} />
 
             <Stack.Screen name="Modal" component={ModalComponent} />
+
+            <Stack.Screen name="Progressbar" component={ProgressPage} />
 
             <Stack.Screen name="Switch" component={Switch} />
 
