@@ -8,6 +8,7 @@ import {
     type TextInputProps,
     type ViewStyle,
     type TextStyle,
+    Platform,
 } from 'react-native'
 import Animated, {
     useAnimatedStyle,
@@ -67,11 +68,13 @@ export const AnimatedInput = forwardRef<TextInput, AnimatedInputProps>(({
     errorStyle,
     value,
     secureTextEntry,
+    onChangeText,
     ...textInputProps
 }, ref) => {
     const inputRef = useRef<TextInput>(null)
     const [isFocused, setIsFocused] = React.useState(false)
     const [isPasswordVisible, setIsPasswordVisible] = React.useState(false)
+    const [inputValue, setInputValue] = React.useState(value || '')
 
     // Animation values
     const focusAnimation = useSharedValue(0)
@@ -79,6 +82,13 @@ export const AnimatedInput = forwardRef<TextInput, AnimatedInputProps>(({
 
     // Forward ref
     useImperativeHandle(ref, () => inputRef.current!)
+
+    // Update internal value when prop changes
+    React.useEffect(() => {
+        if (value !== undefined) {
+            setInputValue(value)
+        }
+    }, [value])
 
     // Handle focus
     const handleFocus = (e: any) => {
@@ -99,6 +109,12 @@ export const AnimatedInput = forwardRef<TextInput, AnimatedInputProps>(({
         scaleAnimation.value = withSpring(1, { damping: 15, stiffness: 300 })
 
         textInputProps.onBlur?.(e)
+    }
+
+    // Handle text change
+    const handleChangeText = (text: string) => {
+        setInputValue(text)
+        onChangeText?.(text)
     }
 
     // Get current state for colors
@@ -170,24 +186,32 @@ export const AnimatedInput = forwardRef<TextInput, AnimatedInputProps>(({
             transform.push({ scale: scaleAnimation.value })
         }
 
+        // Base style
+        const style: any = {
+            borderColor,
+            backgroundColor,
+        }
+
+        // Add transform if needed
+        if (transform.length > 0) {
+            style.transform = transform
+        }
+
+        // Add shadow for glow effect
         if (animationType === 'glow') {
             const shadowOpacity = interpolate(focusAnimation.value, [0, 1], [0, 0.3])
-            return {
-                borderColor,
-                backgroundColor,
-                shadowColor: currentColors.borderFocus,
-                shadowOffset: { width: 0, height: 0 },
-                shadowOpacity,
-                shadowRadius: interpolate(focusAnimation.value, [0, 1], [0, 8]),
-                elevation: interpolate(focusAnimation.value, [0, 1], [0, 4]),
+
+            if (Platform.OS === 'ios') {
+                style.shadowColor = currentColors.borderFocus
+                style.shadowOffset = { width: 0, height: 0 }
+                style.shadowOpacity = shadowOpacity
+                style.shadowRadius = interpolate(focusAnimation.value, [0, 1], [0, 8])
+            } else {
+                style.elevation = interpolate(focusAnimation.value, [0, 1], [0, 4])
             }
         }
 
-        return {
-            borderColor,
-            backgroundColor,
-            transform,
-        }
+        return style
     })
 
     // Toggle password visibility
@@ -197,11 +221,14 @@ export const AnimatedInput = forwardRef<TextInput, AnimatedInputProps>(({
 
     // Clear input
     const handleClear = () => {
+        setInputValue('')
+        onChangeText?.('')
         onClear?.()
+        inputRef.current?.focus()
     }
 
     // Show clear button
-    const shouldShowClearButton = showClearButton && value && value.length > 0
+    const shouldShowClearButton = showClearButton && inputValue && inputValue.length > 0
 
     // Show password toggle
     const shouldShowPasswordToggle = showPasswordToggle || secureTextEntry
@@ -252,15 +279,18 @@ export const AnimatedInput = forwardRef<TextInput, AnimatedInputProps>(({
                         {
                             fontSize: currentSize.fontSize,
                             color: currentColors.text,
-                            paddingHorizontal: currentSize.padding,
+                            paddingHorizontal: leftIcon ? 4 : currentSize.padding,
+                            paddingLeft: leftIcon ? 0 : currentSize.padding,
+                            paddingRight: (shouldShowClearButton || shouldShowPasswordToggle || rightIcon) ? 4 : currentSize.padding,
                             paddingVertical: textInputProps.multiline ? currentSize.padding : 0,
                         },
                         inputStyle,
                     ]}
-                    value={value}
+                    value={inputValue}
                     secureTextEntry={shouldShowPasswordToggle ? !isPasswordVisible : secureTextEntry}
                     onFocus={handleFocus}
                     onBlur={handleBlur}
+                    onChangeText={handleChangeText}
                     placeholderTextColor="#9CA3AF"
                     {...textInputProps}
                 />
@@ -271,7 +301,7 @@ export const AnimatedInput = forwardRef<TextInput, AnimatedInputProps>(({
                         <TouchableOpacity onPress={handleClear} style={styles.iconButton}>
                             <Feather
                                 name="x"
-                                size={currentSize.iconSize}
+                                size={currentSize.iconSize - 2}
                                 color={currentColors.label}
                             />
                         </TouchableOpacity>
@@ -281,7 +311,7 @@ export const AnimatedInput = forwardRef<TextInput, AnimatedInputProps>(({
                         <TouchableOpacity onPress={togglePasswordVisibility} style={styles.iconButton}>
                             <Feather
                                 name={isPasswordVisible ? "eye-off" : "eye"}
-                                size={currentSize.iconSize}
+                                size={currentSize.iconSize - 2}
                                 color={currentColors.label}
                             />
                         </TouchableOpacity>
@@ -335,11 +365,12 @@ const styles = StyleSheet.create({
         borderColor: '#E5E7EB',
         borderRadius: 6,
         backgroundColor: 'transparent',
+        overflow: 'hidden',
     },
     input: {
         flex: 1,
         fontWeight: '400',
-        textAlignVertical: 'top',
+        textAlignVertical: 'center',
     },
     leftIcon: {
         marginLeft: 12,
