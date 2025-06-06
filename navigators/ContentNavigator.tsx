@@ -18,6 +18,7 @@ import ModalComponent from '@/screens/ModalComponent';
 import ToastComponent from '@/screens/ToastComponent';
 import ProgressPage from '@/screens/ProgressBar';
 import RadioPage from '@/screens/RadioComponent';
+import SnackbarPage from '@/screens/SnackbarComponent';
 
 export type CScreenNames = [
     'Introduction',
@@ -86,6 +87,8 @@ const ContentNavigator = () => {
             <Stack.Screen name="Radio" component={RadioPage} />
 
             <Stack.Screen name="Switch" component={Switch} />
+
+            <Stack.Screen name="Snackbar" component={SnackbarPage} />
 
             <Stack.Screen name="Toast" component={ToastComponent} />
         </Stack.Navigator>

@@ -81,7 +81,9 @@ export default function RadioPage() {
         <ComponentPage>
             {/* Header */}
             <View style={globalStyles.demoSection}>
-                <Text style={globalStyles.title}>Radio Button Component</Text>
+                <Text style={globalStyles.title}>
+                    Radio Button Component
+                </Text>
                 <Text style={globalStyles.description}>
                     Highly customizable radio button component with smooth animations
                 </Text>
