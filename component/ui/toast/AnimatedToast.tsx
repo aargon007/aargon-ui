@@ -1,461 +1,317 @@
-import React, { useEffect, useRef } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, Pressable, AccessibilityInfo } from 'react-native';
+import React, { useEffect, useRef } from 'react'
+import { View, Text, StyleSheet, Pressable, Dimensions } from 'react-native'
 import Animated, {
     useSharedValue,
     useAnimatedStyle,
     withSpring,
     withTiming,
-    interpolate,
-    Extrapolate,
     runOnJS,
+    interpolate,
+    Easing,
     withSequence,
     withDelay,
-    cancelAnimation,
-    interpolateColor,
-} from 'react-native-reanimated';
-import { Gesture, GestureDetector } from 'react-native-gesture-handler';
-import { Feather } from '@expo/vector-icons';
+} from 'react-native-reanimated'
+import { Gesture, GestureDetector } from 'react-native-gesture-handler'
+import { Feather } from '@expo/vector-icons'
 import {
-   type ToastItem,
-    getPositionStyle,
-    getVariantStyles,
-    getSizeStyles,
-    getAnimationConfig,
-    getSpringConfig,
-    getTypeColors,
-} from './toastUtils';
+   type ToastConfig,
+    getToastColors,
+    getToastSizeStyles,
+    getToastIcon,
+} from './toastUtils'
+
+const { width: SCREEN_WIDTH } = Dimensions.get('window')
 
 interface AnimatedToastProps {
-    toast: ToastItem;
-    onClose: (id: string) => void;
-    index: number;
-    totalCount: number;
+    toast: ToastConfig
+    onDismiss: (id: string) => void
 }
 
-const AnimatedToast: React.FC<AnimatedToastProps> = ({ toast, onClose, index, totalCount }) => {
-    // Extract toast options
-    const {
-        id,
-        message,
-        title,
-        type = 'default',
-        position = 'top',
-        duration = 3000,
-        variant = 'default',
-        size = 'md',
-        animation = 'slide',
-        animationIn = animation,
-        animationOut = 'fade',
-        icon = true,
-        showProgress = true,
-        swipeToClose = true,
-        hideCloseButton = false,
-        style,
-        textStyle,
-        titleStyle,
-        accessibilityAnnouncement,
-        testID,
-    } = toast;
+export const AnimatedToast: React.FC<AnimatedToastProps> = ({ toast, onDismiss }) => {
+    const translateX = useSharedValue(0)
+    const translateY = useSharedValue(0)
+    const scale = useSharedValue(0)
+    const opacity = useSharedValue(0)
+    const progress = useSharedValue(0)
+    const rotateY = useSharedValue(0)
 
-    // Animation values
-    const opacity = useSharedValue(0);
-    const scale = useSharedValue(0);
-    const translateY = useSharedValue(0);
-    const translateX = useSharedValue(0);
-    const rotateX = useSharedValue(0);
-    const rotateY = useSharedValue(0);
-    const progress = useSharedValue(0);
-    const isPressing = useSharedValue(0);
-    const isVisible = useSharedValue(1);
+    const colors = getToastColors(toast.type, toast.variant || 'default')
+    const sizeStyles = getToastSizeStyles(toast.size || 'md')
+    const iconName = getToastIcon(toast.type)
 
-    // Refs
-    const timeoutRef = useRef<NodeJS.Timeout | null>(null);
-    const closeTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+    const timerRef = useRef<NodeJS.Timeout>(null)
 
-    // Get styles based on options
-    const positionStyle = getPositionStyle(position);
-    const variantStyles = getVariantStyles(variant, type || 'default');
-    const sizeStyles = getSizeStyles(size);
-    const colors = getTypeColors(type || 'default');
-
-    // Animation configurations
-    const inAnimation = getAnimationConfig(animationIn, position);
-    const outAnimation = getAnimationConfig(animationOut, position);
-    const springConfig = getSpringConfig(animationIn);
-
-    // Calculate offset for stacked toasts
-    const getStackOffset = () => {
-        if (totalCount <= 1) return 0;
-        const offset = index * 10;
-        return position.includes('top') ? offset : -offset;
-    };
-
-    // Handle close
-    const handleClose = () => {
-        // Cancel any running animations
-        cancelAnimation(opacity);
-        cancelAnimation(scale);
-        cancelAnimation(translateY);
-        cancelAnimation(translateX);
-        cancelAnimation(rotateX);
-        cancelAnimation(rotateY);
-        cancelAnimation(progress);
-
-        // Clear timeouts
-        if (timeoutRef.current) {
-            clearTimeout(timeoutRef.current);
-            timeoutRef.current = null;
+    const dismiss = () => {
+        if (timerRef.current) {
+            clearTimeout(timerRef.current)
         }
 
-        // Animate out
-        isVisible.value = 0;
-
-        // Apply exit animation
-        if (outAnimation.exit.opacity !== undefined) {
-            opacity.value = withTiming(outAnimation.exit.opacity, { duration: 300 });
+        // Exit animation
+        switch (toast.animation) {
+            case 'slide':
+                if (toast.position?.includes('top')) {
+                    translateY.value = withTiming(-200, { duration: 300 })
+                } else {
+                    translateY.value = withTiming(200, { duration: 300 })
+                }
+                break
+            case 'fade':
+                opacity.value = withTiming(0, { duration: 300 })
+                break
+            case 'scale':
+                scale.value = withTiming(0, { duration: 300 })
+                break
+            case 'bounce':
+                scale.value = withSequence(
+                    withTiming(1.1, { duration: 100 }),
+                    withTiming(0, { duration: 200 })
+                )
+                break
+            case 'flip':
+                rotateY.value = withTiming(90, { duration: 300 })
+                break
+            case 'zoom':
+                scale.value = withTiming(0, { duration: 300 })
+                opacity.value = withTiming(0, { duration: 300 })
+                break
+            default:
+                opacity.value = withTiming(0, { duration: 300 })
         }
 
-        if (outAnimation.exit.scale !== undefined) {
-            scale.value = withTiming(outAnimation.exit.scale, { duration: 300 });
-        }
-
-        if (outAnimation.exit.translateY !== undefined) {
-            translateY.value = withTiming(outAnimation.exit.translateY, { duration: 300 });
-        }
-
-        if (outAnimation.exit.translateX !== undefined) {
-            translateX.value = withTiming(outAnimation.exit.translateX, { duration: 300 });
-        }
-
-        // Delay actual removal to allow animation to complete
-        closeTimeoutRef.current = setTimeout(() => {
-            if (toast.onClose) {
-                toast.onClose();
+        setTimeout(() => {
+            runOnJS(onDismiss)(toast.id)
+            if (toast.onDismiss) {
+                runOnJS(toast.onDismiss)()
             }
-            onClose(id);
-        }, 300);
-    };
+        }, 300)
+    }
 
-    // Gesture handler for swipe to dismiss
+    const startTimer = () => {
+        if (toast.duration && toast.duration > 0) {
+            if (toast.showProgress) {
+                progress.value = withTiming(1, {
+                    duration: toast.duration,
+                    easing: Easing.linear,
+                })
+            }
+
+            timerRef.current = setTimeout(() => {
+                dismiss()
+            }, toast.duration)
+        }
+    }
+
+    useEffect(() => {
+        // Entry animation
+        switch (toast.animation) {
+            case 'slide':
+                if (toast.position?.includes('top')) {
+                    translateY.value = -200
+                    translateY.value = withSpring(0, { damping: 20, stiffness: 300 })
+                } else {
+                    translateY.value = 200
+                    translateY.value = withSpring(0, { damping: 20, stiffness: 300 })
+                }
+                opacity.value = withTiming(1, { duration: 300 })
+                break
+            case 'fade':
+                opacity.value = withTiming(1, { duration: 400 })
+                break
+            case 'scale':
+                scale.value = withSpring(1, { damping: 15, stiffness: 200 })
+                opacity.value = withTiming(1, { duration: 300 })
+                break
+            case 'bounce':
+                scale.value = withSequence(
+                    withTiming(1.2, { duration: 200 }),
+                    withSpring(1, { damping: 10, stiffness: 300 })
+                )
+                opacity.value = withTiming(1, { duration: 300 })
+                break
+            case 'flip':
+                rotateY.value = 90
+                rotateY.value = withSpring(0, { damping: 15, stiffness: 200 })
+                opacity.value = withTiming(1, { duration: 300 })
+                break
+            case 'zoom':
+                scale.value = withSpring(1, { damping: 15, stiffness: 200 })
+                opacity.value = withTiming(1, { duration: 300 })
+                break
+            default:
+                opacity.value = withTiming(1, { duration: 300 })
+                scale.value = 1
+        }
+
+        startTimer()
+
+        return () => {
+            if (timerRef.current) {
+                clearTimeout(timerRef.current)
+            }
+        }
+    }, [])
+
     const panGesture = Gesture.Pan()
-        .enabled(!!swipeToClose)
-        .onBegin(() => {
-            if (timeoutRef.current) {
-                clearTimeout(timeoutRef.current);
-                timeoutRef.current = null;
-            }
-            isPressing.value = 1;
-        })
         .onUpdate((event) => {
-            // Determine swipe direction based on position
-            if (position.includes('top') || position === 'bottom') {
-                translateX.value = event.translationX;
-            } else {
-                translateY.value = event.translationY;
-            }
+            translateX.value = event.translationX
         })
         .onEnd((event) => {
-            isPressing.value = 0;
-
-            // Determine if swipe should dismiss
-            const threshold = 80;
-            let shouldDismiss = false;
-
-            if (position.includes('top') || position === 'bottom') {
-                shouldDismiss = Math.abs(event.translationX) > threshold;
-                if (shouldDismiss) {
-                    translateX.value = withTiming(
-                        event.translationX > 0 ? 500 : -500,
-                        { duration: 200 },
-                        () => runOnJS(handleClose)()
-                    );
-                } else {
-                    translateX.value = withSpring(0, springConfig);
-
-                    // Restart auto-dismiss timer if needed
-                    if (duration > 0) {
-                        timeoutRef.current = setTimeout(handleClose, duration);
-                    }
-                }
+            if (Math.abs(event.translationX) > 100 || Math.abs(event.velocityX) > 500) {
+                translateX.value = withTiming(
+                    event.translationX > 0 ? SCREEN_WIDTH : -SCREEN_WIDTH,
+                    { duration: 200 }
+                )
+                runOnJS(dismiss)()
             } else {
-                shouldDismiss = Math.abs(event.translationY) > threshold;
-                if (shouldDismiss) {
-                    translateY.value = withTiming(
-                        event.translationY > 0 ? 500 : -500,
-                        { duration: 200 },
-                        () => runOnJS(handleClose)()
-                    );
-                } else {
-                    translateY.value = withSpring(0, springConfig);
-
-                    // Restart auto-dismiss timer if needed
-                    if (duration > 0) {
-                        timeoutRef.current = setTimeout(handleClose, duration);
-                    }
-                }
+                translateX.value = withSpring(0)
             }
-        });
-
-    // Press gesture for feedback
-    const pressGesture = Gesture.Tap()
-        .onBegin(() => {
-            isPressing.value = 1;
         })
-        .onEnd(() => {
-            isPressing.value = withSequence(
-                withTiming(0.95, { duration: 100 }),
-                withTiming(1, { duration: 100 })
-            );
-        });
 
-    // Combined gestures
-    const gestures = Gesture.Simultaneous(panGesture, pressGesture);
-
-    // Initialize animations
-    useEffect(() => {
-        // Announce for screen readers
-        if (accessibilityAnnouncement) {
-            AccessibilityInfo.announceForAccessibility(accessibilityAnnouncement);
-        } else if (title) {
-            AccessibilityInfo.announceForAccessibility(`${title}: ${message}`);
-        } else {
-            AccessibilityInfo.announceForAccessibility(message);
-        }
-
-        // Set initial animation values
-        if (inAnimation.initial.opacity !== undefined) {
-            opacity.value = inAnimation.initial.opacity;
-        }
-
-        if (inAnimation.initial.scale !== undefined) {
-            scale.value = inAnimation.initial.scale;
-        }
-
-        if (inAnimation.initial.translateY !== undefined) {
-            translateY.value = inAnimation.initial.translateY;
-        }
-
-        if (inAnimation.initial.translateX !== undefined) {
-            translateX.value = inAnimation.initial.translateX;
-        }
-
-        // Apply entrance animation with slight delay based on index for stacking effect
-        const delay = index * 100;
-
-        opacity.value = withDelay(
-            delay,
-            withSpring(inAnimation.animate.opacity, springConfig)
-        );
-
-        scale.value = withDelay(
-            delay,
-            withSpring(inAnimation.animate.scale, springConfig)
-        );
-
-        translateY.value = withDelay(
-            delay,
-            withSpring(inAnimation.animate.translateY + getStackOffset(), springConfig)
-        );
-
-        translateX.value = withDelay(
-            delay,
-            withSpring(inAnimation.animate.translateX, springConfig)
-        );
-
-        // Start progress animation if duration is set
-        if (duration > 0 && showProgress) {
-            progress.value = withTiming(1, { duration });
-        }
-
-        // Set auto-dismiss timeout if duration is set
-        if (duration > 0) {
-            timeoutRef.current = setTimeout(handleClose, duration);
-        }
-
-        // Cleanup
-        return () => {
-            if (timeoutRef.current) {
-                clearTimeout(timeoutRef.current);
-            }
-            if (closeTimeoutRef.current) {
-                clearTimeout(closeTimeoutRef.current);
-            }
-        };
-    }, []);
-
-    // Animated styles
     const animatedStyle = useAnimatedStyle(() => {
-        const pressScale = interpolate(
-            isPressing.value,
-            [0, 1],
-            [1, 0.98],
-            Extrapolate.CLAMP
-        );
+        const scaleValue = toast.animation === 'none' ? 1 : scale.value
 
         return {
-            opacity: opacity.value,
             transform: [
-                { translateY: translateY.value },
                 { translateX: translateX.value },
-                { scale: scale.value * pressScale },
-                { rotateX: `${rotateX.value}deg` },
+                { translateY: translateY.value },
+                { scale: scaleValue },
                 { rotateY: `${rotateY.value}deg` },
             ],
-        };
-    });
-
-    // Progress bar animated style
-    const progressAnimatedStyle = useAnimatedStyle(() => {
-        return {
-            width: `${(1 - progress.value) * 100}%`,
-            backgroundColor: variant === 'filled' ? 'rgba(255,255,255,0.4)' : colors.background,
-            height: 3,
-            position: 'absolute',
-            bottom: 0,
-            left: 0,
-            borderBottomLeftRadius: sizeStyles.container.borderRadius,
-        };
-    });
-
-    // Background color animation for press state
-    const backgroundAnimatedStyle = useAnimatedStyle(() => {
-        let baseColor = variantStyles.container.backgroundColor as string;
-        if (!baseColor || baseColor === 'transparent') {
-            baseColor = '#FFFFFF';
+            opacity: opacity.value,
         }
+    })
 
-        const pressedColor = variant === 'filled'
-            ? 'rgba(0,0,0,0.1)'
-            : 'rgba(0,0,0,0.05)';
-
+    const progressStyle = useAnimatedStyle(() => {
         return {
-            backgroundColor: interpolateColor(
-                isPressing.value,
-                [0, 1],
-                [baseColor, pressedColor]
-            ),
-        };
-    });
+            width: `${interpolate(progress.value, [0, 1], [0, 100])}%`,
+        }
+    })
 
-    // Get icon component if enabled
-    const getIconComponent = () => {
-        if (!icon) return null;
-
-        const iconName = typeof icon === 'string' ? icon : colors.icon;
-
-        return (
-            <View style={styles.iconContainer}>
-                <Feather name={iconName as any} size={sizeStyles.iconSize} color={
-                    variant === 'filled' ? colors.text : colors.background
-                } />
-            </View>
-        );
-    };
+    const handlePress = () => {
+        if (toast.onPress) {
+            toast.onPress()
+        }
+    }
 
     return (
-        <GestureDetector gesture={gestures}>
-            <Animated.View
-                style={[
-                    styles.container,
-                    positionStyle,
-                    sizeStyles.container,
-                    variantStyles.container,
-                    backgroundAnimatedStyle,
-                    animatedStyle,
-                    style,
-                ]}
-                accessibilityRole="alert"
-                testID={testID}
-            >
-                {/* Content */}
-                <View style={styles.contentContainer}>
-                    {getIconComponent()}
+        <GestureDetector gesture={panGesture}>
+            <Animated.View style={[animatedStyle]}>
+                <Pressable
+                    onPress={handlePress}
+                    style={[
+                        styles.container,
+                        {
+                            backgroundColor: colors.backgroundColor,
+                            borderColor: colors.borderColor,
+                            borderRadius: sizeStyles.borderRadius,
+                            padding: sizeStyles.padding,
+                            maxWidth: sizeStyles.maxWidth,
+                            borderWidth: toast.variant === 'outlined' ? 1 : 0,
+                        },
+                        toast.style,
+                    ]}
+                    testID={toast.testID}
+                >
+                    <View style={styles.content}>
+                        <Feather
+                            name={iconName as any}
+                            size={sizeStyles.iconSize}
+                            color={colors.titleColor}
+                            style={styles.icon}
+                        />
 
-                    <View style={styles.textContainer}>
-                        {title && (
+                        <View style={styles.textContainer}>
+                            {toast.title && (
+                                <Text
+                                    style={[
+                                        styles.title,
+                                        {
+                                            color: colors.titleColor,
+                                            fontSize: sizeStyles.titleSize,
+                                        },
+                                        toast.titleStyle,
+                                    ]}
+                                >
+                                    {toast.title}
+                                </Text>
+                            )}
+
                             <Text
                                 style={[
-                                    styles.title,
-                                    sizeStyles.title,
-                                    variantStyles.text,
-                                    titleStyle,
+                                    styles.message,
+                                    {
+                                        color: colors.textColor,
+                                        fontSize: sizeStyles.messageSize,
+                                    },
+                                    toast.messageStyle,
                                 ]}
-                                numberOfLines={1}
                             >
-                                {title}
+                                {toast.message}
                             </Text>
-                        )}
+                        </View>
 
-                        <Text
-                            style={[
-                                styles.message,
-                                sizeStyles.message,
-                                variantStyles.text,
-                                textStyle,
-                            ]}
-                            numberOfLines={2}
-                        >
-                            {message}
-                        </Text>
+                        <Pressable onPress={dismiss} style={styles.closeButton}>
+                            <Feather name="x" size={16} color={colors.textColor} />
+                        </Pressable>
                     </View>
 
-                    {!hideCloseButton && (
-                        <TouchableOpacity
-                            style={styles.closeButton}
-                            onPress={handleClose}
-                            accessibilityLabel="Close"
-                            accessibilityRole="button"
-                            hitSlop={{ top: 10, right: 10, bottom: 10, left: 10 }}
-                        >
-                            <Feather
-                                name="x"
-                                size={sizeStyles.iconSize - 2}
-                                color={variant === 'filled' ? colors.text : colors.textSoft}
+                    {toast.showProgress && toast.duration && toast.duration > 0 && (
+                        <View style={styles.progressContainer}>
+                            <Animated.View
+                                style={[
+                                    styles.progressBar,
+                                    { backgroundColor: colors.titleColor },
+                                    progressStyle,
+                                ]}
                             />
-                        </TouchableOpacity>
+                        </View>
                     )}
-                </View>
-
-                {/* Progress bar */}
-                {showProgress && duration > 0 && (
-                    <Animated.View style={progressAnimatedStyle} />
-                )}
+                </Pressable>
             </Animated.View>
         </GestureDetector>
-    );
-};
+    )
+}
 
 const styles = StyleSheet.create({
     container: {
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.1,
-        shadowRadius: 4,
-        elevation: 3,
-        overflow: 'hidden',
+        shadowRadius: 8,
+        elevation: 4,
         marginVertical: 4,
     },
-    contentContainer: {
+    content: {
         flexDirection: 'row',
-        alignItems: 'center',
+        alignItems: 'flex-start',
     },
-    iconContainer: {
-        marginRight: 10,
+    icon: {
+        marginRight: 12,
+        marginTop: 2,
     },
     textContainer: {
         flex: 1,
     },
     title: {
         fontWeight: '600',
-        marginBottom: 2,
+        marginBottom: 4,
     },
     message: {
-        fontWeight: '400',
+        lineHeight: 20,
     },
     closeButton: {
-        marginLeft: 10,
-        padding: 2,
+        padding: 4,
+        marginLeft: 8,
     },
-});
-
-export default AnimatedToast;
+    progressContainer: {
+        height: 3,
+        backgroundColor: 'rgba(0,0,0,0.1)',
+        marginTop: 12,
+        borderRadius: 2,
+        overflow: 'hidden',
+    },
+    progressBar: {
+        height: '100%',
+        borderRadius: 2,
+    },
+})

@@ -1,9 +1,8 @@
 import React, { useState } from 'react'
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native'
 import { Feather } from '@expo/vector-icons'
-import { ToastProvider } from '@/component/ui/toast/ToastProvider'
+import { ToastProvider, useToast } from '@/component/ui/toast/ToastProvider'
 import type { ToastType, ToastVariant, ToastPosition, ToastAnimation, ToastSize } from '@/component/ui/toast/toastUtils'
-import useToast from '@/component/ui/toast/useToasts'
 
 const ToastPageContent = () => {
     const toast = useToast()

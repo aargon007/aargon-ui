@@ -1,413 +1,266 @@
-import { Dimensions, Platform } from 'react-native';
-import type { ViewStyle, TextStyle } from 'react-native';
+import type { ViewStyle, TextStyle } from 'react-native'
 
-// Constants
-const { width: SCREEN_WIDTH } = Dimensions.get('window');
-const TOAST_MAX_WIDTH = Math.min(SCREEN_WIDTH - 32, 400);
-const IS_IOS = Platform.OS === 'ios';
-const IS_ANDROID = Platform.OS === 'android';
-const IS_WEB = Platform.OS === 'web';
+export type ToastType = 'info' | 'success' | 'warning' | 'error' | 'neutral'
+export type ToastVariant = 'default' | 'filled' | 'outlined' | 'soft' | 'minimal' | 'accent'
+export type ToastPosition = 'top' | 'bottom' | 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right'
+export type ToastAnimation = 'slide' | 'fade' | 'scale' | 'bounce' | 'flip' | 'zoom' | 'none'
+export type ToastSize = 'sm' | 'md' | 'lg'
 
-// Types
-export type ToastPosition = 'top' | 'bottom' | 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right';
-export type ToastType = 'success' | 'error' | 'warning' | 'info' | 'default';
-export type ToastVariant = 'default' | 'filled' | 'outlined' | 'soft' | 'minimal' | 'accent';
-export type ToastSize = 'sm' | 'md' | 'lg';
-export type ToastAnimation = 'slide' | 'fade' | 'scale' | 'bounce' | 'flip' | 'zoom' | 'none';
+export interface ToastConfig {
+    id: string
+    title?: string
+    message: string
+    type?: ToastType
+    variant?: ToastVariant
+    position?: ToastPosition
+    animation?: ToastAnimation
+    size?: ToastSize
+    duration?: number
+    showProgress?: boolean
+    style?: ViewStyle
+    titleStyle?: TextStyle
+    messageStyle?: TextStyle
+    onPress?: () => void
+    onDismiss?: () => void
+    testID?: string
+}
 
 export interface ToastOptions {
-    id?: string;
-    message: string;
-    title?: string;
-    type?: ToastType;
-    position?: ToastPosition;
-    duration?: number;
-    variant?: ToastVariant;
-    size?: ToastSize;
-    animation?: ToastAnimation;
-    animationIn?: ToastAnimation;
-    animationOut?: ToastAnimation;
-    icon?: string | boolean;
-    showProgress?: boolean;
-    swipeToClose?: boolean;
-    onClose?: () => void;
-    style?: ViewStyle;
-    textStyle?: TextStyle;
-    titleStyle?: TextStyle;
-    hideCloseButton?: boolean;
-    accessibilityAnnouncement?: string;
-    testID?: string;
+    title?: string
+    message: string
+    type?: ToastType
+    variant?: ToastVariant
+    position?: ToastPosition
+    animation?: ToastAnimation
+    size?: ToastSize
+    duration?: number
+    showProgress?: boolean
+    style?: ViewStyle
+    titleStyle?: TextStyle
+    messageStyle?: TextStyle
+    onPress?: () => void
+    onDismiss?: () => void
+    testID?: string
 }
 
-export interface ToastItem extends ToastOptions {
-    id: string;
-    createdAt: number;
-    visible: boolean;
+export interface PromiseToastOptions {
+    loading: {
+        title?: string
+        message: string
+    }
+    success: {
+        title?: string
+        message: string
+    }
+    error: {
+        title?: string
+        message: string
+    }
 }
 
-// Helper functions
-export const getPositionStyle = (position: ToastPosition): ViewStyle => {
-    const baseStyle: ViewStyle = {
-        position: 'absolute',
-        zIndex: 9999,
-        maxWidth: TOAST_MAX_WIDTH,
-        minWidth: 200,
-    };
+export const DEFAULT_TOAST_CONFIG: Partial<ToastConfig> = {
+    type: 'info',
+    variant: 'default',
+    position: 'top',
+    animation: 'slide',
+    size: 'md',
+    duration: 4000,
+    showProgress: false,
+}
 
-    const safeAreaTop = IS_IOS ? 50 : 30;
-    const safeAreaBottom = IS_IOS ? 34 : 16;
-    const horizontalPadding = 16;
-
-    switch (position) {
-        case 'top':
-            return {
-                ...baseStyle,
-                top: safeAreaTop,
-                alignSelf: 'center',
-            };
-        case 'bottom':
-            return {
-                ...baseStyle,
-                bottom: safeAreaBottom,
-                alignSelf: 'center',
-            };
-        case 'top-left':
-            return {
-                ...baseStyle,
-                top: safeAreaTop,
-                left: horizontalPadding,
-            };
-        case 'top-right':
-            return {
-                ...baseStyle,
-                top: safeAreaTop,
-                right: horizontalPadding,
-            };
-        case 'bottom-left':
-            return {
-                ...baseStyle,
-                bottom: safeAreaBottom,
-                left: horizontalPadding,
-            };
-        case 'bottom-right':
-            return {
-                ...baseStyle,
-                bottom: safeAreaBottom,
-                right: horizontalPadding,
-            };
-        default:
-            return {
-                ...baseStyle,
-                top: safeAreaTop,
-                alignSelf: 'center',
-            };
+export const getToastColors = (type: ToastType, variant: ToastVariant) => {
+    const colorMap = {
+        info: {
+            primary: '#3b82f6',
+            background: '#eff6ff',
+            border: '#bfdbfe',
+            text: '#1e40af',
+        },
+        success: {
+            primary: '#10b981',
+            background: '#ecfdf5',
+            border: '#a7f3d0',
+            text: '#047857',
+        },
+        warning: {
+            primary: '#f59e0b',
+            background: '#fffbeb',
+            border: '#fde68a',
+            text: '#d97706',
+        },
+        error: {
+            primary: '#ef4444',
+            background: '#fef2f2',
+            border: '#fecaca',
+            text: '#dc2626',
+        },
+        neutral: {
+            primary: '#6b7280',
+            background: '#f9fafb',
+            border: '#d1d5db',
+            text: '#374151',
+        },
     }
-};
 
-export const getTypeColors = (type: ToastType) => {
-    switch (type) {
-        case 'success':
-            return {
-                background: '#10B981',
-                backgroundSoft: '#ECFDF5',
-                text: '#FFFFFF',
-                textSoft: '#065F46',
-                border: '#059669',
-                icon: 'check-circle',
-            };
-        case 'error':
-            return {
-                background: '#EF4444',
-                backgroundSoft: '#FEF2F2',
-                text: '#FFFFFF',
-                textSoft: '#991B1B',
-                border: '#DC2626',
-                icon: 'x-circle',
-            };
-        case 'warning':
-            return {
-                background: '#F59E0B',
-                backgroundSoft: '#FFFBEB',
-                text: '#FFFFFF',
-                textSoft: '#92400E',
-                border: '#D97706',
-                icon: 'alert-triangle',
-            };
-        case 'info':
-            return {
-                background: '#3B82F6',
-                backgroundSoft: '#EFF6FF',
-                text: '#FFFFFF',
-                textSoft: '#1E40AF',
-                border: '#2563EB',
-                icon: 'info',
-            };
-        default:
-            return {
-                background: '#6B7280',
-                backgroundSoft: '#F3F4F6',
-                text: '#FFFFFF',
-                textSoft: '#374151',
-                border: '#4B5563',
-                icon: 'bell',
-            };
-    }
-};
-
-export const getVariantStyles = (variant: ToastVariant, type: ToastType): { container: ViewStyle; text: TextStyle } => {
-    const colors = getTypeColors(type);
+    const colors = colorMap[type]
 
     switch (variant) {
         case 'filled':
             return {
-                container: {
-                    backgroundColor: colors.background,
-                    borderColor: colors.background,
-                },
-                text: {
-                    color: colors.text,
-                },
-            };
+                backgroundColor: colors.primary,
+                borderColor: colors.primary,
+                textColor: '#ffffff',
+                titleColor: '#ffffff',
+            }
         case 'outlined':
             return {
-                container: {
-                    backgroundColor: 'transparent',
-                    borderColor: colors.border,
-                    borderWidth: 1,
-                },
-                text: {
-                    color: colors.textSoft,
-                },
-            };
+                backgroundColor: '#ffffff',
+                borderColor: colors.primary,
+                textColor: colors.text,
+                titleColor: colors.text,
+            }
         case 'soft':
             return {
-                container: {
-                    backgroundColor: colors.backgroundSoft,
-                    borderColor: colors.backgroundSoft,
-                },
-                text: {
-                    color: colors.textSoft,
-                },
-            };
+                backgroundColor: colors.background,
+                borderColor: colors.border,
+                textColor: colors.text,
+                titleColor: colors.text,
+            }
         case 'minimal':
             return {
-                container: {
-                    backgroundColor: 'transparent',
-                    borderColor: 'transparent',
-                },
-                text: {
-                    color: colors.textSoft,
-                },
-            };
+                backgroundColor: 'transparent',
+                borderColor: 'transparent',
+                textColor: colors.text,
+                titleColor: colors.text,
+            }
         case 'accent':
             return {
-                container: {
-                    backgroundColor: '#FFFFFF',
-                    borderLeftColor: colors.background,
-                    borderLeftWidth: 4,
-                    borderColor: '#E5E7EB',
-                    borderWidth: 1,
-                },
-                text: {
-                    color: colors.textSoft,
-                },
-            };
+                backgroundColor: colors.background,
+                borderColor: colors.primary,
+                textColor: colors.text,
+                titleColor: colors.primary,
+            }
         default:
             return {
-                container: {
-                    backgroundColor: '#FFFFFF',
-                    borderColor: '#E5E7EB',
-                    borderWidth: 1,
-                },
-                text: {
-                    color: colors.textSoft,
-                },
-            };
+                backgroundColor: '#ffffff',
+                borderColor: colors.border,
+                textColor: colors.text,
+                titleColor: colors.text,
+            }
     }
-};
+}
 
-export const getSizeStyles = (size: ToastSize): { container: ViewStyle; title: TextStyle; message: TextStyle; iconSize: number } => {
+export const getToastSizeStyles = (size: ToastSize) => {
     switch (size) {
         case 'sm':
             return {
-                container: {
-                    paddingVertical: 8,
-                    paddingHorizontal: 12,
-                    borderRadius: 6,
-                    minHeight: 36,
-                },
-                title: {
-                    fontSize: 14,
-                    lineHeight: 18,
-                },
-                message: {
-                    fontSize: 12,
-                    lineHeight: 16,
-                },
+                padding: 12,
+                titleSize: 14,
+                messageSize: 12,
                 iconSize: 16,
-            };
+                borderRadius: 6,
+                maxWidth: 280,
+            }
         case 'lg':
             return {
-                container: {
-                    paddingVertical: 12,
-                    paddingHorizontal: 16,
-                    borderRadius: 10,
-                    minHeight: 56,
-                },
-                title: {
-                    fontSize: 18,
-                    lineHeight: 24,
-                },
-                message: {
-                    fontSize: 14,
-                    lineHeight: 20,
-                },
-                iconSize: 24,
-            };
+                padding: 20,
+                titleSize: 18,
+                messageSize: 16,
+                iconSize: 22,
+                borderRadius: 12,
+                maxWidth: 400,
+            }
         default: // md
             return {
-                container: {
-                    paddingVertical: 10,
-                    paddingHorizontal: 14,
-                    borderRadius: 8,
-                    minHeight: 46,
-                },
-                title: {
-                    fontSize: 16,
-                    lineHeight: 20,
-                },
-                message: {
-                    fontSize: 13,
-                    lineHeight: 18,
-                },
+                padding: 16,
+                titleSize: 16,
+                messageSize: 14,
                 iconSize: 20,
-            };
+                borderRadius: 8,
+                maxWidth: 340,
+            }
     }
-};
+}
 
-export const getAnimationConfig = (animation: ToastAnimation, position: ToastPosition) => {
-    // Default values
-    const defaultConfig = {
-        translateY: 0,
-        translateX: 0,
-        scale: 1,
-        opacity: 1,
-        rotateX: '0deg',
-        rotateY: '0deg',
-    };
-
-    // Initial values based on animation type
-    const initialValues = { ...defaultConfig };
-
-    switch (animation) {
-        case 'slide':
-            if (position.includes('top')) {
-                initialValues.translateY = -100;
-            } else {
-                initialValues.translateY = 100;
-            }
-            break;
-        case 'fade':
-            initialValues.opacity = 0;
-            break;
-        case 'scale':
-            initialValues.scale = 0;
-            initialValues.opacity = 0;
-            break;
-        case 'bounce':
-            if (position.includes('top')) {
-                initialValues.translateY = -20;
-            } else {
-                initialValues.translateY = 20;
-            }
-            break;
-        case 'flip':
-            initialValues.rotateX = '90deg';
-            initialValues.opacity = 0;
-            break;
-        case 'zoom':
-            initialValues.scale = 1.2;
-            initialValues.opacity = 0;
-            break;
-        case 'none':
+export const getToastIcon = (type: ToastType) => {
+    switch (type) {
+        case 'success':
+            return 'check-circle'
+        case 'error':
+            return 'x-circle'
+        case 'warning':
+            return 'alert-triangle'
+        case 'info':
+            return 'info'
+        case 'neutral':
+            return 'message-circle'
         default:
-            // No animation, use default values
-            break;
+            return 'info'
+    }
+}
+
+export const generateToastId = () => {
+    return `toast_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+}
+
+export const getPositionStyles = (position: ToastPosition) => {
+    const baseStyles = {
+        position: 'absolute' as const,
+        zIndex: 9999,
     }
 
-    return {
-        initial: initialValues,
-        animate: defaultConfig,
-        exit: { ...initialValues, opacity: 0 },
-    };
-};
-
-// Spring configurations
-export const getSpringConfig = (animation: ToastAnimation) => {
-    switch (animation) {
-        case 'bounce':
+    switch (position) {
+        case 'top':
             return {
-                damping: 10,
-                mass: 0.8,
-                stiffness: 150,
-                overshootClamping: false,
-                restDisplacementThreshold: 0.01,
-                restSpeedThreshold: 0.01,
-            };
-        case 'scale':
+                ...baseStyles,
+                top: 60,
+                left: 20,
+                right: 20,
+                alignItems: 'center' as const,
+            }
+        case 'bottom':
             return {
-                damping: 15,
-                mass: 1,
-                stiffness: 200,
-                overshootClamping: false,
-                restDisplacementThreshold: 0.01,
-                restSpeedThreshold: 0.01,
-            };
-        case 'flip':
+                ...baseStyles,
+                bottom: 60,
+                left: 20,
+                right: 20,
+                alignItems: 'center' as const,
+            }
+        case 'top-left':
             return {
-                damping: 12,
-                mass: 1,
-                stiffness: 120,
-                overshootClamping: false,
-                restDisplacementThreshold: 0.01,
-                restSpeedThreshold: 0.01,
-            };
-        case 'zoom':
+                ...baseStyles,
+                top: 60,
+                left: 20,
+                alignItems: 'flex-start' as const,
+            }
+        case 'top-right':
             return {
-                damping: 20,
-                mass: 1.2,
-                stiffness: 250,
-                overshootClamping: false,
-                restDisplacementThreshold: 0.01,
-                restSpeedThreshold: 0.01,
-            };
+                ...baseStyles,
+                top: 60,
+                right: 20,
+                alignItems: 'flex-end' as const,
+            }
+        case 'bottom-left':
+            return {
+                ...baseStyles,
+                bottom: 60,
+                left: 20,
+                alignItems: 'flex-start' as const,
+            }
+        case 'bottom-right':
+            return {
+                ...baseStyles,
+                bottom: 60,
+                right: 20,
+                alignItems: 'flex-end' as const,
+            }
         default:
             return {
-                damping: 18,
-                mass: 1,
-                stiffness: 180,
-                overshootClamping: false,
-                restDisplacementThreshold: 0.01,
-                restSpeedThreshold: 0.01,
-            };
+                ...baseStyles,
+                top: 60,
+                left: 20,
+                right: 20,
+                alignItems: 'center' as const,
+            }
     }
-};
-
-// Default options
-export const DEFAULT_TOAST_OPTIONS: Partial<ToastOptions> = {
-    type: 'default',
-    position: 'top',
-    duration: 3000,
-    variant: 'default',
-    size: 'md',
-    animation: 'slide',
-    animationIn: 'slide',
-    animationOut: 'fade',
-    icon: true,
-    showProgress: true,
-    swipeToClose: true,
-    hideCloseButton: false,
-};
-
-// Generate unique ID
-export const generateId = () => `toast-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+}
