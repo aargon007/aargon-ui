@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react'
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native'
-import { AnimatedProgressBar,type AnimatedProgressBarRef } from '@/component/ui/progress/AnimatedProgressbar'
+import { View, Text, StyleSheet, TouchableOpacity, Dimensions } from 'react-native'
+import { AnimatedProgressBar,type AnimatedProgressBarRef } from '@/component/ui/progress/AnimatedProgressBar'
 import type { ProgressVariant, ProgressSize, ProgressColorScheme, ProgressAnimationType, ProgressShape } from '@/component/ui/progress/utils'
 import ComponentPage from '@/component/common/ComponentPage'
 import { globalStyles } from '@/styles/globalStyles'
@@ -394,9 +394,11 @@ const styles = StyleSheet.create({
         borderColor: '#E5E7EB',
     },
     controls: {
-        flexDirection: 'row',
+        flex:1,
+        flexDirection: Dimensions.get('window').width < 768 ? 'column' : 'row',
         justifyContent: 'space-between',
         marginTop: 20,
+        flexWrap:"wrap",
         gap: 8,
     },
     button: {

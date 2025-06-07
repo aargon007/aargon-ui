@@ -1,5 +1,5 @@
-import React, { useEffect, useRef, forwardRef, useImperativeHandle } from 'react'
-import { View, Text, StyleSheet, type ViewStyle, type TextStyle, Platform } from 'react-native'
+import React, { useEffect, forwardRef, useImperativeHandle } from 'react'
+import { View, Text, StyleSheet, type ViewStyle, type TextStyle } from 'react-native'
 import Animated, {
     useSharedValue,
     useAnimatedStyle,

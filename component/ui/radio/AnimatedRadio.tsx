@@ -245,14 +245,6 @@ export const AnimatedRadio = forwardRef<AnimatedRadioRef, AnimatedRadioProps>(
         }
 
         // Animated styles
-        const containerAnimatedStyle = useAnimatedStyle(() => {
-            const scale = interpolate(pressAnimation.value, [0, 1], [1, 0.95])
-
-            return {
-                transform: [{ scale }],
-            }
-        })
-
         const radioAnimatedStyle = useAnimatedStyle(() => {
             const borderColor = interpolateColor(
                 selectedAnimation.value,
@@ -273,7 +265,7 @@ export const AnimatedRadio = forwardRef<AnimatedRadioRef, AnimatedRadioProps>(
                 borderColor,
                 backgroundColor,
                 shadowColor: showFocusRing ? colors.focus : 'transparent',
-                shadowOffset: { width: 0, height: 0 },
+                // shadowOffset: { width: 0, height: 0 },
                 shadowOpacity: focusRingOpacity,
                 shadowRadius: 8,
                 transform: [{ scale: focusRingScale }],
@@ -375,7 +367,7 @@ export const AnimatedRadio = forwardRef<AnimatedRadioRef, AnimatedRadioProps>(
         }
 
         return (
-            <Animated.View style={[containerAnimatedStyle, style]}>
+            <Animated.View style={[ style]}>
                 <Pressable
                     onPress={handlePress}
                     onPressIn={handlePressIn}
