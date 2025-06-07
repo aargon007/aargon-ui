@@ -16,7 +16,9 @@ import Animated, {
     interpolate,
     interpolateColor,
     runOnJS,
+    runOnUI,
     Easing,
+    withSequence,
 } from 'react-native-reanimated'
 import {
     type RadioVariant,
@@ -27,6 +29,7 @@ import {
     getRadioColors,
     getRadioSizes,
     getRadioAnimationConfig,
+    getFeedbackAnimationConfig,
 } from './utils'
 
 export interface AnimatedRadioProps {
@@ -111,18 +114,25 @@ export const AnimatedRadio = forwardRef<AnimatedRadioRef, AnimatedRadioProps>(
         const pressAnimation = useSharedValue(0)
         const focusAnimation = useSharedValue(0)
         const dotScale = useSharedValue(selected ? 1 : 0)
+        const dotOpacity = useSharedValue(selected ? 1 : 0)
+        const borderAnimation = useSharedValue(selected ? 1 : 0)
         const rippleScale = useSharedValue(0)
 
         // Get configurations
         const colors = getRadioColors(colorScheme, variant)
         const sizes = getRadioSizes(size)
         const animationConfig = getRadioAnimationConfig(animationType)
+        const feedbackConfig = getFeedbackAnimationConfig()
 
-        // Update animation when selected prop changes
-        React.useEffect(() => {
+        // Direct animation function that runs on UI thread
+        const animateSelection = (isSelected: boolean) => {
+            'worklet'
+
             if (animationType === 'none') {
-                selectedAnimation.value = selected ? 1 : 0
-                dotScale.value = selected ? 1 : 0
+                selectedAnimation.value = isSelected ? 1 : 0
+                dotScale.value = isSelected ? 1 : 0
+                dotOpacity.value = isSelected ? 1 : 0
+                borderAnimation.value = isSelected ? 1 : 0
                 return
             }
 
@@ -133,48 +143,67 @@ export const AnimatedRadio = forwardRef<AnimatedRadioRef, AnimatedRadioProps>(
                 overshootClamping: animationConfig.overshootClamping,
             }
 
-            selectedAnimation.value = withSpring(selected ? 1 : 0, springConfig)
+            // Start all animations immediately
+            selectedAnimation.value = withSpring(isSelected ? 1 : 0, springConfig)
+            borderAnimation.value = withSpring(isSelected ? 1 : 0, springConfig)
 
             switch (animationType) {
                 case 'scale':
-                    dotScale.value = withSpring(selected ? 1 : 0, springConfig)
+                    dotScale.value = withSpring(isSelected ? 1 : 0, springConfig)
+                    dotOpacity.value = withSpring(isSelected ? 1 : 0, springConfig)
                     break
                 case 'bounce':
-                    dotScale.value = withSpring(selected ? 1 : 0, {
-                        ...springConfig,
-                        damping: 8,
-                        stiffness: 150,
-                    })
-                    break
-                case 'fade':
-                    dotScale.value = withTiming(selected ? 1 : 0, {
-                        duration: animationConfig.duration,
-                        easing: Easing.out(Easing.cubic),
-                    })
-                    break
-                case 'slide':
-                    dotScale.value = withSpring(selected ? 1 : 0, springConfig)
-                    break
-                case 'elastic':
-                    dotScale.value = withSpring(selected ? 1 : 0, {
-                        ...springConfig,
-                        damping: 6,
-                        stiffness: 120,
-                    })
-                    break
-                case 'pulse':
-                    if (selected) {
-                        dotScale.value = withSpring(1.2, { damping: 10, stiffness: 300 }, () => {
-                            dotScale.value = withSpring(1, springConfig)
-                        })
+                    if (isSelected) {
+                        dotScale.value = withSequence(
+                            withSpring(1.1, { damping: 10, stiffness: 400, mass: 0.3 }),
+                            withSpring(1, springConfig)
+                        )
                     } else {
                         dotScale.value = withSpring(0, springConfig)
                     }
+                    dotOpacity.value = withSpring(isSelected ? 1 : 0, springConfig)
+                    break
+                case 'fade':
+                    dotScale.value = withSpring(isSelected ? 1 : 0, springConfig)
+                    dotOpacity.value = withTiming(isSelected ? 1 : 0, {
+                        duration: animationConfig.duration,
+                        easing: Easing.bezier(0.4, 0.0, 0.2, 1),
+                    })
+                    break
+                case 'slide':
+                    dotScale.value = withSpring(isSelected ? 1 : 0, springConfig)
+                    dotOpacity.value = withSpring(isSelected ? 1 : 0, springConfig)
+                    break
+                case 'elastic':
+                    dotScale.value = withSpring(isSelected ? 1 : 0, {
+                        ...springConfig,
+                        damping: 10,
+                        stiffness: 250,
+                    })
+                    dotOpacity.value = withSpring(isSelected ? 1 : 0, springConfig)
+                    break
+                case 'pulse':
+                    if (isSelected) {
+                        dotScale.value = withSequence(
+                            withSpring(1.15, { damping: 15, stiffness: 500, mass: 0.2 }),
+                            withSpring(1, springConfig)
+                        )
+                        dotOpacity.value = withSpring(1, springConfig)
+                    } else {
+                        dotScale.value = withSpring(0, springConfig)
+                        dotOpacity.value = withSpring(0, springConfig)
+                    }
                     break
                 default:
-                    dotScale.value = withSpring(selected ? 1 : 0, springConfig)
+                    dotScale.value = withSpring(isSelected ? 1 : 0, springConfig)
+                    dotOpacity.value = withSpring(isSelected ? 1 : 0, springConfig)
             }
-        }, [selected, animationType])
+        }
+
+        // DIRECT: Update animation immediately when selected prop changes
+        React.useEffect(() => {
+            runOnUI(animateSelection)(selected)
+        }, [selected])
 
         // Imperative methods
         useImperativeHandle(ref, () => ({
@@ -195,19 +224,19 @@ export const AnimatedRadio = forwardRef<AnimatedRadioRef, AnimatedRadioProps>(
             },
             focus: () => {
                 focusAnimation.value = withSpring(1, {
-                    damping: 15,
-                    stiffness: 200,
+                    damping: feedbackConfig.damping,
+                    stiffness: feedbackConfig.stiffness,
                 })
             },
             blur: () => {
                 focusAnimation.value = withSpring(0, {
-                    damping: 15,
-                    stiffness: 200,
+                    damping: feedbackConfig.damping,
+                    stiffness: feedbackConfig.stiffness,
                 })
             },
         }))
 
-        // Handle press
+        // Direct press handling
         const handlePress = () => {
             if (disabled) return
 
@@ -216,38 +245,47 @@ export const AnimatedRadio = forwardRef<AnimatedRadioRef, AnimatedRadioProps>(
                 // In production, use: Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)
             }
 
-            // Ripple effect
+            // Immediate ripple effect
             rippleScale.value = 0
-            rippleScale.value = withSpring(1, { damping: 15, stiffness: 300 }, () => {
-                rippleScale.value = withTiming(0, { duration: 200 })
+            rippleScale.value = withSpring(1, {
+                damping: feedbackConfig.damping,
+                stiffness: feedbackConfig.stiffness,
+                mass: feedbackConfig.mass,
+            }, () => {
+                rippleScale.value = withTiming(0, {
+                    duration: feedbackConfig.duration,
+                    easing: Easing.out(Easing.cubic),
+                })
             })
 
-            // Call onPress
+            // Call onPress immediately
             if (onPress) {
                 onPress(!selected)
             }
         }
 
-        // Handle press in/out
+        // Ultra-fast press feedback
         const handlePressIn = () => {
             if (disabled) return
             pressAnimation.value = withSpring(1, {
-                damping: 15,
-                stiffness: 300,
+                damping: feedbackConfig.damping,
+                stiffness: feedbackConfig.stiffness,
+                mass: feedbackConfig.mass,
             })
         }
 
         const handlePressOut = () => {
             pressAnimation.value = withSpring(0, {
-                damping: 15,
-                stiffness: 300,
+                damping: feedbackConfig.damping,
+                stiffness: feedbackConfig.stiffness,
+                mass: feedbackConfig.mass,
             })
         }
 
-        // Animated styles
+        // Direct animated styles
         const radioAnimatedStyle = useAnimatedStyle(() => {
             const borderColor = interpolateColor(
-                selectedAnimation.value,
+                borderAnimation.value,
                 [0, 1],
                 [colors.border, colors.borderSelected]
             )
@@ -256,23 +294,41 @@ export const AnimatedRadio = forwardRef<AnimatedRadioRef, AnimatedRadioProps>(
                 selectedAnimation.value,
                 [0, 1],
                 [colors.background, colors.backgroundSelected]
-              )
+            )
 
-            const focusRingOpacity = interpolate(focusAnimation.value, [0, 1], [0, 0.3])
-            const focusRingScale = interpolate(focusAnimation.value, [0, 1], [0.8, 1.2])
+            const focusRingOpacity = interpolate(
+                focusAnimation.value,
+                [0, 1],
+                [0, 0.2],
+                'clamp'
+            )
+            const focusRingScale = interpolate(
+                focusAnimation.value,
+                [0, 1],
+                [0.98, 1.05],
+                'clamp'
+            )
+
+            const pressScale = interpolate(
+                pressAnimation.value,
+                [0, 1],
+                [1, 0.97],
+                'clamp'
+            )
 
             return {
                 borderColor,
                 backgroundColor,
                 shadowColor: showFocusRing ? colors.focus : 'transparent',
-                // shadowOffset: { width: 0, height: 0 },
                 shadowOpacity: focusRingOpacity,
-                shadowRadius: 8,
-                transform: [{ scale: focusRingScale }],
-                elevation: Platform.OS === 'android' ? focusRingOpacity * 8 : 0,
+                shadowRadius: interpolate(focusAnimation.value, [0, 1], [0, 6]),
+                // shadowOffset: { width: 0, height: 1 },
+                transform: [{ scale: focusRingScale * pressScale }],
+                elevation: Platform.OS === 'android' ? focusRingOpacity * 6 : 0,
             }
         })
 
+        // Direct dot animation
         const dotAnimatedStyle = useAnimatedStyle(() => {
             let transform = []
 
@@ -284,10 +340,14 @@ export const AnimatedRadio = forwardRef<AnimatedRadioRef, AnimatedRadioProps>(
                     transform.push({ scale: dotScale.value })
                     break
                 case 'fade':
-                    // Fade uses opacity instead of scale
+                    transform.push({ scale: dotScale.value })
                     break
                 case 'slide':
-                    const translateX = interpolate(dotScale.value, [0, 1], [-sizes.dot.width, 0])
+                    const translateX = interpolate(
+                        dotScale.value,
+                        [0, 1],
+                        [-sizes.dot.width * 0.3, 0]
+                    )
                     transform.push({ translateX })
                     transform.push({ scale: dotScale.value })
                     break
@@ -301,17 +361,20 @@ export const AnimatedRadio = forwardRef<AnimatedRadioRef, AnimatedRadioProps>(
                     transform.push({ scale: dotScale.value })
             }
 
-            const opacity = animationType === 'fade' ? dotScale.value : 1
-
             return {
                 transform,
-                opacity,
+                opacity: dotOpacity.value,
             }
         })
 
+        // Direct ripple animation
         const rippleAnimatedStyle = useAnimatedStyle(() => {
-            const scale = interpolate(rippleScale.value, [0, 1], [0, 2])
-            const opacity = interpolate(rippleScale.value, [0, 0.5, 1], [0, 0.3, 0])
+            const scale = interpolate(rippleScale.value, [0, 1], [0, 2.2])
+            const opacity = interpolate(
+                rippleScale.value,
+                [0, 0.4, 1],
+                [0, 0.3, 0]
+            )
 
             return {
                 transform: [{ scale }],
@@ -367,7 +430,7 @@ export const AnimatedRadio = forwardRef<AnimatedRadioRef, AnimatedRadioProps>(
         }
 
         return (
-            <Animated.View style={[ style]}>
+            <Animated.View style={[style]}>
                 <Pressable
                     onPress={handlePress}
                     onPressIn={handlePressIn}
@@ -400,7 +463,7 @@ export const AnimatedRadio = forwardRef<AnimatedRadioRef, AnimatedRadioProps>(
                                 radioStyle,
                             ]}
                         >
-                            {/* Ripple effect */}
+                            {/* Direct ripple effect */}
                             <Animated.View
                                 style={[
                                     styles.ripple,
@@ -414,7 +477,7 @@ export const AnimatedRadio = forwardRef<AnimatedRadioRef, AnimatedRadioProps>(
                                 ]}
                             />
 
-                            {/* Dot */}
+                            {/* Direct dot animation */}
                             <Animated.View
                                 style={[
                                     styles.dot,

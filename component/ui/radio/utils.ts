@@ -1,3 +1,4 @@
+// utils.ts - Optimized for direct animation
 export type RadioVariant = 'default' | 'filled' | 'outline' | 'ghost' | 'soft' | 'minimal'
 export type RadioSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl'
 export type RadioColorScheme = 'primary' | 'secondary' | 'success' | 'warning' | 'error' | 'info'
@@ -42,7 +43,7 @@ export interface RadioAnimationConfig {
     overshootClamping: boolean
 }
 
-// Color schemes
+// Color schemes - unchanged
 export const getRadioColors = (colorScheme: RadioColorScheme, variant: RadioVariant): RadioColors => {
     const colorMap = {
         primary: {
@@ -149,7 +150,7 @@ export const getRadioColors = (colorScheme: RadioColorScheme, variant: RadioVari
     }
 }
 
-// Size configurations
+// Size configurations - unchanged
 export const getRadioSizes = (size: RadioSize): RadioSizes => {
     switch (size) {
         case 'xs':
@@ -269,55 +270,55 @@ export const getRadioSizes = (size: RadioSize): RadioSizes => {
     }
 }
 
-// Animation configurations
+// Direct animation configurations - ultra-fast response
 export const getRadioAnimationConfig = (animationType: RadioAnimationType): RadioAnimationConfig => {
     switch (animationType) {
         case 'scale':
             return {
-                duration: 200,
-                damping: 15,
-                stiffness: 200,
-                mass: 1,
+                duration: 150,
+                damping: 25,        // High damping for direct response
+                stiffness: 500,     // Very high stiffness for immediate start
+                mass: 0.4,          // Very low mass for instant response
                 overshootClamping: false,
             }
         case 'bounce':
             return {
-                duration: 400,
-                damping: 8,
-                stiffness: 150,
-                mass: 1,
+                duration: 200,
+                damping: 15,
+                stiffness: 400,
+                mass: 0.5,
                 overshootClamping: false,
             }
         case 'fade':
             return {
-                duration: 250,
-                damping: 20,
-                stiffness: 300,
-                mass: 0.8,
+                duration: 120,
+                damping: 30,
+                stiffness: 600,
+                mass: 0.3,
                 overshootClamping: true,
             }
         case 'slide':
             return {
-                duration: 300,
-                damping: 18,
-                stiffness: 180,
-                mass: 1,
+                duration: 180,
+                damping: 28,
+                stiffness: 450,
+                mass: 0.4,
                 overshootClamping: false,
             }
         case 'elastic':
             return {
-                duration: 500,
-                damping: 6,
-                stiffness: 120,
-                mass: 1.2,
+                duration: 250,
+                damping: 12,
+                stiffness: 300,
+                mass: 0.6,
                 overshootClamping: false,
             }
         case 'pulse':
             return {
-                duration: 150,
-                damping: 25,
-                stiffness: 400,
-                mass: 0.6,
+                duration: 100,
+                damping: 35,
+                stiffness: 700,
+                mass: 0.2,
                 overshootClamping: true,
             }
         case 'none':
@@ -330,18 +331,25 @@ export const getRadioAnimationConfig = (animationType: RadioAnimationType): Radi
             }
         default:
             return {
-                duration: 200,
-                damping: 15,
-                stiffness: 200,
-                mass: 1,
+                duration: 150,
+                damping: 25,
+                stiffness: 500,
+                mass: 0.4,
                 overshootClamping: false,
             }
     }
 }
 
-// Helper functions
+// Ultra-fast feedback animation config
+export const getFeedbackAnimationConfig = () => ({
+    duration: 80,
+    damping: 30,
+    stiffness: 600,
+    mass: 0.3,
+    overshootClamping: false,
+})
+
 export const interpolateColor = (progress: number, fromColor: string, toColor: string): string => {
-    // Simple color interpolation - in production, you might want to use a more robust solution
     return progress > 0.5 ? toColor : fromColor
 }
 
