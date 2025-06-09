@@ -20,6 +20,7 @@ import ProgressPage from '@/screens/ProgressBar';
 import RadioPage from '@/screens/RadioComponent';
 import SnackbarPage from '@/screens/SnackbarComponent';
 import SelectPage from '@/screens/SelectComponent';
+import DropdownPage from '@/screens/DropdownPage';
 
 export type CScreenNames = [
     'Introduction',
@@ -33,6 +34,7 @@ export type CScreenNames = [
     'Card',
     'Carousel',
     'Checkbox',
+    'Dropdown',
     'Input',
     'Modal',
     'Progressbar',
@@ -79,6 +81,8 @@ const ContentNavigator = () => {
             <Stack.Screen name="Carousel" component={CarouselComponent} />
 
             <Stack.Screen name="Checkbox" component={CheckboxComponent} />
+
+            <Stack.Screen name="Dropdown" component={DropdownPage} />
 
             <Stack.Screen name="Input" component={InputComponent} />
 
