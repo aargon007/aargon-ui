@@ -1,63 +1,29 @@
-import React, { useState, useRef, forwardRef, useImperativeHandle } from 'react'
+import React, { useState, useRef, useImperativeHandle, forwardRef, useEffect } from 'react'
 import {
     View,
     Text,
-    TouchableOpacity,
     TextInput,
+    TouchableOpacity,
     ScrollView,
     StyleSheet,
     Dimensions,
     Platform,
+    Modal,
 } from 'react-native'
 import Animated, {
-    useAnimatedStyle,
     useSharedValue,
+    useAnimatedStyle,
     withSpring,
     withTiming,
     interpolate,
     runOnJS,
-    interpolateColor,
+    Easing,
 } from 'react-native-reanimated'
 import { Feather } from '@expo/vector-icons'
+import { type SelectOption, getSelectStyles, getSelectColors, type SelectAnimationType, type SelectVariant, type SelectSize, type SelectColorScheme } from './utils'
 import { SelectOptionComponent } from './SelectOption'
-import {
-    getSelectColors,
-    getSelectSizes,
-    getAnimationConfig,
-    type SelectOption,
-    type SelectVariant,
-    type SelectSize,
-    type SelectColorScheme,
-    type SelectAnimationType,
-} from './utils'
 
-const { height: SCREEN_HEIGHT } = Dimensions.get('window')
-const AnimatedTouchableOpacity = Animated.createAnimatedComponent(TouchableOpacity)
-
-export interface AnimatedSelectProps {
-    options: SelectOption[]
-    value?: string | number | (string | number)[]
-    placeholder?: string
-    variant?: SelectVariant
-    size?: SelectSize
-    colorScheme?: SelectColorScheme
-    animationType?: SelectAnimationType
-    multiple?: boolean
-    searchable?: boolean
-    disabled?: boolean
-    required?: boolean
-    loading?: boolean
-    clearable?: boolean
-    maxHeight?: number
-    onSelectionChange?: (value: string | number | (string | number)[]) => void
-    onOpen?: () => void
-    onClose?: () => void
-    onSearch?: (query: string) => void
-    renderOption?: (option: SelectOption, isSelected: boolean) => React.ReactNode
-    style?: any
-    dropdownStyle?: any
-    testID?: string
-}
+const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window')
 
 export interface SelectRef {
     open: () => void
@@ -67,515 +33,612 @@ export interface SelectRef {
     blur: () => void
 }
 
-export const AnimatedSelect = forwardRef<SelectRef, AnimatedSelectProps>(
-    (
-        {
-            options = [],
-            value,
-            placeholder = 'Select an option...',
-            variant = 'default',
-            size = 'md',
-            colorScheme = 'primary',
-            animationType = 'fade',
-            multiple = false,
-            searchable = false,
-            disabled = false,
-            required = false,
-            loading = false,
-            clearable = false,
-            maxHeight,
-            onSelectionChange,
-            onOpen,
-            onClose,
-            onSearch,
-            renderOption,
-            style,
-            dropdownStyle,
-            testID,
-        },
-        ref
-    ) => {
-        const [isOpen, setIsOpen] = useState(false)
-        const [searchQuery, setSearchQuery] = useState('')
-        const [dropdownLayout, setDropdownLayout] = useState({ width: 0, height: 0 })
+export interface AnimatedSelectProps {
+    options: SelectOption[]
+    value?: string | number | (string | number)[]
+    placeholder?: string
+    multiple?: boolean
+    searchable?: boolean
+    clearable?: boolean
+    disabled?: boolean
+    loading?: boolean
+    required?: boolean
+    animationType?: SelectAnimationType
+    variant?: SelectVariant
+    size?: SelectSize
+    colorScheme?: SelectColorScheme
+    maxHeight?: number
+    renderOption?: (option: SelectOption, isSelected: boolean) => React.ReactNode
+    onSelectionChange?: (value: string | number | (string | number)[]) => void
+    onOpen?: () => void
+    onClose?: () => void
+    onSearch?: (query: string) => void
+    style?: any
+    dropdownStyle?: any
+    testID?: string
+}
 
-        const containerRef = useRef<View>(null)
-        const searchInputRef = useRef<TextInput>(null)
+export const AnimatedSelect = forwardRef<SelectRef, AnimatedSelectProps>(({
+    options = [],
+    value,
+    placeholder = 'Select an option...',
+    multiple = false,
+    searchable = false,
+    clearable = false,
+    disabled = false,
+    loading = false,
+    required = false,
+    animationType = 'fade',
+    variant = 'default',
+    size = 'md',
+    colorScheme = 'primary',
+    maxHeight = 300,
+    renderOption,
+    onSelectionChange,
+    onOpen,
+    onClose,
+    onSearch,
+    style,
+    dropdownStyle,
+    testID,
+}, ref) => {
+    // State
+    const [isOpen, setIsOpen] = useState(false)
+    const [searchQuery, setSearchQuery] = useState('')
+    const [triggerLayout, setTriggerLayout] = useState({ x: 0, y: 0, width: 0, height: 0 })
 
-        // Animation values
-        const dropdownAnimation = useSharedValue(0)
-        const focusAnimation = useSharedValue(0)
-        const rotationAnimation = useSharedValue(0)
+    // Refs
+    const triggerRef = useRef<View>(null)
+    const searchInputRef = useRef<TextInput>(null)
 
-        // Get theme values
-        const colors = getSelectColors(variant, colorScheme)
-        const sizes = getSelectSizes(size)
-        const animationConfig = getAnimationConfig(animationType)
+    // Animation values
+    const dropdownAnimation = useSharedValue(0)
+    const backdropAnimation = useSharedValue(0)
 
-        // Get selected options
-        const selectedOptions = React.useMemo(() => {
-            if (!value) return []
-            const values = Array.isArray(value) ? value : [value]
-            return options.filter(option => values.includes(option.value))
-        }, [value, options])
+    // Get styles and colors
+    const selectStyles = getSelectStyles(size)
+    const selectColors = getSelectColors(colorScheme, variant)
 
-        // Filter options based on search
-        const filteredOptions = React.useMemo(() => {
-            if (!searchQuery) return options
-            return options.filter(option =>
-                option.label.toLowerCase().includes(searchQuery.toLowerCase())
-            )
-        }, [options, searchQuery])
+    // Filter options based on search
+    const filteredOptions = searchable && searchQuery
+        ? options.filter(option =>
+            option.label.toLowerCase().includes(searchQuery.toLowerCase())
+        )
+        : options
 
-        // Imperative methods
-        useImperativeHandle(ref, () => ({
-            open: () => handleOpen(),
-            close: () => handleClose(),
-            clear: () => handleClear(),
-            focus: () => handleOpen(),
-            blur: () => handleClose(),
-        }))
+    // Get selected options
+    const selectedOptions = multiple
+        ? options.filter(option =>
+            Array.isArray(value) ? value.includes(option.value) : false
+        )
+        : options.find(option => option.value === value)
 
-        const handleOpen = () => {
-            if (disabled || loading) return
-
-            setIsOpen(true)
-            dropdownAnimation.value = withSpring(1, animationConfig.spring)
-            focusAnimation.value = withSpring(1, animationConfig.spring)
-            rotationAnimation.value = withSpring(1, animationConfig.spring)
-
-            if (searchable) {
-                setTimeout(() => searchInputRef.current?.focus(), 100)
+    // Get display text
+    const getDisplayText = () => {
+        if (multiple && Array.isArray(value) && value.length > 0) {
+            if (value.length === 1) {
+                const option = options.find(opt => opt.value === value[0])
+                return option?.label || ''
             }
-
-            onOpen?.()
+            return `${value.length} items selected`
         }
 
-        const handleClose = () => {
-            dropdownAnimation.value = withSpring(0, animationConfig.spring, () => {
-                runOnJS(setIsOpen)(false)
-                runOnJS(setSearchQuery)('')
-            })
-            focusAnimation.value = withSpring(0, animationConfig.spring)
-            rotationAnimation.value = withSpring(0, animationConfig.spring)
+        if (!multiple && value) {
+            const option = options.find(opt => opt.value === value)
+            return option?.label || ''
+        }
 
+        return ''
+    }
+
+    // Animation configurations
+    const getAnimationConfig = () => {
+        const configs = {
+            fade: {
+                duration: 200,
+                easing: Easing.out(Easing.cubic),
+            },
+            scale: {
+                duration: 250,
+                damping: 20,
+                stiffness: 300,
+            },
+            slide: {
+                duration: 300,
+                damping: 25,
+                stiffness: 400,
+            },
+            bounce: {
+                duration: 400,
+                damping: 15,
+                stiffness: 200,
+            },
+            flip: {
+                duration: 350,
+                damping: 20,
+                stiffness: 300,
+            },
+            none: {
+                duration: 0,
+            },
+        }
+        return configs[animationType] || configs.fade
+    }
+
+    // Open dropdown
+    const openDropdown = () => {
+        if (disabled || loading) return
+
+        // Measure trigger position
+        triggerRef.current?.measureInWindow((x, y, width, height) => {
+            setTriggerLayout({ x, y, width, height })
+        })
+
+        setIsOpen(true)
+        onOpen?.()
+
+        const config = getAnimationConfig()
+
+        if (animationType === 'none') {
+            dropdownAnimation.value = 1
+            backdropAnimation.value = 1
+        } else if (['scale', 'slide', 'bounce', 'flip'].includes(animationType)) {
+            if ('damping' in config) {
+                dropdownAnimation.value = withSpring(1, {
+                    damping: config.damping,
+                    stiffness: config.stiffness,
+                    mass: 1,
+                })
+            }
+            backdropAnimation.value = withTiming(1, { duration: config.duration })
+        } else {
+            if ('easing' in config) {
+                dropdownAnimation.value = withTiming(1, {
+                    duration: config.duration,
+                    easing: config.easing,
+                })
+            } else {
+                dropdownAnimation.value = withTiming(1, {
+                    duration: config.duration,
+                })
+            }
+            backdropAnimation.value = withTiming(1, { duration: config.duration })
+        }
+
+        // Focus search input if searchable
+        if (searchable) {
+            setTimeout(() => {
+                searchInputRef.current?.focus()
+            }, 100)
+        }
+    }
+
+    // Close dropdown
+    const closeDropdown = () => {
+        const config = getAnimationConfig()
+
+        const closeAnimation = () => {
+            setIsOpen(false)
+            setSearchQuery('')
             onClose?.()
         }
 
-        const handleToggle = () => {
-            if (isOpen) {
-                handleClose()
-            } else {
-                handleOpen()
+        if (animationType === 'none') {
+            dropdownAnimation.value = 0
+            backdropAnimation.value = 0
+            runOnJS(closeAnimation)()
+        } else if (['scale', 'slide', 'bounce', 'flip'].includes(animationType)) {
+            if ('damping' in config) {
+                dropdownAnimation.value = withSpring(0, {
+                    damping: config.damping,
+                    stiffness: config.stiffness,
+                    mass: 1,
+                }, () => {
+                    runOnJS(closeAnimation)()
+                })
             }
+            backdropAnimation.value = withTiming(0, { duration: config.duration })
+        } else {
+            if ('easing' in config) {
+                dropdownAnimation.value = withTiming(0, {
+                    duration: config.duration,
+                    easing: config.easing,
+                }, () => {
+                    runOnJS(closeAnimation)()
+                })
+            }
+            backdropAnimation.value = withTiming(0, { duration: config.duration })
+        }
+    }
+
+    // Handle option selection
+    const handleOptionSelect = (option: SelectOption) => {
+        if (option.disabled) return
+
+        let newValue: string | number | (string | number)[]
+
+        if (multiple) {
+            const currentValues = Array.isArray(value) ? value : []
+            if (currentValues.includes(option.value)) {
+                newValue = currentValues.filter(v => v !== option.value)
+            } else {
+                newValue = [...currentValues, option.value]
+            }
+        } else {
+            newValue = option.value
+            closeDropdown()
         }
 
-        const handleOptionSelect = (option: SelectOption) => {
-            if (multiple) {
-                const currentValues = Array.isArray(value) ? value : []
-                const isSelected = currentValues.includes(option.value)
+        onSelectionChange?.(newValue)
+    }
 
-                let newValues: (string | number)[]
-                if (isSelected) {
-                    newValues = currentValues.filter(v => v !== option.value)
-                } else {
-                    newValues = [...currentValues, option.value]
+    // Clear selection
+    const clearSelection = () => {
+        const newValue = multiple ? [] : ''
+        onSelectionChange?.(newValue)
+    }
+
+    // Handle search
+    const handleSearch = (query: string) => {
+        setSearchQuery(query)
+        onSearch?.(query)
+    }
+
+    // Imperative methods
+    useImperativeHandle(ref, () => ({
+        open: openDropdown,
+        close: closeDropdown,
+        clear: clearSelection,
+        focus: openDropdown,
+        blur: closeDropdown,
+    }))
+
+    // Animated styles
+    const backdropAnimatedStyle = useAnimatedStyle(() => ({
+        opacity: backdropAnimation.value,
+    }))
+
+    const dropdownAnimatedStyle = useAnimatedStyle(() => {
+        const progress = dropdownAnimation.value
+
+        switch (animationType) {
+            case 'scale':
+                return {
+                    opacity: progress,
+                    transform: [
+                        { scale: interpolate(progress, [0, 1], [0.8, 1]) },
+                    ],
                 }
-
-                onSelectionChange?.(newValues)
-            } else {
-                onSelectionChange?.(option.value)
-                handleClose()
-            }
+            case 'slide':
+                return {
+                    opacity: progress,
+                    transform: [
+                        { translateY: interpolate(progress, [0, 1], [-20, 0]) },
+                    ],
+                }
+            case 'bounce':
+                return {
+                    opacity: progress,
+                    transform: [
+                        { scale: interpolate(progress, [0, 1], [0.3, 1]) },
+                    ],
+                }
+            case 'flip':
+                return {
+                    opacity: progress,
+                    transform: [
+                        { rotateX: `${interpolate(progress, [0, 1], [90, 0])}deg` },
+                    ],
+                }
+            case 'fade':
+            default:
+                return {
+                    opacity: progress,
+                }
         }
+    })
 
-        const handleClear = () => {
-            onSelectionChange?.(multiple ? [] : '')
+    // Calculate dropdown position
+    const getDropdownPosition = () => {
+        const spaceBelow = SCREEN_HEIGHT - triggerLayout.y - triggerLayout.height
+        const spaceAbove = triggerLayout.y
+        const dropdownHeight = Math.min(maxHeight, filteredOptions.length * 50 + 60)
+
+        const shouldShowAbove = spaceBelow < dropdownHeight && spaceAbove > dropdownHeight
+
+        return {
+            top: shouldShowAbove
+                ? triggerLayout.y - dropdownHeight - 8
+                : triggerLayout.y + triggerLayout.height + 8,
+            left: Math.max(16, Math.min(triggerLayout.x, SCREEN_WIDTH - triggerLayout.width - 16)),
+            width: triggerLayout.width,
+            maxHeight: shouldShowAbove ? spaceAbove - 16 : spaceBelow - 16,
         }
+    }
 
-        const handleSearch = (query: string) => {
-            setSearchQuery(query)
-            onSearch?.(query)
-        }
+    const dropdownPosition = getDropdownPosition()
 
-        // Animated styles
-        const containerAnimatedStyle = useAnimatedStyle(() => {
-            const borderColor = interpolateColor(
-                focusAnimation.value,
-                [0, 1],
-                [colors.border, colors.borderFocus]
-            )
-
-            return {
-                borderColor,
-                backgroundColor: colors.background,
-            }
-        })
-
-        const dropdownAnimatedStyle = useAnimatedStyle(() => {
-            let transform: any[] = []
-            let opacity = dropdownAnimation.value
-
-            switch (animationType) {
-                case 'scale':
-                    const scale = interpolate(dropdownAnimation.value, [0, 1], [0.8, 1])
-                    transform = [{ scale }]
-                    break
-                case 'slide':
-                    const translateY = interpolate(dropdownAnimation.value, [0, 1], [-20, 0])
-                    transform = [{ translateY }]
-                    break
-                case 'bounce':
-                    const bounceScale = interpolate(dropdownAnimation.value, [0, 1], [0.3, 1])
-                    transform = [{ scale: bounceScale }]
-                    break
-                case 'flip':
-                    const rotateX = interpolate(dropdownAnimation.value, [0, 1], [-90, 0])
-                    transform = [{ rotateX: `${rotateX}deg` }]
-                    break
-                case 'none':
-                    opacity = dropdownAnimation.value > 0.5 ? 1 : 0
-                    break
-            }
-
-            return {
-                opacity,
-                transform,
-                backgroundColor: colors.dropdown,
-                borderColor: colors.dropdownBorder,
-            }
-        })
-
-        const iconAnimatedStyle = useAnimatedStyle(() => {
-            const rotation = interpolate(rotationAnimation.value, [0, 1], [0, 180])
-            return {
-                transform: [{ rotate: `${rotation}deg` }],
-            }
-        })
-
-        const backdropAnimatedStyle = useAnimatedStyle(() => {
-            return {
-                opacity: dropdownAnimation.value * 0.5,
-            }
-        })
-
-        // Render selected text
-        const renderSelectedText = () => {
-            if (selectedOptions.length === 0) {
-                return (
-                    <Text
-                        style={[
-                            styles.placeholderText,
-                            { fontSize: sizes.text.fontSize, color: colors.placeholder },
-                        ]}
-                    >
-                        {placeholder}
-                        {required && <Text style={styles.required}> *</Text>}
-                    </Text>
-                )
-            }
-
-            if (multiple && selectedOptions.length > 1) {
-                return (
-                    <Text
-                        style={[
-                            styles.selectedText,
-                            { fontSize: sizes.text.fontSize, color: colors.text },
-                        ]}
-                    >
-                        {selectedOptions.length} items selected
-                    </Text>
-                )
-            }
-
-            return (
-                <Text
+    return (
+        <>
+            {/* Trigger */}
+            <View ref={triggerRef} style={style}>
+                <TouchableOpacity
                     style={[
-                        styles.selectedText,
-                        { fontSize: sizes.text.fontSize, color: colors.text },
-                    ]}
-                >
-                    {selectedOptions[0]?.label}
-                </Text>
-            )
-        }
-
-        return (
-            <View style={[styles.container, style]} testID={testID}>
-                {/* Main Select Button */}
-                <AnimatedTouchableOpacity
-                    ref={containerRef}
-                    style={[
-                        styles.selectButton,
+                        styles.trigger,
+                        selectStyles.container,
                         {
-                            paddingVertical: sizes.container.paddingVertical,
-                            paddingHorizontal: sizes.container.paddingHorizontal,
-                            minHeight: sizes.container.minHeight,
-                            borderRadius: sizes.container.borderRadius,
-                            borderWidth: 1,
-                            opacity: disabled ? 0.5 : 1,
+                            backgroundColor: selectColors.background,
+                            borderColor: selectColors.border,
+                            borderWidth: selectColors.borderWidth,
                         },
-                        containerAnimatedStyle,
+                        disabled && styles.disabled,
                     ]}
-                    onPress={handleToggle}
+                    onPress={openDropdown}
                     disabled={disabled || loading}
-                    activeOpacity={0.8}
+                    activeOpacity={0.7}
+                    testID={testID}
                 >
-                    <View style={styles.selectContent}>
-                        {renderSelectedText()}
+                    <View style={styles.triggerContent}>
+                        <Text
+                            style={[
+                                styles.triggerText,
+                                selectStyles.text,
+                                {
+                                    color: getDisplayText() ? selectColors.text : selectColors.placeholder,
+                                },
+                            ]}
+                            numberOfLines={1}
+                        >
+                            {getDisplayText() || placeholder}
+                            {required && !getDisplayText() && (
+                                <Text style={styles.required}> *</Text>
+                            )}
+                        </Text>
 
-                        <View style={styles.rightSection}>
-                            {clearable && selectedOptions.length > 0 && !loading && (
+                        <View style={styles.triggerActions}>
+                            {clearable && getDisplayText() && !disabled && !loading && (
                                 <TouchableOpacity
                                     style={styles.clearButton}
-                                    onPress={handleClear}
-                                    hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+                                    onPress={(e) => {
+                                        e.stopPropagation()
+                                        clearSelection()
+                                    }}
+                                    hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
                                 >
-                                    <Feather
-                                        name="x"
-                                        size={sizes.icon - 2}
-                                        color={colors.icon}
-                                    />
+                                    <Feather name="x" size={selectStyles.iconSize} color={selectColors.icon} />
                                 </TouchableOpacity>
                             )}
 
                             {loading ? (
-                                <Animated.View
+                                <View style={styles.loadingContainer}>
+                                    <Text style={[styles.loadingText, { color: selectColors.icon }]}>...</Text>
+                                </View>
+                            ) : (
+                                <Feather
+                                    name="chevron-down"
+                                    size={selectStyles.iconSize}
+                                    color={selectColors.icon}
                                     style={[
-                                        styles.loadingSpinner,
-                                        {
-                                            width: sizes.icon,
-                                            height: sizes.icon,
-                                            borderColor: colors.icon,
-                                        },
+                                        styles.chevron,
+                                        isOpen && styles.chevronOpen,
                                     ]}
                                 />
-                            ) : (
-                                <Animated.View style={iconAnimatedStyle}>
-                                    <Feather
-                                        name="chevron-down"
-                                        size={sizes.icon}
-                                        color={colors.icon}
-                                    />
-                                </Animated.View>
                             )}
                         </View>
                     </View>
-                </AnimatedTouchableOpacity>
+                </TouchableOpacity>
+            </View>
+
+            {/* Dropdown Modal */}
+            <Modal
+                visible={isOpen}
+                transparent
+                animationType="none"
+                onRequestClose={closeDropdown}
+                statusBarTranslucent
+            >
+                {/* Backdrop */}
+                <Animated.View style={[styles.backdrop, backdropAnimatedStyle]}>
+                    <TouchableOpacity
+                        style={styles.backdropTouchable}
+                        onPress={closeDropdown}
+                        activeOpacity={1}
+                    />
+                </Animated.View>
 
                 {/* Dropdown */}
-                {isOpen && (
-                    <>
-                        {/* Backdrop */}
-                        <Animated.View
-                            style={[styles.backdrop, backdropAnimatedStyle]}
-                            pointerEvents="auto"
-                        >
-                            <TouchableOpacity
-                                style={StyleSheet.absoluteFillObject}
-                                onPress={handleClose}
-                                activeOpacity={1}
+                <Animated.View
+                    style={[
+                        styles.dropdown,
+                        selectStyles.dropdown,
+                        {
+                            backgroundColor: selectColors.dropdownBackground,
+                            borderColor: selectColors.dropdownBorder,
+                            ...dropdownPosition,
+                        },
+                        dropdownStyle,
+                        dropdownAnimatedStyle,
+                    ]}
+                >
+                    {/* Search Input */}
+                    {searchable && (
+                        <View style={styles.searchContainer}>
+                            <Feather name="search" size={16} color={selectColors.icon} style={styles.searchIcon} />
+                            <TextInput
+                                ref={searchInputRef}
+                                style={[
+                                    styles.searchInput,
+                                    { color: selectColors.text },
+                                ]}
+                                placeholder="Search options..."
+                                placeholderTextColor={selectColors.placeholder}
+                                value={searchQuery}
+                                onChangeText={handleSearch}
+                                autoCapitalize="none"
+                                autoCorrect={false}
                             />
-                        </Animated.View>
-
-                        {/* Dropdown Content */}
-                        <Animated.View
-                            style={[
-                                styles.dropdown,
-                                {
-                                    borderRadius: sizes.dropdown.borderRadius,
-                                    maxHeight: maxHeight || sizes.dropdown.maxHeight,
-                                    borderWidth: 1,
-                                },
-                                dropdownStyle,
-                                dropdownAnimatedStyle,
-                            ]}
-                            onLayout={(event) => {
-                                setDropdownLayout({
-                                    width: event.nativeEvent.layout.width,
-                                    height: event.nativeEvent.layout.height,
-                                })
-                            }}
-                        >
-                            {/* Search Input */}
-                            {searchable && (
-                                <View style={styles.searchContainer}>
-                                    <Feather
-                                        name="search"
-                                        size={sizes.icon - 2}
-                                        color={colors.icon}
-                                        style={styles.searchIcon}
-                                    />
-                                    <TextInput
-                                        ref={searchInputRef}
-                                        style={[
-                                            styles.searchInput,
-                                            { fontSize: sizes.text.fontSize, color: colors.text },
-                                        ]}
-                                        placeholder="Search options..."
-                                        placeholderTextColor={colors.placeholder}
-                                        value={searchQuery}
-                                        onChangeText={handleSearch}
-                                        autoCapitalize="none"
-                                        autoCorrect={false}
-                                    />
-                                </View>
+                            {searchQuery.length > 0 && (
+                                <TouchableOpacity
+                                    style={styles.searchClear}
+                                    onPress={() => handleSearch('')}
+                                >
+                                    <Feather name="x" size={14} color={selectColors.icon} />
+                                </TouchableOpacity>
                             )}
+                        </View>
+                    )}
 
-                            {/* Options List */}
-                            <ScrollView
-                                style={styles.optionsList}
-                                showsVerticalScrollIndicator={false}
-                                keyboardShouldPersistTaps="handled"
-                            >
-                                {filteredOptions.length === 0 ? (
-                                    <View style={styles.emptyContainer}>
-                                        <Text
-                                            style={[
-                                                styles.emptyText,
-                                                { fontSize: sizes.text.fontSize, color: colors.placeholder },
-                                            ]}
-                                        >
-                                            {searchQuery ? 'No options found' : 'No options available'}
-                                        </Text>
-                                    </View>
-                                ) : (
-                                    filteredOptions.map((option, index) => {
-                                        const isSelected = multiple
-                                            ? Array.isArray(value) && value.includes(option.value)
-                                            : value === option.value
+                    {/* Options List */}
+                    <ScrollView
+                        style={styles.optionsList}
+                        showsVerticalScrollIndicator={false}
+                        keyboardShouldPersistTaps="handled"
+                    >
+                        {filteredOptions.length === 0 ? (
+                            <View style={styles.noOptionsContainer}>
+                                <Text style={[styles.noOptionsText, { color: selectColors.placeholder }]}>
+                                    {searchQuery ? 'No options found' : 'No options available'}
+                                </Text>
+                            </View>
+                        ) : (
+                            filteredOptions.map((option, index) => {
+                                const isSelected = multiple
+                                    ? Array.isArray(value) && value.includes(option.value)
+                                    : value === option.value
 
-                                        if (renderOption) {
-                                            return (
-                                                <TouchableOpacity
-                                                    key={`${option.value}-${index}`}
-                                                    onPress={() => handleOptionSelect(option)}
-                                                    disabled={option.disabled}
-                                                >
-                                                    {renderOption(option, isSelected)}
-                                                </TouchableOpacity>
-                                            )
-                                        }
-
-                                        return (
-                                            <SelectOptionComponent
-                                                key={`${option.value}-${index}`}
-                                                option={option}
-                                                isSelected={isSelected}
-                                                colors={colors}
-                                                sizes={sizes}
-                                                onPress={handleOptionSelect}
-                                                searchQuery={searchQuery}
-                                            />
-                                        )
-                                    })
-                                )}
-                            </ScrollView>
-                        </Animated.View>
-                    </>
-                )}
-            </View>
-        )
-    }
-)
+                                return (
+                                    <SelectOptionComponent
+                                        key={`${option.value}-${index}`}
+                                        option={option}
+                                        isSelected={isSelected}
+                                        onPress={() => handleOptionSelect(option)}
+                                        colors={selectColors}
+                                        size={size}
+                                        multiple={multiple}
+                                        renderCustom={renderOption}
+                                        searchQuery={searchQuery}
+                                    />
+                                )
+                            })
+                        )}
+                    </ScrollView>
+                </Animated.View>
+            </Modal>
+        </>
+    )
+})
 
 const styles = StyleSheet.create({
-    container: {
-        position: 'relative',
-        zIndex: 1000,
+    trigger: {
+        borderRadius: 8,
+        borderWidth: 1,
+        minHeight: 40,
+        justifyContent: 'center',
     },
-    selectButton: {
+    disabled: {
+        opacity: 0.5,
+    },
+    triggerContent: {
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
+        paddingHorizontal: 12,
+        paddingVertical: 8,
     },
-    selectContent: {
+    triggerText: {
         flex: 1,
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-    },
-    placeholderText: {
-        flex: 1,
-        opacity: 0.7,
-    },
-    selectedText: {
-        flex: 1,
-        fontWeight: '500',
+        fontSize: 16,
+        fontWeight: '400',
     },
     required: {
         color: '#EF4444',
     },
-    rightSection: {
+    triggerActions: {
         flexDirection: 'row',
         alignItems: 'center',
+        gap: 8,
     },
     clearButton: {
-        marginRight: 8,
         padding: 2,
     },
-    loadingSpinner: {
-        borderWidth: 2,
-        borderRadius: 50,
-        borderTopColor: 'transparent',
+    loadingContainer: {
+        width: 20,
+        height: 20,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    loadingText: {
+        fontSize: 16,
+        fontWeight: 'bold',
+    },
+    chevron: {
+        // transition: 'transform 0.2s ease',
+    },
+    chevronOpen: {
+        transform: [{ rotate: '180deg' }],
     },
     backdrop: {
         position: 'absolute',
         top: 0,
-        left: -1000,
-        right: -1000,
-        bottom: -SCREEN_HEIGHT,
-        // backgroundColor: '#000000',
+        left: 0,
+        right: 0,
+        bottom: 0,
+        backgroundColor: 'rgba(0, 0, 0, 0.3)',
         zIndex: 999,
+    },
+    backdropTouchable: {
+        flex: 1,
     },
     dropdown: {
         position: 'absolute',
-        top: '100%',
-        left: 0,
-        right: 0,
-        marginTop: 4,
+        borderRadius: 12,
+        borderWidth: 1,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 8 },
+        shadowOpacity: 0.15,
+        shadowRadius: 20,
+        elevation: 8,
         zIndex: 1000,
-        ...Platform.select({
-            ios: {
-                shadowColor: '#000',
-                shadowOffset: { width: 0, height: 4 },
-                shadowOpacity: 0.15,
-                shadowRadius: 12,
-            },
-            android: {
-                elevation: 8,
-            },
-            web: {
-                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
-            },
-        }),
+        overflow: 'hidden',
     },
     searchContainer: {
         flexDirection: 'row',
         alignItems: 'center',
-        paddingHorizontal: 16,
-        paddingVertical: 12,
+        paddingHorizontal: 12,
+        paddingVertical: 8,
         borderBottomWidth: 1,
-        borderBottomColor: '#E2E8F0',
+        borderBottomColor: '#E5E7EB',
     },
     searchIcon: {
         marginRight: 8,
     },
     searchInput: {
         flex: 1,
-        paddingVertical: 0,
+        fontSize: 16,
+        paddingVertical: 4,
+        paddingHorizontal: 0,
+        ...Platform.select({
+            web: {
+                // outline: 'none',
+                outlineWidth: 0,
+                outlineColor: 'transparent',
+                // outlineStyle: 'none',
+            },
+        }),
+    },
+    searchClear: {
+        padding: 4,
+        marginLeft: 8,
     },
     optionsList: {
-        maxHeight: 200,
+        maxHeight: 300,
     },
-    emptyContainer: {
-        padding: 20,
+    noOptionsContainer: {
+        padding: 16,
         alignItems: 'center',
     },
-    emptyText: {
-        textAlign: 'center',
+    noOptionsText: {
+        fontSize: 14,
         fontStyle: 'italic',
     },
 })
-
-AnimatedSelect.displayName = 'AnimatedSelect'

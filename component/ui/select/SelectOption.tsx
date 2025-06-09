@@ -1,169 +1,155 @@
 import React from 'react'
-import { TouchableOpacity, Text, View, StyleSheet } from 'react-native'
-import Animated, {
-    useAnimatedStyle,
-    useSharedValue,
-    withSpring,
-    interpolateColor,
-} from 'react-native-reanimated'
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native'
 import { Feather } from '@expo/vector-icons'
-import type { SelectOption, SelectColors, SelectSizes } from './utils'
+import { type SelectOption,type SelectSize, highlightText } from './utils'
 
-const AnimatedTouchableOpacity = Animated.createAnimatedComponent(TouchableOpacity)
-
-interface SelectOptionProps {
+interface SelectOptionComponentProps {
     option: SelectOption
     isSelected: boolean
-    colors: SelectColors
-    sizes: SelectSizes
     onPress: (option: SelectOption) => void
+    colors: any
+    size: SelectSize
+    multiple?: boolean
+    renderCustom?: (option: SelectOption, isSelected: boolean) => React.ReactNode
     searchQuery?: string
 }
 
-export const SelectOptionComponent: React.FC<SelectOptionProps> = ({
+export const SelectOptionComponent = ({
     option,
     isSelected,
-    colors,
-    sizes,
     onPress,
-    searchQuery,
-}) => {
-    const pressAnimation = useSharedValue(0)
-    const selectionAnimation = useSharedValue(isSelected ? 1 : 0)
-
-    React.useEffect(() => {
-        selectionAnimation.value = withSpring(isSelected ? 1 : 0, {
-            damping: 20,
-            stiffness: 300,
-        })
-    }, [isSelected])
-
-    const handlePressIn = () => {
-        pressAnimation.value = withSpring(1, { damping: 15, stiffness: 300 })
-    }
-
-    const handlePressOut = () => {
-        pressAnimation.value = withSpring(0, { damping: 15, stiffness: 300 })
-    }
-
-    const handlePress = () => {
-        if (!option.disabled) {
-            onPress(option)
-        }
-    }
-
-    const animatedStyle = useAnimatedStyle(() => {
-        const backgroundColor = interpolateColor(
-            selectionAnimation.value,
-            [0, 1],
-            [colors.optionBackground, colors.selectedBackground]
-        )
-
-        const scale = 1 - pressAnimation.value * 0.02
-
-        return {
-            backgroundColor,
-            transform: [{ scale }],
-        }
-    })
-
-    const textAnimatedStyle = useAnimatedStyle(() => {
-        const color = interpolateColor(
-            selectionAnimation.value,
-            [0, 1],
-            [colors.optionText, colors.selectedText]
-        )
-
-        return { color }
-    })
-
-    const highlightText = (text: string, query?: string) => {
-        if (!query) return text
-
-        const parts = text.split(new RegExp(`(${query})`, 'gi'))
-        return parts.map((part, index) => (
-            <Text
-                key={index}
+    colors,
+    size = 'md',
+    multiple = false,
+    renderCustom,
+    searchQuery = '',
+}: SelectOptionComponentProps) => {
+    // If custom render function is provided
+    if (renderCustom) {
+        return (
+            <TouchableOpacity
+                onPress={() => onPress(option)}
+                disabled={option.disabled}
                 style={[
-                    part.toLowerCase() === query.toLowerCase() && styles.highlight,
+                    styles.option,
+                    option.disabled && styles.disabled,
                 ]}
             >
-                {part}
+                {renderCustom(option, isSelected)}
+            </TouchableOpacity>
+        )
+    }
+
+    // Get sizes based on the size prop
+    const getSizes = () => {
+        switch (size) {
+            case 'sm':
+                return { fontSize: 14, iconSize: 14, padding: 8 }
+            case 'lg':
+                return { fontSize: 18, iconSize: 18, padding: 14 }
+            case 'xl':
+                return { fontSize: 20, iconSize: 20, padding: 16 }
+            case 'md':
+            default:
+                return { fontSize: 16, iconSize: 16, padding: 12 }
+        }
+    }
+
+    const sizes = getSizes()
+
+    // Highlight text if search query exists
+    const renderLabel = () => {
+        if (!searchQuery) {
+            return (
+                <Text
+                    style={[
+                        styles.optionLabel,
+                        { fontSize: sizes.fontSize, color: colors.optionText },
+                        isSelected && { color: colors.optionSelectedText, fontWeight: '500' },
+                        option.disabled && styles.disabledText,
+                    ]}
+                    numberOfLines={1}
+                >
+                    {option.label}
+                </Text>
+            )
+        }
+
+        const parts = highlightText(option.label, searchQuery)
+
+        return (
+            <Text
+                style={[
+                    styles.optionLabel,
+                    { fontSize: sizes.fontSize, color: colors.optionText },
+                    isSelected && { color: colors.optionSelectedText, fontWeight: '500' },
+                    option.disabled && styles.disabledText,
+                ]}
+                numberOfLines={1}
+            >
+                {Array.isArray(parts) ? parts.map((part, index) => {
+                    const isMatch = part.toLowerCase() === searchQuery.toLowerCase()
+                    return (
+                        <Text
+                            key={index}
+                            style={isMatch ? styles.highlight : undefined}
+                        >
+                            {part}
+                        </Text>
+                    )
+                }) : parts}
             </Text>
-        ))
+        )
     }
 
     return (
-        <AnimatedTouchableOpacity
+        <TouchableOpacity
             style={[
                 styles.option,
-                {
-                    paddingVertical: sizes.option.paddingVertical,
-                    paddingHorizontal: sizes.option.paddingHorizontal,
-                    minHeight: sizes.option.minHeight,
-                    opacity: option.disabled ? 0.5 : 1,
-                },
-                animatedStyle,
+                { paddingVertical: sizes.padding, paddingHorizontal: sizes.padding + 4 },
+                isSelected && { backgroundColor: colors.optionSelected },
+                option.disabled && styles.disabled,
             ]}
-            onPressIn={handlePressIn}
-            onPressOut={handlePressOut}
-            onPress={handlePress}
+            onPress={() => onPress(option)}
             disabled={option.disabled}
-            activeOpacity={0.8}
+            activeOpacity={0.7}
         >
             <View style={styles.optionContent}>
                 {option.icon && (
                     <Feather
-                        name={option.icon as any}
-                        size={sizes.icon}
-                        color={isSelected ? colors.selectedText : colors.optionText}
+                        name={option?.icon as any}
+                        size={sizes.iconSize}
+                        color={isSelected ? colors.optionSelectedText : colors.optionText}
                         style={styles.optionIcon}
                     />
                 )}
 
                 <View style={styles.optionTextContainer}>
-                    <Animated.Text
-                        style={[
-                            styles.optionText,
-                            { fontSize: sizes.text.fontSize },
-                            textAnimatedStyle,
-                        ]}
-                    >
-                        {highlightText(option.label, searchQuery)}
-                    </Animated.Text>
+                    {renderLabel()}
 
                     {option.description && (
-                        <Animated.Text
+                        <Text
                             style={[
                                 styles.optionDescription,
-                                { fontSize: sizes.text.fontSize - 2 },
-                                textAnimatedStyle,
+                                { fontSize: sizes.fontSize - 2, color: colors.placeholder },
+                                option.disabled && styles.disabledText,
                             ]}
+                            numberOfLines={1}
                         >
                             {option.description}
-                        </Animated.Text>
+                        </Text>
                     )}
                 </View>
-
-                {isSelected && (
-                    <Animated.View
-                        style={[
-                            styles.checkIcon,
-                            {
-                                opacity: selectionAnimation.value,
-                                transform: [{ scale: selectionAnimation.value }],
-                            },
-                        ]}
-                    >
-                        <Feather
-                            name="check"
-                            size={sizes.icon}
-                            color={colors.selectedText}
-                        />
-                    </Animated.View>
-                )}
             </View>
-        </AnimatedTouchableOpacity>
+
+            {isSelected && (
+                <Feather
+                    name={multiple ? 'check-square' : 'check'}
+                    size={sizes.iconSize}
+                    color={colors.optionSelectedText}
+                />
+            )}
+        </TouchableOpacity>
     )
 }
 
@@ -171,6 +157,13 @@ const styles = StyleSheet.create({
     option: {
         flexDirection: 'row',
         alignItems: 'center',
+        justifyContent: 'space-between',
+    },
+    disabled: {
+        opacity: 0.5,
+    },
+    disabledText: {
+        opacity: 0.6,
     },
     optionContent: {
         flex: 1,
@@ -178,23 +171,19 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     optionIcon: {
-        marginRight: 12,
+        marginRight: 8,
     },
     optionTextContainer: {
         flex: 1,
     },
-    optionText: {
-        fontWeight: '500',
+    optionLabel: {
+        fontWeight: '400',
     },
     optionDescription: {
-        opacity: 0.7,
         marginTop: 2,
     },
-    checkIcon: {
-        marginLeft: 12,
-    },
     highlight: {
-        backgroundColor: '#FEF3C7',
-        fontWeight: '600',
+        backgroundColor: 'rgba(99, 102, 241, 0.1)',
+        fontWeight: '500',
     },
 })
