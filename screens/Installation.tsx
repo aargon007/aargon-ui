@@ -1,19 +1,18 @@
 import React from 'react';
 import { ScrollView, StyleSheet, Text, View, Pressable } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Feather } from '@expo/vector-icons';
 import { MotiView } from 'moti';
 
 import Prerequisites from '@/component/installation/Prerequisites';
 import Troubleshooting from '@/component/installation/Troubleshooting';
 import Libraries from '@/component/installation/Libraries';
+import ComponentPage from '@/component/common/ComponentPage';
 
 const Installation = () => {
-    const inset = useSafeAreaInsets();
     const [installMethod, setInstallMethod] = React.useState('npm');
 
     return (
-        <ScrollView style={[styles.contentScroll, { paddingTop: inset.top }]} contentContainerStyle={styles.contentContainer}>
+        <ComponentPage>
             <MotiView
                 from={{ translateY: 20, opacity: 0 }}
                 animate={{ translateY: 0, opacity: 1 }}
@@ -63,7 +62,7 @@ const Installation = () => {
                     </Pressable>
                 </View>
             </MotiView>
-        </ScrollView>
+        </ComponentPage>
     );
 };
 

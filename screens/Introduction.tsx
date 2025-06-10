@@ -5,6 +5,8 @@ import ComponentPage from '@/component/common/ComponentPage';
 import { useNavigation } from '@react-navigation/native';
 import { Feather } from '@expo/vector-icons';
 import { MotiView, MotiText } from 'moti';
+import CodeExample from '@/component/common/CodeExample';
+import { introExample } from '@/constants/intro';
 
 const Introduction = () => {
     const [setupMethod, setSetupMethod] = useState('expo');
@@ -292,34 +294,11 @@ const Introduction = () => {
                 </Text>
 
                 <View style={styles.exampleContainer}>
-                    <View style={styles.codeBlock}>
-                        <Text style={styles.codeText}>
-                            {`import React from 'react';
-import { View, Text } from 'react-native';
-import { MotiView } from 'moti';
-
-export default function App() {
-  return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <MotiView
-            from={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{
-            type: "timing",
-            duration: 1000,
-            loop: true,
-            repeatReverse: true,
-            }}
-      >
-        <Text style={{ fontSize: 24 }}>
-           Hello, Animations!
-        </Text>
-      </MotiView>
-    </View>
-  );
-}`}
-                        </Text>
-                    </View>
+                    <CodeExample
+                        title='Example'
+                        code={introExample}
+                        filename=''
+                    />
 
                     <View style={styles.examplePreview}>
                         <Text style={styles.examplePreviewLabel}>
