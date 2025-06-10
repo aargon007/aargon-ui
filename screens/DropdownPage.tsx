@@ -114,11 +114,11 @@ export default function DropdownPage() {
             <View style={globalStyles.demoSection}>
                 <Text style={globalStyles.title}>
                     Animated Dropdown
-                    </Text>
-                    <Text style={globalStyles.description}>
-                        Highly customizable dropdown component with smooth animations
-                    </Text>
-                </View>
+                </Text>
+                <Text style={globalStyles.description}>
+                    Highly customizable dropdown component with smooth animations
+                </Text>
+            </View>
             <View style={globalStyles.previewContainer}>
                 {/* Basic Example */}
                 <View style={styles.section}>

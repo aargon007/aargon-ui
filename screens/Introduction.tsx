@@ -1,35 +1,38 @@
 import { useState } from 'react';
-import { ScrollView, StyleSheet, Text, View, Pressable } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { MotiView, MotiText } from 'moti';
-import { Feather } from '@expo/vector-icons';
+import { StyleSheet, Text, View, Pressable } from 'react-native';
+import type { ContentStackNavigation } from '@/navigators/ContentNavigator';
+import ComponentPage from '@/component/common/ComponentPage';
 import { useNavigation } from '@react-navigation/native';
-import type { StackNavigation } from '@/navigators/RootNavigator';
+import { Feather } from '@expo/vector-icons';
+import { MotiView, MotiText } from 'moti';
 
 const Introduction = () => {
-    const inset = useSafeAreaInsets();
     const [setupMethod, setSetupMethod] = useState('expo');
-    const { navigate } = useNavigation<StackNavigation>();
+    const { navigate } = useNavigation<ContentStackNavigation>();
 
     const onNavigateToInstallation = () => {
-        navigate('Home', { screen: 'Installation' });
+        navigate('Installation');
     };
 
     return (
-        <ScrollView style={[styles.contentScroll, { paddingTop: inset.top }]} contentContainerStyle={styles.contentContainer}>
+        <ComponentPage>
             {/* Hero Section */}
             <MotiView
                 from={{ translateY: 20, opacity: 0 }}
                 animate={{ translateY: 0, opacity: 1 }}
-                transition={{ type: 'spring', damping: 18 }}>
-                <Text style={styles.contentTitle}>Introduction</Text>
+                transition={{ type: 'spring', damping: 18 }}
+            >
+                {/* <Text style={styles.contentTitle}>
+                    Introduction
+                </Text> */}
 
                 <View style={styles.heroSection}>
                     <MotiView
                         from={{ scale: 0.9, opacity: 0 }}
                         animate={{ scale: 1, opacity: 1 }}
                         transition={{ type: 'spring', damping: 15, delay: 100 }}
-                        style={styles.heroIcon}>
+                        style={styles.heroIcon}
+                    >
                         <Feather name="box" size={32} color="#FFFFFF" />
                     </MotiView>
 
@@ -37,7 +40,8 @@ const Introduction = () => {
                         from={{ translateY: 10, opacity: 0 }}
                         animate={{ translateY: 0, opacity: 1 }}
                         transition={{ type: 'spring', damping: 18, delay: 200 }}
-                        style={styles.heroTitle}>
+                        style={styles.heroTitle}
+                    >
                         Aargon UI Library
                     </MotiText>
 
@@ -45,7 +49,8 @@ const Introduction = () => {
                         from={{ translateY: 10, opacity: 0 }}
                         animate={{ translateY: 0, opacity: 1 }}
                         transition={{ type: 'spring', damping: 18, delay: 300 }}
-                        style={styles.heroSubtitle}>
+                        style={styles.heroSubtitle}
+                    >
                         A powerful React Native animation library built on Moti, Skia and Reanimated
                     </MotiText>
                 </View>
@@ -56,8 +61,11 @@ const Introduction = () => {
                 from={{ translateY: 20, opacity: 0 }}
                 animate={{ translateY: 0, opacity: 1 }}
                 transition={{ type: 'spring', damping: 18, delay: 400 }}
-                style={styles.section}>
-                <Text style={styles.sectionTitle}>Overview</Text>
+                style={styles.section}
+            >
+                <Text style={styles.sectionTitle}>
+                    Overview
+                </Text>
                 <Text style={styles.contentText}>
                     Our UI library provides a collection of beautifully animated components that are easy to use and highly customizable.
                     Built on top of Moti and Reanimated, it offers a simple API for creating complex animations with minimal code.
@@ -75,12 +83,17 @@ const Introduction = () => {
                             from={{ scale: 0.9, opacity: 0 }}
                             animate={{ scale: 1, opacity: 1 }}
                             transition={{ type: 'spring', damping: 15, delay: 500 + index * 100 }}
-                            style={styles.featureCard}>
+                            style={styles.featureCard}
+                        >
                             <View style={styles.featureIconContainer}>
                                 <Feather name={feature.icon as any} size={20} color="#6366F1" />
                             </View>
-                            <Text style={styles.featureTitle}>{feature.title}</Text>
-                            <Text style={styles.featureDescription}>{feature.description}</Text>
+                            <Text style={styles.featureTitle}>
+                                {feature.title}
+                            </Text>
+                            <Text style={styles.featureDescription}>
+                                {feature.description}
+                            </Text>
                         </MotiView>
                     ))}
                 </View>
@@ -91,19 +104,28 @@ const Introduction = () => {
                 from={{ translateY: 20, opacity: 0 }}
                 animate={{ translateY: 0, opacity: 1 }}
                 transition={{ type: 'spring', damping: 18, delay: 900 }}
-                style={styles.section}>
-                <Text style={styles.sectionTitle}>Project Setup</Text>
-                <Text style={styles.contentText}>Get started with a new React Native project using either Expo or React Native CLI.</Text>
+                style={styles.section}
+            >
+                <Text style={styles.sectionTitle}>
+                    Project Setup
+                </Text>
+                <Text style={styles.contentText}>
+                    Get started with a new React Native project using either Expo or React Native CLI.
+                </Text>
 
                 <View style={styles.setupMethodToggle}>
                     <Pressable
                         style={[styles.methodButton, setupMethod === 'expo' && styles.methodButtonActive]}
-                        onPress={() => setSetupMethod('expo')}>
-                        <Text style={[styles.methodButtonText, setupMethod === 'expo' && styles.methodButtonTextActive]}>Expo</Text>
+                        onPress={() => setSetupMethod('expo')}
+                    >
+                        <Text style={[styles.methodButtonText, setupMethod === 'expo' && styles.methodButtonTextActive]}>
+                            Expo
+                        </Text>
                     </Pressable>
                     <Pressable
                         style={[styles.methodButton, setupMethod === 'cli' && styles.methodButtonActive]}
-                        onPress={() => setSetupMethod('cli')}>
+                        onPress={() => setSetupMethod('cli')}
+                    >
                         <Text style={[styles.methodButtonText, setupMethod === 'cli' && styles.methodButtonTextActive]}>
                             React Native CLI
                         </Text>
@@ -118,9 +140,13 @@ const Introduction = () => {
                                     <Text style={styles.stepNumber}>1</Text>
                                 </View>
                                 <View style={styles.stepContent}>
-                                    <Text style={styles.stepTitle}>Create a new Expo project</Text>
+                                    <Text style={styles.stepTitle}>
+                                        Create a new Expo project
+                                    </Text>
                                     <View style={styles.codeBlock}>
-                                        <Text style={styles.codeText}>npx create-expo-app@latest MyAnimatedApp</Text>
+                                        <Text style={styles.codeText}>
+                                            npx create-expo-app@latest MyAnimatedApp
+                                        </Text>
                                     </View>
                                 </View>
                             </View>
@@ -130,9 +156,13 @@ const Introduction = () => {
                                     <Text style={styles.stepNumber}>2</Text>
                                 </View>
                                 <View style={styles.stepContent}>
-                                    <Text style={styles.stepTitle}>Navigate to your project</Text>
+                                    <Text style={styles.stepTitle}>
+                                        Navigate to your project
+                                    </Text>
                                     <View style={styles.codeBlock}>
-                                        <Text style={styles.codeText}>cd MyAnimatedApp</Text>
+                                        <Text style={styles.codeText}>
+                                            cd MyAnimatedApp
+                                        </Text>
                                     </View>
                                 </View>
                             </View>
@@ -142,9 +172,13 @@ const Introduction = () => {
                                     <Text style={styles.stepNumber}>3</Text>
                                 </View>
                                 <View style={styles.stepContent}>
-                                    <Text style={styles.stepTitle}>Start your project</Text>
+                                    <Text style={styles.stepTitle}>
+                                        Start your project
+                                    </Text>
                                     <View style={styles.codeBlock}>
-                                        <Text style={styles.codeText}>npx expo start</Text>
+                                        <Text style={styles.codeText}>
+                                            npx expo start
+                                        </Text>
                                     </View>
                                 </View>
                             </View>
@@ -166,9 +200,13 @@ const Introduction = () => {
                                     <Text style={styles.stepNumber}>1</Text>
                                 </View>
                                 <View style={styles.stepContent}>
-                                    <Text style={styles.stepTitle}>Create a new React Native project</Text>
+                                    <Text style={styles.stepTitle}>
+                                        Create a new React Native project
+                                    </Text>
                                     <View style={styles.codeBlock}>
-                                        <Text style={styles.codeText}>npx @react-native-community/cli@latest init MyAnimatedApp</Text>
+                                        <Text style={styles.codeText}>
+                                            npx @react-native-community/cli@latest init MyAnimatedApp
+                                        </Text>
                                     </View>
                                 </View>
                             </View>
@@ -178,9 +216,13 @@ const Introduction = () => {
                                     <Text style={styles.stepNumber}>2</Text>
                                 </View>
                                 <View style={styles.stepContent}>
-                                    <Text style={styles.stepTitle}>Navigate to your project</Text>
+                                    <Text style={styles.stepTitle}>
+                                        Navigate to your project
+                                    </Text>
                                     <View style={styles.codeBlock}>
-                                        <Text style={styles.codeText}>cd MyAnimatedApp</Text>
+                                        <Text style={styles.codeText}>
+                                            cd MyAnimatedApp
+                                        </Text>
                                     </View>
                                 </View>
                             </View>
@@ -190,15 +232,25 @@ const Introduction = () => {
                                     <Text style={styles.stepNumber}>3</Text>
                                 </View>
                                 <View style={styles.stepContent}>
-                                    <Text style={styles.stepTitle}>Start your project</Text>
+                                    <Text style={styles.stepTitle}>
+                                        Start your project
+                                    </Text>
                                     <View style={styles.codeBlock}>
-                                        <Text style={styles.codeText}>npm run start or yarn start</Text>
+                                        <Text style={styles.codeText}>
+                                            npm run start or yarn start
+                                        </Text>
                                     </View>
-                                    <Text style={styles.stepDescription}>In a separate terminal:</Text>
+                                    <Text style={styles.stepDescription}>
+                                        In a separate terminal:
+                                    </Text>
                                     <View style={styles.codeBlock}>
-                                        <Text style={styles.codeText}>yarn android or npm run android</Text>
+                                        <Text style={styles.codeText}>
+                                            yarn android or npm run android
+                                        </Text>
                                         <Text style={styles.codeText}>// or</Text>
-                                        <Text style={styles.codeText}>yarn ios or npm run ios</Text>
+                                        <Text style={styles.codeText}>
+                                            yarn ios or npm run ios
+                                        </Text>
                                     </View>
                                 </View>
                             </View>
@@ -220,17 +272,24 @@ const Introduction = () => {
                 from={{ translateY: 20, opacity: 0 }}
                 animate={{ translateY: 0, opacity: 1 }}
                 transition={{ type: 'spring', damping: 18, delay: 1000 }}
-                style={styles.section}>
-                <Text style={styles.sectionTitle}>Quick Start</Text>
+                style={styles.section}
+            >
+                <Text style={styles.sectionTitle}>
+                    Quick Start
+                </Text>
                 <Text style={styles.contentText}>
                     After setting up your project, you can install our UI library and start using the components.
                 </Text>
 
                 <View style={styles.codeBlock}>
-                    <Text style={styles.codeText}>npm install moti react-native-reanimated</Text>
+                    <Text style={styles.codeText}>
+                        npm install moti react-native-reanimated
+                    </Text>
                 </View>
 
-                <Text style={styles.contentText}>Here's a simple example of using a fade-in animation component:</Text>
+                <Text style={styles.contentText}>
+                    Here's a simple example of using a fade-in animation component:
+                </Text>
 
                 <View style={styles.exampleContainer}>
                     <View style={styles.codeBlock}>
@@ -263,7 +322,9 @@ export default function App() {
                     </View>
 
                     <View style={styles.examplePreview}>
-                        <Text style={styles.examplePreviewLabel}>Preview:</Text>
+                        <Text style={styles.examplePreviewLabel}>
+                            Preview:
+                        </Text>
                         <View style={styles.examplePreviewContent}>
                             <MotiView
                                 from={{ opacity: 0 }}
@@ -273,8 +334,11 @@ export default function App() {
                                     duration: 1000,
                                     loop: true,
                                     repeatReverse: true,
-                                }}>
-                                <Text style={styles.examplePreviewText}>Hello, Animations!</Text>
+                                }}
+                            >
+                                <Text style={styles.examplePreviewText}>
+                                    Hello, Animations!
+                                </Text>
                             </MotiView>
                         </View>
                     </View>
@@ -285,9 +349,12 @@ export default function App() {
             <MotiView
                 from={{ opacity: 0, translateY: 20 }}
                 animate={{ opacity: 1, translateY: 0 }}
-                transition={{ type: 'spring', damping: 18, delay: 1100 }}>
+                transition={{ type: 'spring', damping: 18, delay: 1100 }}
+            >
                 <View style={styles.nextStepsCard}>
-                    <Text style={styles.nextStepsTitle}>Next Steps</Text>
+                    <Text style={styles.nextStepsTitle}>
+                        Next Steps
+                    </Text>
                     <Text style={styles.nextStepsText}>
                         Now that you understand the basics of our UI library, the next step is to set up the required dependencies. Head to
                         the Installation page to learn how to install React Native Reanimated, Gesture Handler, React Native Skia, and Moti
@@ -296,13 +363,16 @@ export default function App() {
                     <Pressable
                         style={styles.nextStepsButton}
                         onPress={onNavigateToInstallation}
-                        android_ripple={{ color: 'rgba(255, 255, 255, 0.2)', radius: 20 }}>
-                        <Text style={styles.nextStepsButtonText}>Go to Installation</Text>
+                        android_ripple={{ color: 'rgba(255, 255, 255, 0.2)', radius: 20 }}
+                    >
+                        <Text style={styles.nextStepsButtonText}>
+                            Go to Installation
+                        </Text>
                         <Feather name="arrow-right" size={16} color="#FFFFFF" />
                     </Pressable>
                 </View>
             </MotiView>
-        </ScrollView>
+        </ComponentPage>
     );
 };
 
