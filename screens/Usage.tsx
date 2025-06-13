@@ -492,81 +492,27 @@ export default function AnimatedList() {
                 {activeTab === 'patterns' && (
                     <MotiView from={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ type: 'timing', duration: 300 }}>
                         <View style={styles.section}>
-                            <Text style={styles.sectionTitle}>Common Animation Patterns</Text>
+                            <Text style={styles.sectionTitle}>
+                                Common Animation Patterns
+                            </Text>
                             <Text style={styles.contentText}>
                                 Here are some common animation patterns and how to implement them with our library:
                             </Text>
 
                             <View style={styles.patternCard}>
                                 <View style={styles.patternHeader}>
-                                    <Text style={styles.patternTitle}>Loading Skeleton</Text>
+                                    <Text style={styles.patternTitle}>
+                                        Pull to Refresh
+                                    </Text>
                                     <View style={styles.patternTag}>
-                                        <Text style={styles.patternTagText}>UX</Text>
+                                        <Text style={styles.patternTagText}>
+                                            Gesture
+                                        </Text>
                                     </View>
                                 </View>
                                 <Text style={styles.patternDescription}>
-                                    Create a loading skeleton effect while content is being fetched:
+                                    Create a custom pull-to-refresh animation:
                                 </Text>
-
-                                <View style={styles.demoContainer}>
-                                    <Text style={styles.demoTitle}>
-                                        Preview:
-                                    </Text>
-                                    <View style={styles.skeletonDemo}>
-                                        <View style={styles.skeletonCircle}>
-                                            <MotiView
-                                                from={{ opacity: 0.5 }}
-                                                animate={{ opacity: 1 }}
-                                                transition={{
-                                                    type: 'timing',
-                                                    duration: 1000,
-                                                    loop: true,
-                                                    repeatReverse: true,
-                                                }}
-                                                style={StyleSheet.absoluteFill}
-                                            />
-                                        </View>
-                                        <View style={styles.skeletonContent}>
-                                            <View style={styles.skeletonLine1}>
-                                                <MotiView
-                                                    from={{ opacity: 0.5 }}
-                                                    animate={{ opacity: 1 }}
-                                                    transition={{
-                                                        type: 'timing',
-                                                        duration: 1000,
-                                                        loop: true,
-                                                        repeatReverse: true,
-                                                    }}
-                                                    style={StyleSheet.absoluteFill}
-                                                />
-                                            </View>
-                                            <View style={styles.skeletonLine2}>
-                                                <MotiView
-                                                    from={{ opacity: 0.5 }}
-                                                    animate={{ opacity: 1 }}
-                                                    transition={{
-                                                        type: 'timing',
-                                                        duration: 1000,
-                                                        loop: true,
-                                                        repeatReverse: true,
-                                                        delay: 100,
-                                                    }}
-                                                    style={StyleSheet.absoluteFill}
-                                                />
-                                            </View>
-                                        </View>
-                                    </View>
-                                </View>
-                            </View>
-
-                            <View style={styles.patternCard}>
-                                <View style={styles.patternHeader}>
-                                    <Text style={styles.patternTitle}>Pull to Refresh</Text>
-                                    <View style={styles.patternTag}>
-                                        <Text style={styles.patternTagText}>Gesture</Text>
-                                    </View>
-                                </View>
-                                <Text style={styles.patternDescription}>Create a custom pull-to-refresh animation:</Text>
 
                                 <View style={styles.codeBlock}>
                                     <Text style={styles.codeText}>
@@ -895,41 +841,6 @@ const styles = StyleSheet.create({
         lineHeight: 20,
         color: '#4B5563',
         marginBottom: 16,
-    },
-    skeletonDemo: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        padding: 16,
-        backgroundColor: '#FFFFFF',
-        borderRadius: 8,
-        borderWidth: 1,
-        borderColor: '#E5E7EB',
-    },
-    skeletonCircle: {
-        width: 48,
-        height: 48,
-        borderRadius: 24,
-        backgroundColor: '#E5E7EB',
-        overflow: 'hidden',
-    },
-    skeletonContent: {
-        marginLeft: 12,
-        flex: 1,
-    },
-    skeletonLine1: {
-        height: 16,
-        width: 120,
-        backgroundColor: '#E5E7EB',
-        borderRadius: 4,
-        marginBottom: 8,
-        overflow: 'hidden',
-    },
-    skeletonLine2: {
-        height: 12,
-        width: 180,
-        backgroundColor: '#E5E7EB',
-        borderRadius: 4,
-        overflow: 'hidden',
     },
 });
 

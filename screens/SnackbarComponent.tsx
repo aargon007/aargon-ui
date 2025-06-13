@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { View, Text, ScrollView, TouchableOpacity, StyleSheet } from 'react-native'
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native'
 import { SnackbarProvider } from '@/component/ui/snackbar/SnackbarManager'
 import { useSnackbar } from '@/component/ui/snackbar/useSnackbar'
 import type { SnackbarType, SnackbarVariant, SnackbarPosition, SnackbarAnimation } from '@/component/ui/snackbar/snackbarUtils'
