@@ -146,18 +146,6 @@ export const AnimatedAccordion = ({
         })
     };
 
-    // Handle content layout
-    const onContentLayout = (event: LayoutChangeEvent) => {
-        const height = event.nativeEvent.layout.height
-        setContentHeight(height)
-
-        if (!measured) {
-            // Set initial height without animation for first render
-            animatedHeight.value = isExpanded ? height : 0
-            setMeasured(true)
-        }
-    };
-
     // Handle header layout
     const onHeaderLayout = (event: LayoutChangeEvent) => {
         const height = event.nativeEvent.layout.height
@@ -174,7 +162,7 @@ export const AnimatedAccordion = ({
                 [0, 0.5, 1],
                 'clamp'
             ),
-        }
+        };
     });
 
     const animatedIconStyle = useAnimatedStyle(() => {
@@ -199,11 +187,9 @@ export const AnimatedAccordion = ({
         }
     });
 
-    const animatedContentStyle = useAnimatedStyle(() => {
-        return {
-            opacity: contentOpacity.value,
-        }
-    });
+    const animatedContentStyle = useAnimatedStyle(() => ({
+        opacity: measured ? contentOpacity.value : 0,
+    }));
 
     const currentIcon = isExpanded ? expandedIcon : collapsedIcon;
     const iconColor = isExpanded ? mergedTheme.colors.iconActive : mergedTheme.colors.icon;
@@ -304,9 +290,30 @@ export const AnimatedAccordion = ({
                         sizeStyles.content,
                         animatedContentStyle,
                     ]}
-                    onLayout={onContentLayout}
                 >
-                    {children}
+                    {/* Actual visible content */}
+                    {measured && children}
+
+                    {/* Hidden measurement on first mount */}
+                    {!measured && (
+                        <View
+                            style={{
+                                position: 'absolute',
+                                opacity:0,
+                                left: 0,
+                                right: 0,
+                                zIndex: -1
+                            }}
+                            pointerEvents="none"
+                            onLayout={(event) => {
+                                const height = event.nativeEvent.layout.height;
+                                setContentHeight(height);
+                                setMeasured(true);
+                            }}
+                        >
+                            {children}
+                        </View>
+                    )}
                 </Animated.View>
             </Animated.View>
         </View>
