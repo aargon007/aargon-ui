@@ -2,17 +2,17 @@ import { useState } from 'react';
 import { View, Text, Pressable, StyleSheet, useWindowDimensions, TouchableOpacity, SafeAreaView, StatusBar } from 'react-native';
 import ContentNavigator from '@/navigators/ContentNavigator';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import SideBar from '@/component/common/SideBar';
 import { Feather } from '@expo/vector-icons';
 import { MotiView } from 'moti';
-import SideBar from '@/component/common/SideBar';
 
 export default function RootLayout() {
     const [activeSection, setActiveSection] = useState('introduction');
     const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
 
     const { width } = useWindowDimensions();
-    const isMobile = width < 768;
     const inset = useSafeAreaInsets();
+    const isMobile = width < 768;
 
     const handleNavItemPress = (nav: any) => {
         setActiveSection(nav?.id);
@@ -40,8 +40,13 @@ export default function RootLayout() {
                             activeOpacity={0.5}
                             style={styles.mobileHeaderButton}
                             hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
-                            onPress={() => setIsMobileNavOpen(!isMobileNavOpen)}>
-                            <Feather name={isMobileNavOpen ? 'x' : 'menu'} size={24} color="#333" />
+                            onPress={() => setIsMobileNavOpen(!isMobileNavOpen)}
+                        >
+                            <Feather
+                                name={isMobileNavOpen ? 'x' : 'menu'}
+                                size={24}
+                                color="#333"
+                            />
                         </TouchableOpacity>
                         <Text style={styles.mobileHeaderTitle}>
                             Aargon UI
@@ -69,7 +74,8 @@ export default function RootLayout() {
                                 style={styles.logo}
                                 from={{ scale: 0.8, opacity: 0 }}
                                 animate={{ scale: 1, opacity: 1 }}
-                                transition={{ type: 'spring' }}>
+                                transition={{ type: 'spring' }}
+                            >
                                 <Text style={styles.logoText}>
                                     AUI
                                 </Text>
@@ -86,7 +92,9 @@ export default function RootLayout() {
                     />
 
                     <View style={styles.sidebarFooter}>
-                        <Text style={styles.footerText}>v1.0.0</Text>
+                        <Text style={styles.footerText}>
+                            v1.0.0
+                        </Text>
                         <Pressable style={styles.themeToggle}>
                             <Feather name="moon" size={16} color="#666" />
                         </Pressable>
@@ -99,7 +107,8 @@ export default function RootLayout() {
                 style={[styles.content, isMobile && styles.mobileContent]}
                 from={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                transition={{ type: 'timing', duration: 500 }}>
+                transition={{ type: 'timing', duration: 500 }}
+            >
                 <ContentNavigator />
             </MotiView>
         </SafeAreaView>

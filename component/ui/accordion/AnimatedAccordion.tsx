@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import { StyleSheet, View, TouchableOpacity, Text, type LayoutChangeEvent, } from 'react-native'
 import Animated, { useAnimatedStyle, useSharedValue, withTiming, withSpring, interpolate, runOnJS, Easing, } from 'react-native-reanimated'
-import { Feather } from "@expo/vector-icons"
 import { getAccordionSizeStyles, getAccordionVariantStyles, type AccordionTheme, type AnimatedAccordionProps } from './utils'
+import { Feather } from "@expo/vector-icons"
 
 const defaultTheme: AccordionTheme = {
     colors: {
@@ -89,7 +89,7 @@ export const AnimatedAccordion = ({
             iconRotation.value = isExpanded ? 180 : 0
             contentOpacity.value = isExpanded ? 1 : 0
         }
-    }, [measured, animateOnMount])
+    }, [measured, animateOnMount]);
 
     // Handle toggle
     const toggleAccordion = () => {
@@ -109,7 +109,7 @@ export const AnimatedAccordion = ({
         if (onToggle) {
             runOnJS(onToggle)(newExpanded)
         }
-    }
+    };
 
     // Animation function
     const animateToState = (expanded: boolean) => {
@@ -144,7 +144,7 @@ export const AnimatedAccordion = ({
             duration: duration * 0.6,
             easing: expanded ? Easing.out(Easing.cubic) : Easing.in(Easing.cubic),
         })
-    }
+    };
 
     // Handle content layout
     const onContentLayout = (event: LayoutChangeEvent) => {
@@ -156,13 +156,13 @@ export const AnimatedAccordion = ({
             animatedHeight.value = isExpanded ? height : 0
             setMeasured(true)
         }
-    }
+    };
 
     // Handle header layout
     const onHeaderLayout = (event: LayoutChangeEvent) => {
         const height = event.nativeEvent.layout.height
         setHeaderHeight(height)
-    }
+    };
 
     // Animated styles
     const animatedBodyStyle = useAnimatedStyle(() => {
@@ -175,13 +175,13 @@ export const AnimatedAccordion = ({
                 'clamp'
             ),
         }
-    })
+    });
 
     const animatedIconStyle = useAnimatedStyle(() => {
         return {
             transform: [{ rotate: `${iconRotation.value}deg` }],
         }
-    })
+    });
 
     const animatedHeaderStyle = useAnimatedStyle(() => {
         const backgroundColor = interpolate(
@@ -197,17 +197,17 @@ export const AnimatedAccordion = ({
                 ? mergedTheme.colors.headerBackgroundActive
                 : mergedTheme.colors.headerBackground,
         }
-    })
+    });
 
     const animatedContentStyle = useAnimatedStyle(() => {
         return {
             opacity: contentOpacity.value,
         }
-    })
+    });
 
-    const currentIcon = isExpanded ? expandedIcon : collapsedIcon
-    const iconColor = isExpanded ? mergedTheme.colors.iconActive : mergedTheme.colors.icon
-    const textColor = isExpanded ? mergedTheme.colors.textActive : mergedTheme.colors.text
+    const currentIcon = isExpanded ? expandedIcon : collapsedIcon;
+    const iconColor = isExpanded ? mergedTheme.colors.iconActive : mergedTheme.colors.icon;
+    const textColor = isExpanded ? mergedTheme.colors.textActive : mergedTheme.colors.text;
 
     return (
         <View
