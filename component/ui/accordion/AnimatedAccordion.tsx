@@ -100,7 +100,7 @@ export const AnimatedAccordion = ({
         // Update internal state if not controlled
         if (controlledExpanded === undefined) {
             setInternalExpanded(newExpanded)
-        }
+        }       
 
         // Animate
         animateToState(newExpanded)
@@ -291,31 +291,34 @@ export const AnimatedAccordion = ({
                         animatedContentStyle,
                     ]}
                 >
-                    {/* Actual visible content */}
                     {measured && children}
-
-                    {/* Hidden measurement on first mount */}
-                    {!measured && (
-                        <View
-                            style={{
-                                position: 'absolute',
-                                opacity:0,
-                                left: 0,
-                                right: 0,
-                                zIndex: -1
-                            }}
-                            pointerEvents="none"
-                            onLayout={(event) => {
-                                const height = event.nativeEvent.layout.height;
-                                setContentHeight(height);
-                                setMeasured(true);
-                            }}
-                        >
-                            {children}
-                        </View>
-                    )}
                 </Animated.View>
             </Animated.View>
+
+            {/* Hidden measurement outside animation block */}
+            {!measured && (
+                <View
+                    style={{
+                        position: 'absolute',
+                        opacity: 0,
+                        left: 0,
+                        right: 0,
+                        top: 0,
+                        zIndex: -1,
+                    }}
+                    pointerEvents="none"
+                    onLayout={(event) => {
+                        const height = event.nativeEvent.layout.height;
+                        setContentHeight(height);
+                        setMeasured(true);
+                    }}
+                >
+                    <View style={[styles.content, sizeStyles.content]}>
+                        {children}
+                    </View>
+                </View>
+            )}
+
         </View>
     )
 };
