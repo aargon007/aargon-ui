@@ -508,46 +508,10 @@ export default function AnimatedList() {
                                     Create a loading skeleton effect while content is being fetched:
                                 </Text>
 
-                                <View style={styles.codeBlock}>
-                                    <Text style={styles.codeText}>
-                                        {`import React from 'react';
-import { View } from 'react-native';
-import { Skeleton } from '@your-org/motion-ui';
-
-export default function LoadingCard() {
-  return (
-    <View style={styles.card}>
-      <Skeleton
-        width={60}
-        height={60}
-        borderRadius={30}
-        colorMode="light"
-      />
-      
-      <View style={{ marginLeft: 12 }}>
-        <Skeleton
-          width={120}
-          height={20}
-          borderRadius={4}
-          colorMode="light"
-        />
-        
-        <Skeleton
-          width={200}
-          height={16}
-          borderRadius={4}
-          colorMode="light"
-          style={{ marginTop: 8 }}
-        />
-      </View>
-    </View>
-  );
-}`}
-                                    </Text>
-                                </View>
-
                                 <View style={styles.demoContainer}>
-                                    <Text style={styles.demoTitle}>Preview:</Text>
+                                    <Text style={styles.demoTitle}>
+                                        Preview:
+                                    </Text>
                                     <View style={styles.skeletonDemo}>
                                         <View style={styles.skeletonCircle}>
                                             <MotiView
@@ -642,139 +606,10 @@ export default function RefreshableList() {
                                     </Text>
                                 </View>
                             </View>
-
-                            <View style={styles.patternCard}>
-                                <View style={styles.patternHeader}>
-                                    <Text style={styles.patternTitle}>Shared Element Transitions</Text>
-                                    <View style={styles.patternTag}>
-                                        <Text style={styles.patternTagText}>Navigation</Text>
-                                    </View>
-                                </View>
-                                <Text style={styles.patternDescription}>
-                                    Create smooth transitions between screens with shared elements:
-                                </Text>
-
-                                <View style={styles.codeBlock}>
-                                    <Text style={styles.codeText}>
-                                        {`import React from 'react';
-import { View, Image, Text, Pressable } from 'react-native';
-import { SharedElement, createSharedElementStackNavigator } from '@your-org/motion-ui';
-
-// List Screen
-function ListScreen({ navigation }) {
-  return (
-    <Pressable
-      onPress={() => navigation.navigate('Detail', { id: 'item-1' })}
-    >
-      <SharedElement id="item.1.image">
-        <Image source={require('./image.jpg')} style={styles.thumbnail} />
-      </SharedElement>
-      
-      <SharedElement id="item.1.title">
-        <Text style={styles.title}>Item Title</Text>
-      </SharedElement>
-    </Pressable>
-  );
-}
-
-// Detail Screen
-function DetailScreen({ route }) {
-  const { id } = route.params;
-  
-  return (
-    <View style={styles.detailContainer}>
-      <SharedElement id="item.1.image">
-        <Image source={require('./image.jpg')} style={styles.heroImage} />
-      </SharedElement>
-      
-      <SharedElement id="item.1.title">
-        <Text style={styles.heroTitle}>Item Title</Text>
-      </SharedElement>
-      
-      <Text style={styles.description}>
-        Detailed description goes here...
-      </Text>
-    </View>
-  );
-}
-
-// Navigator
-const Stack = createSharedElementStackNavigator();
-
-function App() {
-  return (
-    <Stack.Navigator>
-      <Stack.Screen name="List" component={ListScreen} />
-      <Stack.Screen 
-        name="Detail" 
-        component={DetailScreen}
-        sharedElements={(route) => {
-          const { id } = route.params;
-          return [
-            \`item.\${id}.image\`,
-            \`item.\${id}.title\`,
-          ];
-        }}
-      />
-    </Stack.Navigator>
-  );
-}
-
-export default App;`}
-                                    </Text>
-                                </View>
-                            </View>
-                        </View>
-
-                        <View style={styles.bestPracticesCard}>
-                            <Text style={styles.bestPracticesTitle}>Best Practices</Text>
-                            <View style={styles.bestPracticesList}>
-                                <View style={styles.bestPracticeItem}>
-                                    <Feather name="check-circle" size={16} color="#10B981" style={styles.bestPracticeIcon} />
-                                    <Text style={styles.bestPracticeText}>
-                                        Keep animations under 400ms for UI interactions to feel responsive
-                                    </Text>
-                                </View>
-                                <View style={styles.bestPracticeItem}>
-                                    <Feather name="check-circle" size={16} color="#10B981" style={styles.bestPracticeIcon} />
-                                    <Text style={styles.bestPracticeText}>Use spring animations for natural-feeling motion</Text>
-                                </View>
-                                <View style={styles.bestPracticeItem}>
-                                    <Feather name="check-circle" size={16} color="#10B981" style={styles.bestPracticeIcon} />
-                                    <Text style={styles.bestPracticeText}>
-                                        Implement exit animations for elements being removed from the UI
-                                    </Text>
-                                </View>
-                                <View style={styles.bestPracticeItem}>
-                                    <Feather name="check-circle" size={16} color="#10B981" style={styles.bestPracticeIcon} />
-                                    <Text style={styles.bestPracticeText}>
-                                        Use staggered animations for lists to create visual hierarchy
-                                    </Text>
-                                </View>
-                                <View style={styles.bestPracticeItem}>
-                                    <Feather name="check-circle" size={16} color="#10B981" style={styles.bestPracticeIcon} />
-                                    <Text style={styles.bestPracticeText}>
-                                        Consider accessibility settings - some users prefer reduced motion
-                                    </Text>
-                                </View>
-                            </View>
                         </View>
                     </MotiView>
                 )}
             </MotiView>
-
-            {/* Next Steps */}
-            <View style={styles.nextStepsCard}>
-                <Text style={styles.nextStepsTitle}>Next Steps</Text>
-                <Text style={styles.nextStepsText}>
-                    Now that you understand how to use our UI components, check out the Examples section to see complete implementations of
-                    common UI patterns and screens.
-                </Text>
-                <Pressable style={styles.nextStepsButton}>
-                    <Text style={styles.nextStepsButtonText}>View Examples</Text>
-                    <Feather name="arrow-right" size={16} color="#FFFFFF" />
-                </Pressable>
-            </View>
         </ScrollView>
     );
 };
@@ -1095,70 +930,6 @@ const styles = StyleSheet.create({
         backgroundColor: '#E5E7EB',
         borderRadius: 4,
         overflow: 'hidden',
-    },
-    bestPracticesCard: {
-        backgroundColor: '#F0FDF4',
-        borderRadius: 12,
-        padding: 16,
-        marginBottom: 24,
-    },
-    bestPracticesTitle: {
-        fontSize: 18,
-        fontWeight: '600',
-        color: '#111827',
-        marginBottom: 16,
-    },
-    bestPracticesList: {},
-    bestPracticeItem: {
-        flexDirection: 'row',
-        marginBottom: 12,
-    },
-    bestPracticeIcon: {
-        marginRight: 8,
-        marginTop: 2,
-    },
-    bestPracticeText: {
-        fontSize: 14,
-        lineHeight: 20,
-        color: '#4B5563',
-        flex: 1,
-    },
-    nextStepsCard: {
-        backgroundColor: '#FFFFFF',
-        borderRadius: 12,
-        padding: 24,
-        marginTop: 8,
-        marginBottom: 16,
-        borderWidth: 1,
-        borderColor: '#E5E7EB',
-    },
-    nextStepsTitle: {
-        fontSize: 20,
-        fontWeight: '600',
-        color: '#111827',
-        marginBottom: 12,
-    },
-    nextStepsText: {
-        fontSize: 15,
-        lineHeight: 24,
-        color: '#4B5563',
-        marginBottom: 20,
-    },
-    nextStepsButton: {
-        backgroundColor: '#6366F1',
-        borderRadius: 8,
-        paddingVertical: 12,
-        paddingHorizontal: 20,
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'center',
-        alignSelf: 'flex-start',
-    },
-    nextStepsButtonText: {
-        fontSize: 15,
-        fontWeight: '600',
-        color: '#FFFFFF',
-        marginRight: 8,
     },
 });
 

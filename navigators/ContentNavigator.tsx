@@ -20,6 +20,7 @@ import RadioPage from '@/screens/RadioComponent';
 import SnackbarPage from '@/screens/SnackbarComponent';
 import SelectPage from '@/screens/SelectComponent';
 import DropdownPage from '@/screens/DropdownPage';
+import SkeletonPage from '@/screens/SkeletonPage';
 
 export type CScreenNames = [
     'Introduction',
@@ -39,9 +40,10 @@ export type CScreenNames = [
     'Progressbar',
     'Radio',
     'Select',
+    'Skeleton',
     "Switch",
-    'Toast',
     'Snackbar',
+    'Toast',
 ];
 
 export type ContentStackParamList = Record<CScreenNames[number], undefined>;
@@ -90,6 +92,8 @@ const ContentNavigator = () => {
             <Stack.Screen name="Radio" component={RadioPage} />
 
             <Stack.Screen name="Select" component={SelectPage} />
+
+            <Stack.Screen name="Skeleton" component={SkeletonPage} />
 
             <Stack.Screen name="Switch" component={Switch} />
 
