@@ -60,7 +60,7 @@ const CustomCheckbox: React.FC<CustomCheckboxProps> = ({
     accessibilityLabel,
     accessibilityHint,
     hapticFeedback = true,
-    animationDuration = 200,
+    animationDuration = 150,
     customIcon = 'check',
     rippleColor
 }) => {
@@ -96,17 +96,24 @@ const CustomCheckbox: React.FC<CustomCheckboxProps> = ({
     useEffect(() => {
         const toValue = checked || indeterminate ? 1 : 0;
 
+        // Faster, smoother spring animation for scale
         scale.value = withSpring(toValue, {
-            damping: 15,
-            stiffness: 150
+            damping: 12,        // Reduced from 15 for less resistance
+            stiffness: 200,     // Increased from 150 for snappier response
+            mass: 0.8,          // Added mass for smoother motion
+            overshootClamping: false,  // Allow slight overshoot for natural feel
+            restSpeedThreshold: 0.01,  // Faster settling
+            restDisplacementThreshold: 0.01
         });
 
+        // Faster timing animation for opacity
         opacity.value = withTiming(toValue, {
-            duration: animationDuration
+            duration: 150       // Reduced from 200ms for quicker fade
         });
 
+        // Faster color transition
         progress.value = withTiming(toValue, {
-            duration: animationDuration
+            duration: 150       // Reduced from 200ms for quicker color change
         });
     }, [checked, indeterminate, animationDuration]);
 

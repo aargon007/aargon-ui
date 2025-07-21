@@ -30,6 +30,7 @@
     "expo": "53.0.20",
     "expo-clipboard": "~7.1.5",
     "expo-constants": "~17.1.7",
+    "expo-haptics": "^14.1.4",
     "expo-linear-gradient": "~14.1.5",
     "expo-splash-screen": "~0.30.10",
     "moti": "^0.30.0",
