@@ -22,14 +22,15 @@ const defaultTheme: AccordionTheme = {
 
 // Animation configurations
 const springConfig = {
-    damping: 20,
-    stiffness: 300,
-    mass: 0.8,
-}
+    damping: 25,
+    stiffness: 250,
+    mass: 0.6,
+};
+
 
 const bounceConfig = {
-    damping: 12,
-    stiffness: 400,
+    damping: 25,
+    stiffness: 250,
     mass: 0.6,
 }
 
@@ -100,7 +101,7 @@ export const AnimatedAccordion = ({
         // Update internal state if not controlled
         if (controlledExpanded === undefined) {
             setInternalExpanded(newExpanded)
-        }       
+        }
 
         // Animate
         animateToState(newExpanded)
@@ -318,7 +319,6 @@ export const AnimatedAccordion = ({
                     </View>
                 </View>
             )}
-
         </View>
     )
 };
