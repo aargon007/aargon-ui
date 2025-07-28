@@ -149,6 +149,7 @@ const StackedToast: React.FC<StackedToastProps> = ({ stackedSheet, index, onDism
       <Animated.View
         key={index}
         style={[
+          rStackedToastStyle,
           {
             width: "auto",
             left: 0,
@@ -157,7 +158,6 @@ const StackedToast: React.FC<StackedToastProps> = ({ stackedSheet, index, onDism
             zIndex: -1,
           },
           styles.container,
-          rStackedToastStyle,
         ]}
         exiting={FadeOutLeft.delay(120 * stackedToastId)}
       >

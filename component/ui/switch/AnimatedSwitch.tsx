@@ -80,7 +80,7 @@ const AnimatedSwitch = ({
                     height.value = e.nativeEvent.layout.height;
                     width.value = e.nativeEvent.layout.width;
                 }}
-                style={[styles.switch, trackAnimatedStyle]}
+                style={[styles.track, styles.switch, trackAnimatedStyle]}
             >
                 <Animated.View style={[styles.thumb, thumbAnimatedStyle]} />
             </Animated.View>
@@ -90,8 +90,15 @@ const AnimatedSwitch = ({
 
 const styles = StyleSheet.create({
     thumb: {
-        height: '100%',
+        height: "100%",
+        maxHeight: 45,
         aspectRatio: 1,
+    },
+    track: {
+        alignItems: 'flex-start',
+        // width: 100,
+        // height: 40,
+        padding: 5,
     },
     switch: {
         width: 60,

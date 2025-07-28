@@ -34,13 +34,13 @@ export const Backdrop = () => {
         maskElement={
           <LinearGradient
             locations={[0, 0.55]}
-            colors={['rgba(255, 255,255,0.0)', 'rgba(255, 255,255,1)']}
+            colors={['rgba(255, 255,255,0.0)', 'rgba(255, 255,255,.7)']}
             style={StyleSheet.absoluteFill}
           />
         }
         style={{
           height: windowHeight / 2,
-          width: '100%',
+          width: 'auto',
         }}
       >
         <BlurView
