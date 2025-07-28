@@ -1,6 +1,5 @@
 import { ScrollView, StyleSheet, View } from 'react-native';
 import { PressableScale } from 'pressto';
-
 import { useDemoStackedToast } from './hook';
 
 const ToastApp = () => {
@@ -9,9 +8,7 @@ const ToastApp = () => {
   return (
     <View style={styles.container}>
       <ScrollView
-        contentContainerStyle={{
-          paddingTop: 60,
-        }}
+        contentContainerStyle={{ paddingTop: 60 }}
       >
         {new Array(10).fill(null).map((_, index) => (
           <PressableScale

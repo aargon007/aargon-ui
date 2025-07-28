@@ -2,22 +2,28 @@ import React from 'react'
 import { View, Text, StyleSheet } from 'react-native'
 import { StackedToastProvider } from '@/component/ui/toast/stacked-toast-manager'
 import { ToastApp } from '@/component/ui/toast'
+import ComponentPage from '@/component/common/ComponentPage'
+import { globalStyles } from '@/styles/globalStyles'
 
 const ToastPage = () => {
 
     return (
-        <View style={styles.container}>
-            <View style={styles.header}>
-                <Text style={styles.title}>Animated Toast Component</Text>
-                <Text style={styles.subtitle}>
-                    Highly customizable toast notifications with smooth animations
-                </Text>
-            </View>
-
-            <StackedToastProvider>
-                <ToastApp />
-            </StackedToastProvider>
-        </View>
+        <StackedToastProvider>
+            <ComponentPage>
+                {/* UI Demo */}
+                <View style={globalStyles.demoSection}>
+                    <Text style={globalStyles.title}>
+                        Animated Toast Component
+                    </Text>
+                    <Text style={globalStyles.description}>
+                        Highly customizable toast notifications with smooth animations
+                    </Text>
+                </View>
+                <View style={globalStyles.previewContainer}>
+                    <ToastApp />
+                </View>
+            </ComponentPage>
+        </StackedToastProvider >
     )
 }
 

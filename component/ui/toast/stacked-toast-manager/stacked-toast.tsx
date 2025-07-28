@@ -1,4 +1,6 @@
+import { useCallback, useEffect, useMemo } from 'react';
 import { StyleSheet, useWindowDimensions } from 'react-native';
+import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import Animated, {
   FadeOutLeft,
   runOnJS,
@@ -7,8 +9,6 @@ import Animated, {
   withSpring,
   withTiming,
 } from 'react-native-reanimated';
-import { Gesture, GestureDetector } from 'react-native-gesture-handler';
-import { useCallback, useEffect, useMemo } from 'react';
 
 import type { StackedToastType } from './context';
 import { useInternalStackedToast } from './hooks';
@@ -22,34 +22,28 @@ type StackedToastProps = {
 };
 
 // Constants for StackedToast styling
-
 const BaseSafeArea = 50;
 
 // Define the StackedToast component
-const StackedToast: React.FC<StackedToastProps> = ({
-  stackedSheet,
-  index,
-  onDismiss,
-}) => {
+const StackedToast: React.FC<StackedToastProps> = ({ stackedSheet, index, onDismiss }) => {
   // Get the width of the window using useWindowDimensions hook
   const { width: windowWidth } = useWindowDimensions();
-  const { id: stackedToastId, bottomHeight } =
-    useInternalStackedToast(stackedSheet.key) ?? 0;
+  const { id: stackedToastId, bottomHeight } = useInternalStackedToast(stackedSheet.key) ?? 0;
   const isActiveStackedToast = stackedToastId === 0;
 
-  // Shared values for animation
   // That's the "initial" position of the StackedToast
-  // After that, the StackedToast will be animated to the bottom
+  // Not an elegant way to handle the first StackedToast.
+  // Basically the purpose is that the initial position of the StackedToast
+  // should be the same as the last StackedToast that is being dismissed
+  // Except for the first StackedToast, that should be animated from the bottom
+  // of the screen (so -HideStackedToastOffset)
   const initialBottomPosition = isActiveStackedToast
-    ? // Not an elegant way to handle the first StackedToast.
-      // Basically the purpose is that the initial position of the StackedToast
-      // should be the same as the last StackedToast that is being dismissed
-      // Except for the first StackedToast, that should be animated from the bottom
-      // of the screen (so -HideStackedToastOffset)
-      -TOAST_HEIGHT
+    ? -TOAST_HEIGHT
     : BaseSafeArea;
 
   const bottom = useSharedValue(initialBottomPosition);
+  const translateX = useSharedValue(0);
+  const isSwiping = useSharedValue(false);
 
   // Update the bottom position when the StackedToast id changes
   // After the "mount" animation, the StackedToast will be animated to the
@@ -63,12 +57,7 @@ const StackedToast: React.FC<StackedToastProps> = ({
       overshootClamping: false,
       restSpeedThreshold: 50,
     });
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [bottomHeight]);
-
-  const translateX = useSharedValue(0);
-  const isSwiping = useSharedValue(false);
 
   // Callback to dismiss the StackedToast with animation
   const dismissItem = useCallback(() => {
@@ -85,6 +74,15 @@ const StackedToast: React.FC<StackedToastProps> = ({
       },
     );
   }, [onDismiss, stackedToastId, translateX, windowWidth]);
+
+  // useEffect(() => {
+  //   const timeout = setTimeout(() => {
+  //     dismissItem();
+  //   }, 1000); // dismiss after 1 second
+
+  //   return () => clearTimeout(timeout); // cleanup
+  // }, [dismissItem]);
+
 
   // Gesture handler for swipe interactions
   const gesture = Gesture.Pan()
@@ -152,27 +150,34 @@ const StackedToast: React.FC<StackedToastProps> = ({
         key={index}
         style={[
           {
-            width: windowWidth * 0.9,
-            left: windowWidth * 0.05,
+            width: "auto",
+            left: 0,
+            right: 0,
+            alignItems: 'center',
             zIndex: -1,
           },
           styles.container,
           rStackedToastStyle,
         ]}
-        exiting={FadeOutLeft.delay(120 * stackedToastId)}>
-        <Animated.View key={index} style={rStackedToastTranslationStyle}>
+        exiting={FadeOutLeft.delay(120 * stackedToastId)}
+      >
+        <Animated.View
+          key={index}
+          style={rStackedToastTranslationStyle}
+        >
           {memoizedChildren && (
             <Animated.View
               style={[
                 rVisibleContainerStyle,
                 {
-                  width: windowWidth * 0.9,
+                  width: "auto",
                   borderRadius: 35,
                   borderCurve: 'continuous',
                   overflow: 'hidden',
                   height: TOAST_HEIGHT,
                 },
-              ]}>
+              ]}
+            >
               {stackedToastId <= MAX_VISIBLE_TOASTS * 1.5 && memoizedChildren}
             </Animated.View>
           )}

@@ -10,9 +10,7 @@ import { StackedToast } from './stacked-toast';
 import { Backdrop } from './backdrop';
 
 // Define a StackedToastProvider component to manage and display StackedToasts
-export const StackedToastProvider: React.FC<PropsWithChildren> = ({
-  children,
-}) => {
+export const StackedToastProvider: React.FC<PropsWithChildren> = ({ children }) => {
   // State to manage the list of StackedToasts
   const [stackedToasts, setStackedToasts] = useState<StackedToastType[]>([]);
 
