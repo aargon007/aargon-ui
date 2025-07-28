@@ -1,5 +1,5 @@
-import { View, Text, StyleSheet, ScrollView } from "react-native"
-import { useSharedValue } from "react-native-reanimated"
+import { useState } from "react";
+import { View, Text, StyleSheet } from "react-native"
 import AnimatedSwitch from "@/component/ui/switch/AnimatedSwitch"
 import CodeExample from "@/component/common/CodeExample";
 import { switchCode } from "@/component/ui/switch/code";
@@ -8,10 +8,9 @@ import { globalStyles } from "@/styles/globalStyles";
 import ComponentPage from "@/component/common/ComponentPage";
 
 export default function SwitchDemoPage() {
-    // Switch states
-    const switch1 = useSharedValue(false);
-    const switch3 = useSharedValue(true);
-    const switch5 = useSharedValue(false);
+    const [switch1, setSwitch1] = useState(false);
+    const [switch3, setSwitch3] = useState(true);
+    const [switch5, setSwitch5] = useState(false);
 
     return (
         <ComponentPage>
@@ -31,7 +30,7 @@ export default function SwitchDemoPage() {
                         </Text>
                         <AnimatedSwitch
                             value={switch1}
-                            onPress={() => (switch1.value = !switch1.value)}
+                            onPress={() => setSwitch1(!switch1)}
                             isDisabled={false}
                         />
                     </View>
@@ -42,10 +41,11 @@ export default function SwitchDemoPage() {
                         </Text>
                         <AnimatedSwitch
                             value={switch3}
-                            onPress={() => (switch3.value = !switch3.value)}
+                            onPress={() => setSwitch3(!switch3)}
                             isDisabled={false}
                             trackColors={{ on: "#10B981", off: "#374151" }}
                             thumbColors={{ on: "#FFFFFF", off: "#9CA3AF" }}
+                            borderColors={{ on: "#10B981", off: "#374151" }}
                         />
                     </View>
 
@@ -55,7 +55,7 @@ export default function SwitchDemoPage() {
                         </Text>
                         <AnimatedSwitch
                             value={switch5}
-                            onPress={() => (switch5.value = !switch5.value)}
+                            onPress={() => setSwitch5(!switch5)}
                             isDisabled={true}
                         />
                     </View>

@@ -8,9 +8,10 @@ const switch1 = useSharedValue(false);
 />
 <AnimatedSwitch
     value={switch3}
-    onPress={() => (switch3.value = !switch3.value)}
+    onPress={() => setSwitch3(!switch3)}
     isDisabled={false}
     trackColors={{ on: "#10B981", off: "#374151" }}
     thumbColors={{ on: "#FFFFFF", off: "#9CA3AF" }}
+    borderColors={{ on: "#10B981", off: "#374151" }}
 />
 `
