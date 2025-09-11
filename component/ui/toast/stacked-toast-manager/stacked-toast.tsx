@@ -53,9 +53,9 @@ const StackedToast: React.FC<StackedToastProps> = ({ stackedSheet, index, onDism
     bottom.value = withSpring(BaseSafeArea + bottomHeight, {
       duration: 500,
       dampingRatio: 1.5,
-      stiffness: 1,
+      // stiffness: 1,
       overshootClamping: false,
-      restSpeedThreshold: 50,
+      // restSpeedThreshold: 50,
     });
   }, [bottomHeight]);
 

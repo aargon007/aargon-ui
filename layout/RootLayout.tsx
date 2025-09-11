@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { View, Text, Pressable, StyleSheet, useWindowDimensions, TouchableOpacity, SafeAreaView, StatusBar } from 'react-native';
+import { View, Text, Pressable, StyleSheet, useWindowDimensions, TouchableOpacity, StatusBar } from 'react-native';
 import ContentNavigator from '@/navigators/ContentNavigator';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import SideBar from '@/component/common/SideBar';
 import { Feather } from '@expo/vector-icons';
 import { MotiView } from 'moti';

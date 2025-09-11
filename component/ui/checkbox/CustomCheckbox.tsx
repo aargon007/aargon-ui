@@ -102,8 +102,8 @@ const CustomCheckbox: React.FC<CustomCheckboxProps> = ({
             stiffness: 200,     // Increased from 150 for snappier response
             mass: 0.8,          // Added mass for smoother motion
             overshootClamping: false,  // Allow slight overshoot for natural feel
-            restSpeedThreshold: 0.01,  // Faster settling
-            restDisplacementThreshold: 0.01
+            // restSpeedThreshold: 0.01,  // Faster settling
+            // restDisplacementThreshold: 0.01
         });
 
         // Faster timing animation for opacity

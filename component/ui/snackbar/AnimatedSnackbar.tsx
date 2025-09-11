@@ -3,12 +3,11 @@ import { View, Text, TouchableOpacity, StyleSheet, Platform } from 'react-native
 import Animated, {
     useSharedValue,
     useAnimatedStyle,
-    useAnimatedGestureHandler,
     interpolate,
     runOnJS,
     withTiming
 } from 'react-native-reanimated'
-import { PanGestureHandler, State } from 'react-native-gesture-handler'
+import { Gesture, GestureDetector } from 'react-native-gesture-handler'
 import { Feather } from '@expo/vector-icons'
 import {
     type SnackbarConfig,
@@ -142,13 +141,13 @@ const AnimatedSnackbar = forwardRef<SnackbarRef, AnimatedSnackbarProps>(({
         dismiss
     }))
 
-    // Gesture handler
-    const gestureHandler = useAnimatedGestureHandler({
-        onStart: () => {
+    // Gesture handler using the new Gesture API
+    const panGesture = Gesture.Pan()
+        .onStart(() => {
             gestureTranslateX.value = 0
             gestureTranslateY.value = 0
-        },
-        onActive: (event) => {
+        })
+        .onUpdate((event) => {
             if (!swipeToDismiss) return
 
             gestureTranslateX.value = event.translationX
@@ -161,8 +160,8 @@ const AnimatedSnackbar = forwardRef<SnackbarRef, AnimatedSnackbarProps>(({
             )
 
             gestureOpacity.value = 1 - swipeProgress * 0.5
-        },
-        onEnd: (event) => {
+        })
+        .onEnd((event) => {
             if (!swipeToDismiss) return
 
             const swipeProgress = calculateSwipeProgress(
@@ -180,8 +179,8 @@ const AnimatedSnackbar = forwardRef<SnackbarRef, AnimatedSnackbarProps>(({
                 gestureTranslateY.value = withTiming(0)
                 gestureOpacity.value = withTiming(1)
             }
-        }
-    })
+        })
+        .enabled(swipeToDismiss) // Enable/disable gesture based on prop
 
     // Animated styles
     const containerAnimatedStyle = useAnimatedStyle(() => {
@@ -237,7 +236,7 @@ const AnimatedSnackbar = forwardRef<SnackbarRef, AnimatedSnackbarProps>(({
             ]}
             pointerEvents="box-none"
         >
-            <PanGestureHandler onGestureEvent={gestureHandler}>
+            <GestureDetector gesture={panGesture}>
                 <Animated.View>
                     <TouchableOpacity
                         activeOpacity={dismissible || onPress ? 0.8 : 1}
@@ -326,7 +325,7 @@ const AnimatedSnackbar = forwardRef<SnackbarRef, AnimatedSnackbarProps>(({
                         </View>
                     </TouchableOpacity>
                 </Animated.View>
-            </PanGestureHandler>
+            </GestureDetector>
         </Animated.View>
     )
 })

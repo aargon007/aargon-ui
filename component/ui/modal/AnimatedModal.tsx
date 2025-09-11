@@ -18,10 +18,9 @@ import Animated, {
     withTiming,
     runOnJS,
     interpolate,
-    useAnimatedGestureHandler,
-    Extrapolate
+    Extrapolation
 } from 'react-native-reanimated'
-import { PanGestureHandler, type PanGestureHandlerGestureEvent } from 'react-native-gesture-handler'
+import { Gesture, GestureDetector, type PanGestureHandlerEventPayload } from 'react-native-gesture-handler'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import {
     type ModalAnimationType,
@@ -170,8 +169,8 @@ export const AnimatedModal = forwardRef<AnimatedModalRef, AnimatedModalProps>(({
         modalOpacity.value = withSpring(initialTransform.opacity, config)
         modalScale.value = withSpring(initialTransform.scale, config)
         modalTranslateX.value = withSpring(initialTransform.translateX, config)
-        modalTranslateY.value = withSpring(initialTransform.translateY, config, () => {
-            if (callback) {
+        modalTranslateY.value = withSpring(initialTransform.translateY, config, (finished) => {
+            if (finished && callback) {
                 runOnJS(callback)()
             }
         })
@@ -205,29 +204,30 @@ export const AnimatedModal = forwardRef<AnimatedModalRef, AnimatedModalProps>(({
     }, [visible, handleBackButton, onClose])
 
     // Gesture handler for swipe to dismiss
-    const gestureHandler = useAnimatedGestureHandler<PanGestureHandlerGestureEvent>({
-        onStart: () => {
-            // Store initial position
-        },
-        onActive: (event) => {
+    const panGesture = Gesture.Pan()
+        .onStart(() => {
+            // Store initial position - nothing needed here for basic implementation
+        })
+        .onUpdate((event) => {
             if (dismissOnGesture && (animationType === 'slideUp' || position === 'bottom')) {
                 gestureTranslateY.value = Math.max(0, event.translationY)
             }
-        },
-        onEnd: (event) => {
+        })
+        .onEnd((event) => {
             if (dismissOnGesture && (animationType === 'slideUp' || position === 'bottom')) {
                 if (event.translationY > MODAL_CONSTANTS.GESTURE_THRESHOLD) {
                     // Dismiss modal
-                    gestureTranslateY.value = withSpring(500, MODAL_CONSTANTS.SPRING_CONFIG, () => {
-                        runOnJS(onClose)()
+                    gestureTranslateY.value = withSpring(500, MODAL_CONSTANTS.SPRING_CONFIG, (finished) => {
+                        if (finished) {
+                            runOnJS(onClose)()
+                        }
                     })
                 } else {
                     // Snap back
                     gestureTranslateY.value = withSpring(0, MODAL_CONSTANTS.SPRING_CONFIG)
                 }
             }
-        }
-    })
+        })
 
     // Animated styles
     const backdropAnimatedStyle = useAnimatedStyle(() => ({
@@ -255,7 +255,7 @@ export const AnimatedModal = forwardRef<AnimatedModalRef, AnimatedModalProps>(({
                 gestureTranslateY.value,
                 [0, MODAL_CONSTANTS.GESTURE_THRESHOLD * 2],
                 [1, 0],
-                Extrapolate.CLAMP
+                Extrapolation.CLAMP
             )
             return { opacity }
         }
@@ -312,7 +312,7 @@ export const AnimatedModal = forwardRef<AnimatedModalRef, AnimatedModalProps>(({
                 </TouchableWithoutFeedback>
 
                 {/* Modal Content */}
-                <PanGestureHandler onGestureEvent={gestureHandler} enabled={dismissOnGesture}>
+                <GestureDetector gesture={panGesture}>
                     <Animated.View
                         style={[
                             styles.modal,
@@ -361,7 +361,7 @@ export const AnimatedModal = forwardRef<AnimatedModalRef, AnimatedModalProps>(({
                             {children}
                         </View>
                     </Animated.View>
-                </PanGestureHandler>
+                </GestureDetector>
             </View>
         </Modal>
     )

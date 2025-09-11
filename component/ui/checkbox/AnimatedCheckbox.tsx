@@ -19,8 +19,8 @@ import Animated, {
     withSpring,
     withTiming,
     interpolateColor,
-    runOnJS,
 } from "react-native-reanimated"
+import { scheduleOnRN } from 'react-native-worklets';
 
 export interface CustomCheckboxProps {
     checked: boolean
@@ -112,8 +112,8 @@ const CustomCheckbox: React.FC<CustomCheckboxProps> = ({
             stiffness: 200,
             mass: 0.8,
             overshootClamping: false,
-            restSpeedThreshold: 0.01,
-            restDisplacementThreshold: 0.01,
+            // restSpeedThreshold: 0.01,
+            // restDisplacementThreshold: 0.01,
         })
 
         // Faster timing animation for opacity
@@ -147,9 +147,9 @@ const CustomCheckbox: React.FC<CustomCheckboxProps> = ({
     const handlePress = async () => {
         if (disabled) return
 
-        await triggerHapticFeedback()
-        runOnJS(announceAccessibility)()
-        onPress()
+        await triggerHapticFeedback();
+        scheduleOnRN(announceAccessibility);
+        onPress();
     }
 
     // Animated styles
