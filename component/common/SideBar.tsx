@@ -1,11 +1,21 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import type { ContentStackNavigation } from '@/navigators/ContentNavigator';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Feather } from '@expo/vector-icons';
 import { navItems } from '@/constants/navItems';
-import { MotiView } from '@alloc/moti';
+import Animated, {
+    useSharedValue,
+    useAnimatedStyle,
+    withSpring,
+    withTiming,
+    FadeIn,
+    FadeOut,
+    SlideInDown,
+    SlideOutUp,
+    LayoutAnimationConfig
+} from 'react-native-reanimated';
 
 interface NavigationProps {
     activeSection: string;
@@ -45,109 +55,154 @@ const SideBar = ({ activeSection, onNavItemPress }: NavigationProps) => {
         return activeSection === childId;
     };
 
+    // Animated Nav Item Component
+    const AnimatedNavItem = ({ item, isActive }: { item: any, isActive: boolean }) => {
+        const scale = useSharedValue(1);
+        const translateX = useSharedValue(0);
+
+        useEffect(() => {
+            scale.value = withSpring(isActive && !item.hasChildren ? 1.1 : 1, {
+                stiffness: 300
+            });
+            translateX.value = withSpring(isActive && !item.hasChildren ? 5 : 0, {
+                stiffness: 300
+            });
+        }, [isActive, item.hasChildren]);
+
+        const animatedStyle = useAnimatedStyle(() => ({
+            transform: [
+                { scale: scale.value },
+                { translateX: translateX.value }
+            ]
+        }));
+
+        return (
+            <Animated.View style={[styles.navItemContent, animatedStyle]}>
+                <Feather
+                    name={item.icon as any}
+                    size={18}
+                    color={isActive && !item.hasChildren ? '#6366F1' : '#666'}
+                />
+                <Text style={[styles.navItemText, isActive && !item.hasChildren && styles.activeNavItemText]}>
+                    {item.label}
+                </Text>
+
+                {item.hasChildren && (
+                    <AnimatedChevron expanded={expandedSections.includes(item.id)} />
+                )}
+            </Animated.View>
+        );
+    };
+
+    // Animated Chevron Component
+    const AnimatedChevron = ({ expanded }: { expanded: boolean }) => {
+        const rotation = useSharedValue(0);
+
+        useEffect(() => {
+            rotation.value = withTiming(expanded ? 180 : 0, { duration: 300 });
+        }, [expanded]);
+
+        const animatedStyle = useAnimatedStyle(() => ({
+            transform: [{ rotate: `${rotation.value}deg` }]
+        }));
+
+        return (
+            <Animated.View style={[styles.chevronIcon, animatedStyle]}>
+                <Feather name="chevron-down" size={16} color="#666" />
+            </Animated.View>
+        );
+    };
+
+    // Animated Child Item Component
+    const AnimatedChildItem = ({ child, parentId, isActive }: { child: any, parentId: string, isActive: boolean }) => {
+        const scale = useSharedValue(1);
+        const translateX = useSharedValue(0);
+
+        useEffect(() => {
+            scale.value = withSpring(isActive ? 1.05 : 1, { stiffness: 300 });
+            translateX.value = withSpring(isActive ? 3 : 0, { stiffness: 300 });
+        }, [isActive]);
+
+        const animatedStyle = useAnimatedStyle(() => ({
+            transform: [
+                { scale: scale.value },
+                { translateX: translateX.value }
+            ]
+        }));
+
+        return (
+            <Animated.View style={[styles.childNavItemContent, animatedStyle]}>
+                <Feather
+                    name={child.icon as any}
+                    size={16}
+                    color={isActive ? '#6366F1' : '#666'}
+                />
+                <Text
+                    style={[
+                        styles.childNavItemText,
+                        isActive && styles.activeChildNavItemText,
+                    ]}
+                >
+                    {child.label}
+                </Text>
+            </Animated.View>
+        );
+    };
+
     return (
         <ScrollView
             style={[styles.navItems, { marginTop: inset.top }]}
             showsVerticalScrollIndicator={false}
             contentContainerStyle={{ paddingBottom: 20 }}
         >
-            {navItems.map(item => (
-                <View key={item.id}>
-                    <Pressable
-                        onPress={() => handleItemPress(item)}
-                        style={({ pressed }) => [
-                            styles.navItem,
-                            isItemActive(item.id) && !item.hasChildren && styles.activeNavItem,
-                            pressed && styles.pressedNavItem,
-                        ]}
-                    >
-                        <MotiView
-                            animate={{
-                                scale: isItemActive(item.id) && !item.hasChildren ? 1.1 : 1,
-                                translateX: isItemActive(item.id) && !item.hasChildren ? 5 : 0,
-                            }}
-                            transition={{ type: 'spring', stiffness: 300 }}
-                            style={styles.navItemContent}
+            <LayoutAnimationConfig skipEntering>
+                {navItems.map((item, index) => (
+                    <View key={item.id}>
+                        <Pressable
+                            onPress={() => handleItemPress(item)}
+                            style={({ pressed }) => [
+                                styles.navItem,
+                                isItemActive(item.id) && !item.hasChildren && styles.activeNavItem,
+                                pressed && styles.pressedNavItem,
+                            ]}
                         >
-                            <Feather
-                                name={item.icon as any}
-                                size={18}
-                                color={isItemActive(item.id) && !item.hasChildren ? '#6366F1' : '#666'}
-                            />
-                            <Text style={[styles.navItemText, isItemActive(item.id) && !item.hasChildren && styles.activeNavItemText]}>
-                                {item.label}
-                            </Text>
+                            <AnimatedNavItem item={item} isActive={isItemActive(item.id)} />
+                        </Pressable>
 
-                            {item.hasChildren && (
-                                <MotiView
-                                    animate={{
-                                        rotateZ: expandedSections.includes(item.id) ? '180deg' : '0deg',
-                                    }}
-                                    transition={{
-                                        type: 'timing',
-                                        duration: 300,
-                                    }}
-                                    style={styles.chevronIcon}
-                                >
-                                    <Feather name="chevron-down" size={16} color="#666" />
-                                </MotiView>
-                            )}
-                        </MotiView>
-                    </Pressable>
-
-                    {/* Render children if this section is expanded */}
-                    {item.hasChildren && expandedSections.includes(item.id) && (
-                        <MotiView
-                            from={{ height: 0, opacity: 0 }}
-                            animate={{ height: 'auto', opacity: 1 }}
-                            transition={{
-                                type: 'timing',
-                                duration: 300,
-                                height: {
-                                    type: 'spring',
-                                    damping: 15,
-                                },
-                            }}
-                            style={styles.childrenContainer}
-                        >
-                            {item.children?.map(child => (
-                                <Pressable
-                                    key={child.id}
-                                    onPress={() => handleItemPress(child)}
-                                    style={({ pressed }) => [
-                                        styles.childNavItem,
-                                        isChildActive(item.id, child.id) && styles.activeChildNavItem,
-                                        pressed && styles.pressedNavItem,
-                                    ]}
-                                >
-                                    <MotiView
-                                        animate={{
-                                            scale: isChildActive(item.id, child.id) ? 1.05 : 1,
-                                            translateX: isChildActive(item.id, child.id) ? 3 : 0,
-                                        }}
-                                        transition={{ type: 'spring', stiffness: 300 }}
-                                        style={styles.childNavItemContent}
+                        {/* Render children if this section is expanded */}
+                        {item.hasChildren && expandedSections.includes(item.id) && (
+                            <Animated.View
+                                entering={SlideInDown.duration(300).springify()}
+                                exiting={SlideOutUp.duration(200)}
+                                style={styles.childrenContainer}
+                            >
+                                {item.children?.map((child, childIndex) => (
+                                    <Animated.View
+                                        key={child.id}
+                                        entering={FadeIn.delay(childIndex * 50).duration(200)}
+                                        exiting={FadeOut.duration(100)}
                                     >
-                                        <Feather
-                                            name={child.icon as any}
-                                            size={16}
-                                            color={isChildActive(item.id, child.id) ? '#6366F1' : '#666'}
-                                        />
-                                        <Text
-                                            style={[
-                                                styles.childNavItemText,
-                                                isChildActive(item.id, child.id) && styles.activeChildNavItemText,
+                                        <Pressable
+                                            onPress={() => handleItemPress(child)}
+                                            style={({ pressed }) => [
+                                                styles.childNavItem,
+                                                isChildActive(item.id, child.id) && styles.activeChildNavItem,
+                                                pressed && styles.pressedNavItem,
                                             ]}
                                         >
-                                            {child.label}
-                                        </Text>
-                                    </MotiView>
-                                </Pressable>
-                            ))}
-                        </MotiView>
-                    )}
-                </View>
-            ))}
+                                            <AnimatedChildItem
+                                                child={child}
+                                                parentId={item.id}
+                                                isActive={isChildActive(item.id, child.id)}
+                                            />
+                                        </Pressable>
+                                    </Animated.View>
+                                ))}
+                            </Animated.View>
+                        )}
+                    </View>
+                ))}
+            </LayoutAnimationConfig>
         </ScrollView>
     );
 };

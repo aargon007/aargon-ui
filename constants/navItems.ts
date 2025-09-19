@@ -24,5 +24,5 @@ export const navItems = [
             { id: 'toast', label: 'Toast', icon: 'message-square' },
         ],
     },
-    { id: 'usage', label: 'Usage', icon: 'code' }
+    // { id: 'usage', label: 'Usage', icon: 'code' }
 ];

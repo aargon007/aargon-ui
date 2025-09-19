@@ -1,8 +1,8 @@
 import type React from 'react';
-import { ScrollView, StyleSheet } from 'react-native';
+import { ScrollView } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { globalStyles } from '@/styles/globalStyles';
-import { MotiView } from 'moti';
+import Animated, { FadeInUp, Easing } from 'react-native-reanimated';
 
 const ComponentPage = ({ children }: { children: React.ReactNode }) => {
     const inset = useSafeAreaInsets();
@@ -12,13 +12,19 @@ const ComponentPage = ({ children }: { children: React.ReactNode }) => {
             style={[globalStyles.container, { paddingTop: inset.top }]}
             contentContainerStyle={globalStyles.contentContainer}
         >
-            <MotiView
-                from={{ translateY: 20, opacity: 0 }}
-                animate={{ translateY: 0, opacity: 1 }}
-                transition={{ type: 'spring', damping: 18 }}
+            <Animated.View
+                entering={
+                    FadeInUp
+                        .duration(600)
+                        .easing(Easing.out(Easing.cubic))
+                        .springify()
+                        .damping(20)
+                        .stiffness(90)
+                        .mass(0.8)
+                }
             >
                 {children}
-            </MotiView>
+            </Animated.View>
         </ScrollView>
     );
 };

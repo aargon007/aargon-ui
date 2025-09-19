@@ -3,7 +3,6 @@ import { type NavigationProp } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Introduction from '@/screens/Introduction';
 import Installation from '@/screens/Installation';
-import Usage from '@/screens/Usage';
 
 import AccordionPage from '@/screens/AccordionPage';
 import Switch from '@/screens/SwitchPage';
@@ -66,8 +65,6 @@ const ContentNavigator = () => {
             <Stack.Screen name="Introduction" component={Introduction} />
 
             <Stack.Screen name="Installation" component={Installation} />
-
-            <Stack.Screen name="Usage" component={Usage} />
 
             <Stack.Screen name="Accordion" component={AccordionPage} />
 

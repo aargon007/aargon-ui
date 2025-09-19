@@ -4,7 +4,7 @@ import type { ContentStackNavigation } from '@/navigators/ContentNavigator';
 import ComponentPage from '@/component/common/ComponentPage';
 import { useNavigation } from '@react-navigation/native';
 import { Feather } from '@expo/vector-icons';
-import { MotiView, MotiText } from '@alloc/moti';
+import Animated, { FadeInUp, ZoomIn, FadeIn } from 'react-native-reanimated';
 import CodeExample from '@/component/common/CodeExample';
 import { introExample } from '@/constants/intro';
 
@@ -19,50 +19,36 @@ const Introduction = () => {
     return (
         <ComponentPage>
             {/* Hero Section */}
-            <MotiView
-                from={{ translateY: 20, opacity: 0 }}
-                animate={{ translateY: 0, opacity: 1 }}
-                transition={{ type: 'spring', damping: 18 }}
+            <Animated.View
+                entering={FadeInUp.springify().damping(18).stiffness(100).mass(1.2)}
             >
-                {/* <Text style={styles.contentTitle}>
-                    Introduction
-                </Text> */}
-
                 <View style={styles.heroSection}>
-                    <MotiView
-                        from={{ scale: 0.9, opacity: 0 }}
-                        animate={{ scale: 1, opacity: 1 }}
-                        transition={{ type: 'spring', damping: 15, delay: 100 }}
+                    <Animated.View
+                        entering={ZoomIn.springify().damping(15).stiffness(100).mass(1.2).delay(100)}
                         style={styles.heroIcon}
                     >
                         <Feather name="box" size={32} color="#FFFFFF" />
-                    </MotiView>
+                    </Animated.View>
 
-                    <MotiText
-                        from={{ translateY: 10, opacity: 0 }}
-                        animate={{ translateY: 0, opacity: 1 }}
-                        transition={{ type: 'spring', damping: 18, delay: 200 }}
+                    <Animated.Text
+                        entering={FadeInUp.springify().damping(18).stiffness(100).mass(1.2).delay(200)}
                         style={styles.heroTitle}
                     >
                         Aargon UI Library
-                    </MotiText>
+                    </Animated.Text>
 
-                    <MotiText
-                        from={{ translateY: 10, opacity: 0 }}
-                        animate={{ translateY: 0, opacity: 1 }}
-                        transition={{ type: 'spring', damping: 18, delay: 300 }}
+                    <Animated.Text
+                        entering={FadeInUp.springify().damping(18).stiffness(100).mass(1.2).delay(300)}
                         style={styles.heroSubtitle}
                     >
                         A powerful React Native animation library built on Moti, Skia and Reanimated
-                    </MotiText>
+                    </Animated.Text>
                 </View>
-            </MotiView>
+            </Animated.View>
 
             {/* Overview Section */}
-            <MotiView
-                from={{ translateY: 20, opacity: 0 }}
-                animate={{ translateY: 0, opacity: 1 }}
-                transition={{ type: 'spring', damping: 18, delay: 400 }}
+            <Animated.View
+                entering={FadeInUp.springify().damping(18).stiffness(100).mass(1.2).delay(400)}
                 style={styles.section}
             >
                 <Text style={styles.sectionTitle}>
@@ -80,11 +66,9 @@ const Introduction = () => {
                         { icon: 'sliders', title: 'Customizable', description: 'Easily adapt to your design system' },
                         { icon: 'smartphone', title: 'Cross-Platform', description: 'Works on iOS, Android, and Web' },
                     ].map((feature, index) => (
-                        <MotiView
+                        <Animated.View
                             key={index}
-                            from={{ scale: 0.9, opacity: 0 }}
-                            animate={{ scale: 1, opacity: 1 }}
-                            transition={{ type: 'spring', damping: 15, delay: 500 + index * 100 }}
+                            entering={ZoomIn.springify().damping(15).stiffness(100).mass(1.2).delay(500 + index * 100)}
                             style={styles.featureCard}
                         >
                             <View style={styles.featureIconContainer}>
@@ -96,16 +80,14 @@ const Introduction = () => {
                             <Text style={styles.featureDescription}>
                                 {feature.description}
                             </Text>
-                        </MotiView>
+                        </Animated.View>
                     ))}
                 </View>
-            </MotiView>
+            </Animated.View>
 
             {/* Project Setup Section */}
-            <MotiView
-                from={{ translateY: 20, opacity: 0 }}
-                animate={{ translateY: 0, opacity: 1 }}
-                transition={{ type: 'spring', damping: 18, delay: 900 }}
+            <Animated.View
+                entering={FadeInUp.springify().damping(18).stiffness(100).mass(1.2).delay(900)}
                 style={styles.section}
             >
                 <Text style={styles.sectionTitle}>
@@ -135,7 +117,7 @@ const Introduction = () => {
                 </View>
 
                 {setupMethod === 'expo' ? (
-                    <MotiView from={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ type: 'timing', duration: 300 }}>
+                    <Animated.View entering={FadeIn.duration(300)}>
                         <View style={styles.setupSteps}>
                             <View style={styles.setupStep}>
                                 <View style={styles.stepNumberContainer}>
@@ -193,9 +175,9 @@ const Introduction = () => {
                                 around React Native that help you develop, build, deploy, and quickly iterate on iOS, Android, and web apps.
                             </Text>
                         </View>
-                    </MotiView>
+                    </Animated.View>
                 ) : (
-                    <MotiView from={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ type: 'timing', duration: 300 }}>
+                    <Animated.View entering={FadeIn.duration(300)}>
                         <View style={styles.setupSteps}>
                             <View style={styles.setupStep}>
                                 <View style={styles.stepNumberContainer}>
@@ -265,15 +247,13 @@ const Introduction = () => {
                                 projects that require deep integration with native modules or custom native code.
                             </Text>
                         </View>
-                    </MotiView>
+                    </Animated.View>
                 )}
-            </MotiView>
+            </Animated.View>
 
             {/* Quick Start Section */}
-            <MotiView
-                from={{ translateY: 20, opacity: 0 }}
-                animate={{ translateY: 0, opacity: 1 }}
-                transition={{ type: 'spring', damping: 18, delay: 1000 }}
+            <Animated.View
+                entering={FadeInUp.springify().damping(18).stiffness(100).mass(1.2).delay(1000)}
                 style={styles.section}
             >
                 <Text style={styles.sectionTitle}>
@@ -305,30 +285,21 @@ const Introduction = () => {
                             Preview:
                         </Text>
                         <View style={styles.examplePreviewContent}>
-                            <MotiView
-                                from={{ opacity: 0 }}
-                                animate={{ opacity: 1 }}
-                                transition={{
-                                    type: 'timing',
-                                    duration: 1000,
-                                    loop: true,
-                                    repeatReverse: true,
-                                }}
+                            <Animated.View
+                                entering={FadeIn.duration(1000).delay(0)}
                             >
                                 <Text style={styles.examplePreviewText}>
                                     Hello, Animations!
                                 </Text>
-                            </MotiView>
+                            </Animated.View>
                         </View>
                     </View>
                 </View>
-            </MotiView>
+            </Animated.View>
 
             {/* Next Steps Section */}
-            <MotiView
-                from={{ opacity: 0, translateY: 20 }}
-                animate={{ opacity: 1, translateY: 0 }}
-                transition={{ type: 'spring', damping: 18, delay: 1100 }}
+            <Animated.View
+                entering={FadeInUp.springify().damping(18).stiffness(100).mass(1.2).delay(1100)}
             >
                 <View style={styles.nextStepsCard}>
                     <Text style={styles.nextStepsTitle}>
@@ -350,7 +321,7 @@ const Introduction = () => {
                         <Feather name="arrow-right" size={16} color="#FFFFFF" />
                     </Pressable>
                 </View>
-            </MotiView>
+            </Animated.View>
         </ComponentPage>
     );
 };

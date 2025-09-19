@@ -1,10 +1,20 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { View, Text, Pressable, StyleSheet, useWindowDimensions, TouchableOpacity, StatusBar } from 'react-native';
 import ContentNavigator from '@/navigators/ContentNavigator';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import SideBar from '@/component/common/SideBar';
 import { Feather } from '@expo/vector-icons';
-import { MotiView } from '@alloc/moti';
+import Animated, {
+    useSharedValue,
+    useAnimatedStyle,
+    withSpring,
+    withTiming,
+    FadeIn,
+    FadeInLeft,
+    SlideInLeft,
+    SlideOutLeft,
+    BounceIn
+} from 'react-native-reanimated';
 
 export default function RootLayout() {
     const [activeSection, setActiveSection] = useState('introduction');
@@ -14,6 +24,17 @@ export default function RootLayout() {
     const inset = useSafeAreaInsets();
     const isMobile = width < 768;
 
+    // Shared values for state-based animations
+    const sidebarTranslateX = useSharedValue(isMobile ? -300 : 0);
+
+    // Update sidebar position when mobile nav state changes
+    useEffect(() => {
+        sidebarTranslateX.value = withTiming(
+            isMobile && !isMobileNavOpen ? -300 : 0,
+            { duration: 300 }
+        );
+    }, [isMobileNavOpen, isMobile]);
+
     const handleNavItemPress = (nav: any) => {
         setActiveSection(nav?.id);
 
@@ -21,6 +42,13 @@ export default function RootLayout() {
             setIsMobileNavOpen(false);
         }
     };
+
+    // Animated styles
+    const sidebarAnimatedStyle = useAnimatedStyle(() => {
+        return {
+            transform: [{ translateX: sidebarTranslateX.value }],
+        };
+    });
 
     return (
         <SafeAreaView style={styles.container}>
@@ -53,33 +81,29 @@ export default function RootLayout() {
                         </Text>
                     </View>
                 </>
-
             )}
 
             {/* Navigation sidebar */}
             {(!isMobile || isMobileNavOpen) && (
-                <MotiView
-                    style={[styles.sidebar, isMobile && styles.mobileSidebar]}
-                    animate={{
-                        translateX: isMobile && !isMobileNavOpen ? -300 : 0,
-                    }}
-                    transition={{
-                        type: 'timing',
-                        duration: 300,
-                    }}
+                <Animated.View
+                    entering={isMobile ? SlideInLeft.duration(300) : FadeInLeft.duration(300)}
+                    exiting={isMobile ? SlideOutLeft.duration(300) : undefined}
+                    style={[
+                        styles.sidebar,
+                        isMobile && styles.mobileSidebar,
+                        sidebarAnimatedStyle
+                    ]}
                 >
                     {!isMobile && (
                         <View style={styles.logoContainer}>
-                            <MotiView
+                            <Animated.View
+                                entering={BounceIn.delay(200).springify()}
                                 style={styles.logo}
-                                from={{ scale: 0.8, opacity: 0 }}
-                                animate={{ scale: 1, opacity: 1 }}
-                                transition={{ type: 'spring' }}
                             >
                                 <Text style={styles.logoText}>
                                     AUI
                                 </Text>
-                            </MotiView>
+                            </Animated.View>
                             <Text style={styles.logoTitle}>
                                 Aargon UI
                             </Text>
@@ -99,18 +123,19 @@ export default function RootLayout() {
                             <Feather name="moon" size={16} color="#666" />
                         </Pressable>
                     </View>
-                </MotiView>
+                </Animated.View>
             )}
 
             {/* Main content */}
-            <MotiView
-                style={[styles.content, isMobile && styles.mobileContent]}
-                from={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ type: 'timing', duration: 500 }}
+            <Animated.View
+                entering={FadeIn.duration(500).delay(100)}
+                style={[
+                    styles.content,
+                    isMobile && styles.mobileContent
+                ]}
             >
                 <ContentNavigator />
-            </MotiView>
+            </Animated.View>
         </SafeAreaView>
     );
 }
