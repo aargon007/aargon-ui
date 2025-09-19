@@ -4,7 +4,7 @@ import type { ContentStackNavigation } from '@/navigators/ContentNavigator';
 import ComponentPage from '@/component/common/ComponentPage';
 import { useNavigation } from '@react-navigation/native';
 import { Feather } from '@expo/vector-icons';
-import { MotiView, MotiText } from 'moti';
+import { MotiView, MotiText } from '@alloc/moti';
 import CodeExample from '@/component/common/CodeExample';
 import { introExample } from '@/constants/intro';
 

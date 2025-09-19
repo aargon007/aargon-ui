@@ -5,7 +5,7 @@ import type { ContentStackNavigation } from '@/navigators/ContentNavigator';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Feather } from '@expo/vector-icons';
 import { navItems } from '@/constants/navItems';
-import { MotiView } from 'moti';
+import { MotiView } from '@alloc/moti';
 
 interface NavigationProps {
     activeSection: string;

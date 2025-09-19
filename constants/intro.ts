@@ -1,7 +1,7 @@
 export const introExample = `
 import React from 'react';
 import { View, Text } from 'react-native';
-import { MotiView } from 'moti';
+import { MotiView } from '@alloc/moti';
 
 export default function App() {
   return (

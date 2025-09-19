@@ -4,7 +4,7 @@ import ContentNavigator from '@/navigators/ContentNavigator';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import SideBar from '@/component/common/SideBar';
 import { Feather } from '@expo/vector-icons';
-import { MotiView } from 'moti';
+import { MotiView } from '@alloc/moti';
 
 export default function RootLayout() {
     const [activeSection, setActiveSection] = useState('introduction');

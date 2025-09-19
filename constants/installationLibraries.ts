@@ -68,7 +68,7 @@ export default function App() {
             'Moti requires react-native-reanimated v2 or higher.',
             'Make sure you have installed and configured react-native-reanimated correctly.',
             'Basic usage example:',
-            `import { MotiView } from 'moti';
+            `import { MotiView } from '@alloc/moti';
 
 export default function App() {
     return (

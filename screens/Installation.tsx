@@ -1,7 +1,7 @@
 import React from 'react';
 import { ScrollView, StyleSheet, Text, View, Pressable } from 'react-native';
 import { Feather } from '@expo/vector-icons';
-import { MotiView } from 'moti';
+import { MotiView } from '@alloc/moti';
 
 import Prerequisites from '@/component/installation/Prerequisites';
 import Troubleshooting from '@/component/installation/Troubleshooting';

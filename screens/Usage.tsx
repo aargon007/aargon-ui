@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { ScrollView, StyleSheet, Text, View, Pressable } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { MotiView, AnimatePresence } from 'moti';
+import { MotiView, AnimatePresence } from '@alloc/moti';
 import { Feather } from '@expo/vector-icons';
 
 const Usage = () => {

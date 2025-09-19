@@ -2,7 +2,7 @@ import React from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { libraries } from '@/constants/installationLibraries';
 import { Feather } from '@expo/vector-icons';
-import { MotiView } from 'moti';
+import { MotiView } from '@alloc/moti';
 
 const Libraries = ({ installMethod }: { installMethod: string }) => {
     const [expandedLibrary, setExpandedLibrary] = React.useState('reanimated');
@@ -30,10 +30,10 @@ const Libraries = ({ installMethod }: { installMethod: string }) => {
                                         library.id === 'reanimated'
                                             ? 'activity'
                                             : library.id === 'gesture'
-                                              ? 'hand'
-                                              : library.id === 'skia'
-                                                ? 'pen-tool'
-                                                : ('box' as any)
+                                                ? 'hand'
+                                                : library.id === 'skia'
+                                                    ? 'pen-tool'
+                                                    : ('box' as any)
                                     }
                                     size={18}
                                     color="#6366F1"
@@ -75,7 +75,7 @@ const Libraries = ({ installMethod }: { installMethod: string }) => {
                                                     style={[
                                                         styles.extraStepText,
                                                         stepIndex > 0 &&
-                                                            !library.extraSteps[stepIndex - 1].includes('{') && { marginTop: 12 },
+                                                        !library.extraSteps[stepIndex - 1].includes('{') && { marginTop: 12 },
                                                     ]}>
                                                     {step}
                                                 </Text>
