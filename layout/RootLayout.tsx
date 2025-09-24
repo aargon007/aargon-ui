@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { View, Text, Pressable, StyleSheet, useWindowDimensions, TouchableOpacity, StatusBar } from 'react-native';
+import { View, Text, Pressable, StyleSheet, useWindowDimensions, TouchableOpacity, StatusBar, Image } from 'react-native';
 import ContentNavigator from '@/navigators/ContentNavigator';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import SideBar from '@/component/common/SideBar';
@@ -94,7 +94,7 @@ export default function RootLayout() {
                         sidebarAnimatedStyle
                     ]}
                 >
-                    {!isMobile && (
+                    {/* {!isMobile && (
                         <View style={styles.logoContainer}>
                             <Animated.View
                                 entering={BounceIn.delay(200).springify()}
@@ -107,6 +107,20 @@ export default function RootLayout() {
                             <Text style={styles.logoTitle}>
                                 Aargon UI
                             </Text>
+                        </View>
+                    )} */}
+                    {!isMobile && (
+                        <View style={styles.logoContainer}>
+                            <Animated.View
+                                entering={BounceIn.delay(200).springify()}
+                                style={styles.logoWrapper}
+                            >
+                                <Image
+                                    source={require('@/assets/aargon.png')}
+                                    style={styles.logoImage}
+                                    resizeMode="contain"
+                                />
+                            </Animated.View>
                         </View>
                     )}
 
@@ -190,6 +204,19 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.1,
         shadowRadius: 10,
         elevation: 5,
+    },
+    logoWrapper: {
+        width: 40,
+        height: 40,
+        borderRadius: 8,
+        overflow: 'hidden',
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '#fff', // optional backdrop
+    },
+    logoImage: {
+        width: '100%',
+        height: '100%',
     },
     logoContainer: {
         flexDirection: 'row',

@@ -7,7 +7,7 @@
     "newArchEnabled": true,
     "orientation": "portrait",
     "userInterfaceStyle": "automatic",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/aargon.png",
     "assetBundlePatterns": [
       "**/*"
     ],
@@ -50,7 +50,7 @@
     },
     "web": {
       "bundler": "metro",
-      "favicon": "./assets/icon.png"
+      "favicon": "./assets/aargon.png"
     },
     "plugins": [
       "expo-font",
