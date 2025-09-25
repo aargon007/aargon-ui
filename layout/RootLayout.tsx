@@ -1,20 +1,10 @@
-import { useState, useEffect } from 'react';
-import { View, Text, Pressable, StyleSheet, useWindowDimensions, TouchableOpacity, StatusBar, Image } from 'react-native';
+import { useState } from 'react';
+import { View, Text, Pressable, StyleSheet, useWindowDimensions, TouchableOpacity, StatusBar } from 'react-native';
 import ContentNavigator from '@/navigators/ContentNavigator';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import SideBar from '@/component/common/SideBar';
 import { Feather } from '@expo/vector-icons';
-import Animated, {
-    useSharedValue,
-    useAnimatedStyle,
-    withSpring,
-    withTiming,
-    FadeIn,
-    FadeInLeft,
-    SlideInLeft,
-    SlideOutLeft,
-    BounceIn
-} from 'react-native-reanimated';
+import { MotiView } from '@/component/ui/moti';
 
 export default function RootLayout() {
     const [activeSection, setActiveSection] = useState('introduction');
@@ -24,17 +14,6 @@ export default function RootLayout() {
     const inset = useSafeAreaInsets();
     const isMobile = width < 768;
 
-    // Shared values for state-based animations
-    const sidebarTranslateX = useSharedValue(isMobile ? -300 : 0);
-
-    // Update sidebar position when mobile nav state changes
-    useEffect(() => {
-        sidebarTranslateX.value = withTiming(
-            isMobile && !isMobileNavOpen ? -300 : 0,
-            { duration: 300 }
-        );
-    }, [isMobileNavOpen, isMobile]);
-
     const handleNavItemPress = (nav: any) => {
         setActiveSection(nav?.id);
 
@@ -42,13 +21,6 @@ export default function RootLayout() {
             setIsMobileNavOpen(false);
         }
     };
-
-    // Animated styles
-    const sidebarAnimatedStyle = useAnimatedStyle(() => {
-        return {
-            transform: [{ translateX: sidebarTranslateX.value }],
-        };
-    });
 
     return (
         <SafeAreaView style={styles.container}>
@@ -81,46 +53,36 @@ export default function RootLayout() {
                         </Text>
                     </View>
                 </>
+
             )}
 
             {/* Navigation sidebar */}
             {(!isMobile || isMobileNavOpen) && (
-                <Animated.View
-                    entering={isMobile ? SlideInLeft.duration(300) : FadeInLeft.duration(300)}
-                    exiting={isMobile ? SlideOutLeft.duration(300) : undefined}
-                    style={[
-                        styles.sidebar,
-                        isMobile && styles.mobileSidebar,
-                        sidebarAnimatedStyle
-                    ]}
+                <MotiView
+                    style={[styles.sidebar, isMobile && styles.mobileSidebar]}
+                    animate={{
+                        translateX: isMobile && !isMobileNavOpen ? -300 : 0,
+                    }}
+                    transition={{
+                        type: 'timing',
+                        duration: 300,
+                    }}
                 >
-                    {/* {!isMobile && (
+                    {!isMobile && (
                         <View style={styles.logoContainer}>
-                            <Animated.View
-                                entering={BounceIn.delay(200).springify()}
+                            <MotiView
                                 style={styles.logo}
+                                from={{ scale: 0.8, opacity: 0 }}
+                                animate={{ scale: 1, opacity: 1 }}
+                                transition={{ type: 'spring' }}
                             >
                                 <Text style={styles.logoText}>
                                     AUI
                                 </Text>
-                            </Animated.View>
+                            </MotiView>
                             <Text style={styles.logoTitle}>
                                 Aargon UI
                             </Text>
-                        </View>
-                    )} */}
-                    {!isMobile && (
-                        <View style={styles.logoContainer}>
-                            <Animated.View
-                                entering={BounceIn.delay(200).springify()}
-                                style={styles.logoWrapper}
-                            >
-                                <Image
-                                    source={require('@/assets/aargon.png')}
-                                    style={styles.logoImage}
-                                    resizeMode="contain"
-                                />
-                            </Animated.View>
                         </View>
                     )}
 
@@ -137,19 +99,18 @@ export default function RootLayout() {
                             <Feather name="moon" size={16} color="#666" />
                         </Pressable>
                     </View>
-                </Animated.View>
+                </MotiView>
             )}
 
             {/* Main content */}
-            <Animated.View
-                entering={FadeIn.duration(500).delay(100)}
-                style={[
-                    styles.content,
-                    isMobile && styles.mobileContent
-                ]}
+            <MotiView
+                style={[styles.content, isMobile && styles.mobileContent]}
+                from={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ type: 'timing', duration: 500 }}
             >
                 <ContentNavigator />
-            </Animated.View>
+            </MotiView>
         </SafeAreaView>
     );
 }
@@ -204,19 +165,6 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.1,
         shadowRadius: 10,
         elevation: 5,
-    },
-    logoWrapper: {
-        width: 40,
-        height: 40,
-        borderRadius: 8,
-        overflow: 'hidden',
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: '#fff', // optional backdrop
-    },
-    logoImage: {
-        width: '100%',
-        height: '100%',
     },
     logoContainer: {
         flexDirection: 'row',

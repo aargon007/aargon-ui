@@ -13,7 +13,6 @@ import {
   withDelay,
   withRepeat,
   withSequence,
-  runOnJS,
   ReduceMotion,
 } from 'react-native-reanimated'
 import type {
@@ -21,6 +20,7 @@ import type {
   WithSpringConfig,
   WithTimingConfig,
 } from 'react-native-reanimated'
+import { runOnJS } from 'react-native-worklets'
 
 import { PackageName } from './constants/package-name'
 import type {
@@ -32,6 +32,7 @@ import type {
   TransitionConfig,
   WithTransition,
   SequenceItemObject,
+  AnimationConfig,
 } from './types'
 
 const debug = (...args: any[]) => {
@@ -50,7 +51,8 @@ const debug = (...args: any[]) => {
 
 const isColor = (styleKey: string) => {
   'worklet'
-  const keys = {
+
+  const keys: { [key: string]: boolean; } = {
     backgroundColor: true,
     borderBottomColor: true,
     borderLeftColor: true,
@@ -61,7 +63,7 @@ const isColor = (styleKey: string) => {
     borderColor: true,
     borderEndColor: true,
     borderStartColor: true,
-  }
+  };
 
   return Boolean(keys[styleKey])
 }
@@ -69,7 +71,20 @@ const isColor = (styleKey: string) => {
 const isTransform = (styleKey: string) => {
   'worklet'
 
-  const transforms: Record<keyof Transforms, true> = {
+  const transforms: Record<string, boolean> & {
+    perspective: true,
+    rotate: true,
+    rotateX: true,
+    rotateY: true,
+    rotateZ: true,
+    scale: true,
+    scaleX: true,
+    scaleY: true,
+    translateX: true,
+    translateY: true,
+    skewX: true,
+    skewY: true,
+  } = {
     perspective: true,
     rotate: true,
     rotateX: true,
@@ -108,13 +123,12 @@ function animationDelay<Animate>(
 }
 
 const withSpringConfigKeys: (keyof WithSpringConfig)[] = [
-  'stiffness',
+  'mass',
   'overshootClamping',
-  'restDisplacementThreshold',
-  'restSpeedThreshold',
+  'energyThreshold',
   'velocity',
   'reduceMotion',
-  'mass',
+  'stiffness',
   'damping',
   'duration',
   'dampingRatio',
@@ -133,8 +147,7 @@ function animationConfig<Animate>(
   let animationType: Required<TransitionConfig>['type'] = 'spring'
   if (isColor(key) || key === 'opacity') animationType = 'timing'
 
-  const styleSpecificTransition = transition?.[key as any]
-
+  const styleSpecificTransition = transition?.[key as keyof MotiTransition<Animate>];
   // say that we're looking at `width`
   // first, check if we have transition.width.type
 
@@ -165,8 +178,8 @@ function animationConfig<Animate>(
 
   // debug({ loop, key, repeatCount, animationType })
 
-  let config = {}
-  let reduceMotion = ReduceMotion.System
+  let config: AnimationConfig = {}
+  let reduceMotion: ReduceMotion = ReduceMotion.System;
   // so sad, but fix it later :(
   let animation = (...props: any): any => props
 
@@ -183,53 +196,64 @@ function animationConfig<Animate>(
       (transition?.[key] as WithTimingConfig | undefined)?.reduceMotion ??
       (transition as WithTimingConfig | undefined)?.reduceMotion
 
-    if (easing) {
-      config['easing'] = easing
-    }
-    if (duration != null) {
-      config['duration'] = duration
-    }
+    const timingConfig: WithTimingConfig = {}
+    if (easing) timingConfig.easing = easing
+    if (duration != null) timingConfig.duration = duration
     if (reduceMotion) {
       reduceMotion = timingReduceMotion ?? reduceMotion
-      config['reduceMotion'] = reduceMotion
+      timingConfig.reduceMotion = reduceMotion
     }
+
+    config = timingConfig
     animation = withTiming
   } else if (animationType === 'spring') {
-    animation = withSpring
-    config = {} as WithSpringConfig
+    const springConfig: WithSpringConfig = {}
+
     for (const configKey of withSpringConfigKeys) {
-      const styleSpecificConfig = transition?.[key]?.[configKey]
-      const transitionConfigForKey = transition?.[configKey]
+      const styleSpecificConfig = transition?.[key]?.[configKey as keyof TransitionConfig]
+      const transitionConfigForKey = transition?.[configKey as keyof TransitionConfig]
+
       if (configKey === 'reduceMotion') {
-        reduceMotion = transitionConfigForKey || styleSpecificConfig
+        if (transitionConfigForKey !== undefined) {
+          reduceMotion = transitionConfigForKey as ReduceMotion
+        } else if (styleSpecificConfig !== undefined) {
+          reduceMotion = styleSpecificConfig as ReduceMotion
+        }
       }
+
       if (styleSpecificConfig != null) {
-        config[configKey] = styleSpecificConfig
+        // @ts-expect-error: index type union
+        springConfig[configKey] = styleSpecificConfig
       } else if (transitionConfigForKey != null) {
-        config[configKey] = transitionConfigForKey
+        // @ts-expect-error: index type union
+        springConfig[configKey] = transitionConfigForKey
       }
     }
+
+    config = springConfig
+    animation = withSpring
   } else if (animationType === 'decay') {
-    animation = withDecay
-    config = {}
+    const decayConfig: WithDecayConfig = {}
     const configKeys: (keyof WithDecayConfig)[] = [
       'clamp',
       'velocity',
       'deceleration',
       'velocityFactor',
-      'reduceMotion',
-      'velocityFactor',
+      'reduceMotion'
     ]
+
     for (const configKey of configKeys) {
-      const styleSpecificConfig = transition?.[key]?.[configKey]
-      const transitionConfigForKey = transition?.[configKey]
+      const styleSpecificConfig = (transition as any)[key]?.[configKey];
+      const transitionConfigForKey = (transition as any)[configKey];
+
       if (configKey === 'reduceMotion') {
         reduceMotion = transitionConfigForKey || styleSpecificConfig
       }
+      
       if (styleSpecificConfig != null) {
-        config[configKey] = styleSpecificConfig
+        decayConfig[configKey] = styleSpecificConfig as never
       } else if (transitionConfigForKey != null) {
-        config[configKey] = transitionConfigForKey
+        decayConfig[configKey] = transitionConfigForKey as never
       }
     }
   } else if (animationType === 'no-animation') {
@@ -378,9 +402,9 @@ export function useMotify<Animate>({
 
   const hasExitStyle = Boolean(
     typeof exitProp === 'function' ||
-      (typeof exitProp === 'object' &&
-        exitProp &&
-        Object.keys(exitProp).length > 0)
+    (typeof exitProp === 'object' &&
+      exitProp &&
+      Object.keys(exitProp).length > 0)
   )
 
   const style = useAnimatedStyle(() => {

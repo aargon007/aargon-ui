@@ -15,7 +15,8 @@ const ComponentPage = ({ children }: { children: React.ReactNode }) => {
             <MotiView
                 from={{ translateY: 20, opacity: 0 }}
                 animate={{ translateY: 0, opacity: 1 }}
-                transition={{ type: 'spring', damping: 18 }}
+                transition={{ type: 'spring' }}
+                // transition={{ type: 'timing', duration: 500 }}
             >
                 {children}
             </MotiView>

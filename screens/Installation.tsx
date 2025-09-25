@@ -1,21 +1,22 @@
 import React from 'react';
 import { StyleSheet, Text, View, Pressable } from 'react-native';
 import { Feather } from '@expo/vector-icons';
-import Animated, { FadeInUp } from 'react-native-reanimated';
 
 import Prerequisites from '@/component/installation/Prerequisites';
 import Troubleshooting from '@/component/installation/Troubleshooting';
 import Libraries from '@/component/installation/Libraries';
 import ComponentPage from '@/component/common/ComponentPage';
+import { MotiView } from '@/component/ui/moti';
 
 const Installation = () => {
     const [installMethod, setInstallMethod] = React.useState('npm');
 
     return (
         <ComponentPage>
-            <Animated.View
-                entering={FadeInUp.springify().damping(18).stiffness(100).mass(1.2)}
-            >
+            <MotiView
+                from={{ translateY: 20, opacity: 0 }}
+                animate={{ translateY: 0, opacity: 1 }}
+                transition={{ type: 'spring' }}>
                 <Text style={styles.contentTitle}>Installation</Text>
 
                 <Text style={styles.contentText}>
@@ -60,7 +61,7 @@ const Installation = () => {
                         <Feather name="arrow-right" size={16} color="#FFFFFF" />
                     </Pressable>
                 </View>
-            </Animated.View>
+            </MotiView>
         </ComponentPage>
     );
 };

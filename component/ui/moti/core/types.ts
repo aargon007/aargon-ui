@@ -550,3 +550,11 @@ export type UseDynamicAnimationState<Animate = FallbackAnimateProp> = {
 export type ExcludeFunctionKeys<T> = {
   [K in keyof T as T[K] extends (...a: any[]) => any ? never : K]?: T[K]
 }
+
+export type ValidTimingConfigKeys = 'clamp' | 'velocity' | 'deceleration' | 'velocityFactor' | 'reduceMotion';
+
+export type AnimationConfig =
+  | WithTimingConfig
+  | WithSpringConfig
+  | WithDecayConfig
+  | Record<string, unknown>; // fallback for no-animation
