@@ -2,7 +2,7 @@ import React from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { libraries } from '@/constants/installationLibraries';
 import { Feather } from '@expo/vector-icons';
-import Animated, { FadeInUp, FadeInDown } from 'react-native-reanimated';
+import { MotiView } from '../ui/moti';
 
 const Libraries = ({ installMethod }: { installMethod: string }) => {
     const [expandedLibrary, setExpandedLibrary] = React.useState('reanimated');
@@ -10,19 +10,19 @@ const Libraries = ({ installMethod }: { installMethod: string }) => {
     return (
         <>
             {libraries.map((library, index) => (
-                <Animated.View
+                <MotiView
                     key={library.id}
-                    entering={FadeInUp.springify()
-                        .damping(18)
-                        .stiffness(100)
-                        .mass(1.2)
-                        .delay(index * 100)}
+                    from={{ opacity: 0, translateY: 20 }}
+                    animate={{ opacity: 1, translateY: 0 }}
+                    transition={{
+                        type: 'spring',
+                        delay: index * 100,
+                    }}
                     style={styles.libraryCard}
                 >
                     <Pressable
                         style={styles.libraryHeader}
-                        onPress={() => setExpandedLibrary(expandedLibrary === library.id ? '' : library.id)}
-                    >
+                        onPress={() => setExpandedLibrary(expandedLibrary === library.id ? '' : library.id)}>
                         <View style={styles.libraryTitleContainer}>
                             <View style={styles.libraryIconContainer}>
                                 <Feather
@@ -45,9 +45,12 @@ const Libraries = ({ installMethod }: { installMethod: string }) => {
                     </Pressable>
 
                     {expandedLibrary === library.id && (
-                        <Animated.View
-                            entering={FadeInDown.duration(300).delay(index * 100)}
-                            style={styles.libraryContent}>
+                        <MotiView
+                            from={{ opacity: 0, height: 0 }}
+                            animate={{ opacity: 1, height: 'auto' }}
+                            transition={{ type: 'timing', duration: 300, delay: index * 100 }}
+                            style={styles.libraryContent}
+                        >
                             <Text style={styles.libraryDescription}>{library.description}</Text>
 
                             <View style={styles.installCommand}>
@@ -82,9 +85,9 @@ const Libraries = ({ installMethod }: { installMethod: string }) => {
                                     ))}
                                 </View>
                             )}
-                        </Animated.View>
+                        </MotiView>
                     )}
-                </Animated.View>
+                </MotiView>
             ))}
         </>
     );

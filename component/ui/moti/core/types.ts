@@ -1,20 +1,8 @@
 import type {
-  PerspectiveTransform,
-  RotateTransform,
-  RotateXTransform,
-  RotateYTransform,
-  RotateZTransform,
-  ScaleTransform,
-  ScaleXTransform,
-  ScaleYTransform,
-  TranslateXTransform,
-  TranslateYTransform,
-  SkewXTransform,
-  SkewYTransform,
+  AnimatableNumericValue,
   ImageStyle,
   TextStyle,
   ViewStyle,
-  
 } from 'react-native'
 import type {
   SharedValue,
@@ -24,32 +12,23 @@ import type {
   DerivedValue,
 } from 'react-native-reanimated'
 
-export type Transforms = PerspectiveTransform &
-  RotateTransform &
-  RotateXTransform &
-  RotateYTransform &
-  RotateZTransform &
-  ScaleTransform &
-  ScaleXTransform &
-  ScaleYTransform &
-  TranslateXTransform &
-  TranslateYTransform &
-  SkewXTransform &
-  SkewYTransform
+type Mutable<T> = T extends object ? { -readonly [P in keyof T]: T[P] } : never
 
-export type MotiTranformProps = Partial<Transforms> &
-  Pick<ViewStyle, 'transform'>
+export type Transforms = Mutable<
+  Exclude<ViewStyle['transform'], string | void>[number]
+>
 
-export type TransitionConfigWithoutRepeats = (
-  | ({ type?: 'spring' } & WithSpringConfig)
-  | ({ type: 'timing' } & WithTimingConfig)
-  | ({ type: 'decay' } & WithDecayConfig)
-  | { type: 'no-animation' }
-) & {
+export type MotiTranformProps = {
+  transform?: ViewStyle['transform']
+} & {
+  [K in keyof Transforms]?: AnimatableNumericValue
+}
+
+export type TransitionDelayConfig = {
   delay?: number
 }
 
-export type TransitionConfig = TransitionConfigWithoutRepeats & {
+export type TransitionRepeatConfig = {
   /**
    * Number of times this animation should repeat. To make it infinite, use the `loop` boolean.
    *
@@ -82,6 +61,35 @@ export type TransitionConfig = TransitionConfigWithoutRepeats & {
   repeatReverse?: boolean
 }
 
+type Simplify<T> = {} & {
+  [K in keyof T]: T[K]
+}
+
+export type SpringConfig = Simplify<
+  WithSpringConfig & TransitionDelayConfig & TransitionRepeatConfig
+>
+
+export type TimingConfig = Simplify<
+  WithTimingConfig & TransitionDelayConfig & TransitionRepeatConfig
+>
+
+export type DecayConfig = Simplify<
+  WithDecayConfig & TransitionDelayConfig & TransitionRepeatConfig
+>
+
+export type TransitionType = 'spring' | 'timing' | 'decay' | 'no-animation'
+
+export type TransitionConfig = {
+  /**
+   * The type of transition to use.
+   *
+   * Defaults to `spring`, except for opacity and color props, in which case `timing` is used.
+   */
+  type?: TransitionType
+} & SpringConfig &
+  TimingConfig &
+  DecayConfig
+
 export type SequenceItemObject<Value> = {
   value: Value
   onDidAnimate?: (
@@ -92,7 +100,7 @@ export type SequenceItemObject<Value> = {
       attemptedSequenceItemValue: Value
     }
   ) => void
-} & TransitionConfigWithoutRepeats
+} & Omit<TransitionConfig, keyof TransitionRepeatConfig>
 
 export type SequenceItem<Value> =
   | // raw style values
@@ -101,15 +109,15 @@ export type SequenceItem<Value> =
   | SequenceItemObject<Value>
 export type StyleValueWithSequenceArraysWithoutTransform<T> = {
   [key in Exclude<keyof T, 'transform' | keyof Transforms>]:
-    | T[key] // either the value
-    // or an array of values for a sequence
-    | SequenceItem<T[ExcludeArrayType<ExcludeObject<key>>]>[]
+  | T[key] // either the value
+  // or an array of values for a sequence
+  | SequenceItem<T[ExcludeArrayType<ExcludeObject<key>>]>[]
 } & {
   // even though the TS types don't allow transform strings, we do for percentages & degrees
   [key in Extract<keyof T, keyof Transforms>]?:
-    | T[key]
-    | (string & {})
-    | SequenceItem<T[key] | (string & {})>[]
+  | T[key]
+  | (string & {})
+  | SequenceItem<T[key] | (string & {})>[]
 }
 
 export type StyleValueWithSequenceArraysWithTransform = {
@@ -118,7 +126,7 @@ export type StyleValueWithSequenceArraysWithTransform = {
 
 export type StyleValueWithSequenceArrays<T> = Partial<
   StyleValueWithSequenceArraysWithoutTransform<T> &
-    StyleValueWithSequenceArraysWithTransform
+  StyleValueWithSequenceArraysWithTransform
 >
 
 export type OnDidAnimate<
@@ -158,7 +166,7 @@ export type OnDidAnimate<
      * />
      * ```
      */
-    attemptedValue: Animate[Key]
+    attemptedValue: unknown
     /**
      * If the value you passed was a sequence, then this will pass the attempted `item` from the sequence array that just tried to animate.
      *
@@ -191,7 +199,7 @@ export type OnDidAnimate<
      *  />
      * ```
      */
-    attemptedSequenceItemValue?: Animate[Key]
+    attemptedSequenceItemValue?: unknown
   }
 ) => void
 
@@ -205,14 +213,15 @@ export type MotiAnimationProp<Animate> = MotiProps<Animate>['animate']
 export type MotiFromProp<Animate> = MotiProps<Animate>['from']
 export type MotiExitProp<Animate> = MotiProps<Animate>['exit']
 
-type OrDerivedValue<T> = T | DerivedValue<T>
+type OrDerivedValue<T> = T | Omit<DerivedValue<T>, 'set'>
 
 type FallbackAnimateProp = StyleValueWithReplacedTransforms<
   ImageStyle & TextStyle & ViewStyle
 >
 
-export type MotiTransition<Animate = FallbackAnimateProp> = TransitionConfig &
-  Partial<Record<keyof Animate, TransitionConfig>>
+export type MotiTransition<Animate = FallbackAnimateProp> = TransitionConfig & {
+  [K in keyof Animate]?: TransitionConfig
+}
 
 export type MotiTransitionProp<Animate = FallbackAnimateProp> = OrDerivedValue<
   MotiTransition<Animate>
@@ -257,11 +266,11 @@ type ExcludeObject<T> = T extends object ? never : T
 
 type StyleValueWithCallbacks<Animate> = {
   [Key in keyof Animate]?:
-    | Animate[Key]
-    | {
-        value: ExcludeObject<ExcludeArrayType<Animate[Key]>>
-        onDidAnimate: InlineOnDidAnimate<Animate[Key]>
-      }
+  | Animate[Key]
+  | {
+    value: ExcludeObject<ExcludeArrayType<Animate[Key]>>
+    onDidAnimate: InlineOnDidAnimate<Animate[Key]>
+  }
 }
 
 export interface MotiProps<
@@ -310,9 +319,9 @@ export interface MotiProps<
    * It follows the same API as the `exit` prop from `framer-motion`. Feel free to reference their docs: https://www.framer.com/motion/animate-presence/
    * */
   exit?:
-    | AnimateWithTransforms
-    | boolean
-    | ((custom?: any) => AnimateWithTransforms)
+  | AnimateWithTransforms
+  | boolean
+  | ((custom?: any) => AnimateWithTransforms)
   /**
    * Define animation configurations.
    *
@@ -334,7 +343,9 @@ export interface MotiProps<
    * />
    * ```
    */
-  transition?: MotiTransitionProp<AnimateWithTransforms>
+  transition?:
+  | MotiTransitionProp<AnimateWithTransforms>
+  | ((custom?: any) => MotiTransition<AnimateWithTransforms>)
   /**
    * Define animation configurations for exiting components.
    *
@@ -360,8 +371,8 @@ export interface MotiProps<
    *
    */
   exitTransition?:
-    | MotiTransitionProp<AnimateWithTransforms>
-    | ((custom?: any) => MotiTransition<AnimateWithTransforms>)
+  | MotiTransitionProp<AnimateWithTransforms>
+  | ((custom?: any) => MotiTransition<AnimateWithTransforms>)
   /**
    * Optionally delay the `animate` field.
    *
@@ -406,7 +417,7 @@ export type Variants<
   AnimateType = ImageStyle & TextStyle & ViewStyle,
   // edit the style props to remove transform array, flattening it
   AnimateWithTransformsAndTransition = StyleValueWithReplacedTransforms<AnimateType> &
-    WithTransition,
+  WithTransition,
   // allow the style values to be arrays for sequences, where values are primitives or objects with configs
   Animate = StyleValueWithSequenceArrays<AnimateWithTransformsAndTransition>
 > = {
@@ -502,9 +513,9 @@ export type DynamicStyleProp<
   // in component usage, it will extract these from the style prop ideally
   AnimateType = ImageStyle & ViewStyle & TextStyle,
   // edit the style props to remove transform array, flattening it
-  // AnimateWithTransitions = Omit<AnimateType, 'transform'> & Partial<Transforms>,
+  // AnimateWithTransitions = Omit<AnimateType, 'transform'> & Transforms,
   AnimateWithTransforms = StyleValueWithReplacedTransforms<AnimateType>
-  // allow the style values to be arrays for sequences, where values are primitives or objects with configs
+// allow the style values to be arrays for sequences, where values are primitives or objects with configs
 > = NonNullable<StyleValueWithSequenceArrays<AnimateWithTransforms>> &
   WithTransition
 
@@ -550,11 +561,3 @@ export type UseDynamicAnimationState<Animate = FallbackAnimateProp> = {
 export type ExcludeFunctionKeys<T> = {
   [K in keyof T as T[K] extends (...a: any[]) => any ? never : K]?: T[K]
 }
-
-export type ValidTimingConfigKeys = 'clamp' | 'velocity' | 'deceleration' | 'velocityFactor' | 'reduceMotion';
-
-export type AnimationConfig =
-  | WithTimingConfig
-  | WithSpringConfig
-  | WithDecayConfig
-  | Record<string, unknown>; // fallback for no-animation

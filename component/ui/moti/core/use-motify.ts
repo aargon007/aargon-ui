@@ -3,7 +3,6 @@ import type {
   usePresence as useFramerPresence,
 } from 'framer-motion'
 import { useEffect, useMemo } from 'react'
-import type { TransformsStyle } from 'react-native'
 import {
   useAnimatedStyle,
   useSharedValue,
@@ -16,6 +15,7 @@ import {
   ReduceMotion,
 } from 'react-native-reanimated'
 import type {
+  AnimationCallback,
   WithDecayConfig,
   WithSpringConfig,
   WithTimingConfig,
@@ -32,7 +32,8 @@ import type {
   TransitionConfig,
   WithTransition,
   SequenceItemObject,
-  AnimationConfig,
+  TransitionType,
+  TransitionDelayConfig,
 } from './types'
 
 const debug = (...args: any[]) => {
@@ -52,39 +53,40 @@ const debug = (...args: any[]) => {
 const isColor = (styleKey: string) => {
   'worklet'
 
-  const keys: { [key: string]: boolean; } = {
-    backgroundColor: true,
-    borderBottomColor: true,
-    borderLeftColor: true,
-    borderRightColor: true,
-    borderTopColor: true,
-    color: true,
-    shadowColor: true,
-    borderColor: true,
-    borderEndColor: true,
-    borderStartColor: true,
-  };
-
-  return Boolean(keys[styleKey])
+  return Boolean(
+    {
+      backgroundColor: true,
+      borderBottomColor: true,
+      borderLeftColor: true,
+      borderRightColor: true,
+      borderTopColor: true,
+      color: true,
+      shadowColor: true,
+      borderColor: true,
+      borderEndColor: true,
+      borderStartColor: true,
+    }[styleKey]
+  )
 }
 
-const isTransform = (styleKey: string) => {
+const hasInlineOnDidAnimate = (
+  value: any
+): value is {
+  value: any
+  onDidAnimate: InlineOnDidAnimate<any>
+} => {
   'worklet'
 
-  const transforms: Record<string, boolean> & {
-    perspective: true,
-    rotate: true,
-    rotateX: true,
-    rotateY: true,
-    rotateZ: true,
-    scale: true,
-    scaleX: true,
-    scaleY: true,
-    translateX: true,
-    translateY: true,
-    skewX: true,
-    skewY: true,
-  } = {
+  return typeof value === 'object' && value !== null && 'onDidAnimate' in value
+}
+
+const isTransform = (
+  styleKey: string
+): styleKey is string & keyof Transforms => {
+  'worklet'
+
+  const transforms: Record<keyof Transforms, true> = {
+    matrix: true,
     perspective: true,
     rotate: true,
     rotateX: true,
@@ -99,7 +101,7 @@ const isTransform = (styleKey: string) => {
     skewY: true,
   }
 
-  return Boolean(transforms[styleKey])
+  return Boolean(transforms[styleKey as keyof Transforms])
 }
 
 function animationDelay<Animate>(
@@ -108,8 +110,9 @@ function animationDelay<Animate>(
   defaultDelay?: number
 ) {
   'worklet'
+
   const key = _key as keyof Animate
-  let delayMs: TransitionConfig['delay'] = defaultDelay
+  let delayMs: unknown = defaultDelay
 
   if (transition?.[key]?.delay != null) {
     delayMs = transition?.[key]?.delay
@@ -119,151 +122,137 @@ function animationDelay<Animate>(
 
   return {
     delayMs,
+  } as {
+    delayMs: TransitionDelayConfig['delay']
   }
 }
 
-const withSpringConfigKeys: (keyof WithSpringConfig)[] = [
-  'mass',
-  'overshootClamping',
-  'energyThreshold',
-  'velocity',
-  'reduceMotion',
-  'stiffness',
-  'damping',
-  'duration',
-  'dampingRatio',
-]
+// a looser type for internal use
+type Transition<Animate> = MotiTransition<Animate> & {
+  reduceMotion?: ReduceMotion
+} & Record<string, any>
 
-function animationConfig<Animate>(
-  styleProp: string,
-  transition: MotiTransition<Animate> | undefined
-) {
+type AnimationConfig =
+  | WithTimingConfig
+  | WithSpringConfig
+  | WithDecayConfig
+  | {}
+
+type AnimationFactory = (
+  value: any,
+  config: any,
+  callback: AnimationCallback
+) => any
+
+type AnimationConfigResult = {
+  animation: AnimationFactory
+  config: AnimationConfig
+  reduceMotion: ReduceMotion
+  repeatReverse: boolean
+  repeatCount: number
+  shouldRepeat: boolean
+}
+
+// distributive version of built-in Omit type
+type Omit<T, K extends string> = T extends object
+  ? { [P in Exclude<keyof T, K>]: T[P] }
+  : never
+
+type AllKeys<T> = T extends object ? keyof T : never
+
+// use a Record type to declare keys with an exhaustive check
+function typedObjectKeys<T>(obj: Record<AllKeys<T>, true>) {
   'worklet'
 
-  const key = styleProp as Extract<keyof Animate, string>
-  let repeatCount = 0
-  let repeatReverse = true
+  return Object.keys(obj) as AllKeys<T>[]
+}
 
-  let animationType: Required<TransitionConfig>['type'] = 'spring'
-  if (isColor(key) || key === 'opacity') animationType = 'timing'
+function animationConfig<Animate>(
+  key: string,
+  transition: Transition<Animate> | undefined
+): AnimationConfigResult {
+  'worklet'
 
-  const styleSpecificTransition = transition?.[key as keyof MotiTransition<Animate>];
-  // say that we're looking at `width`
-  // first, check if we have transition.width.type
+  let animation: AnimationFactory | undefined
+  let config: AnimationConfig & Record<string, any> = {}
+  let reduceMotion = ReduceMotion.System
+  let repeatCount: number
+  let repeatReverse: boolean
 
-  if (styleSpecificTransition?.type) {
-    animationType = styleSpecificTransition.type
-  } else if (transition?.type) {
-    // otherwise, fallback to transition.type
-    animationType = transition.type
-  }
+  if (transition) {
+    // key-specific transition config is used to override the root transition config
+    const overrides: (TransitionConfig & Record<string, any>) | undefined =
+      transition[key]
 
-  const loop = styleSpecificTransition?.loop ?? transition?.loop
+    let transitionType: TransitionType =
+      overrides?.type ??
+      transition.type ??
+      (key === 'opacity' || isColor(key) ? 'timing' : 'spring')
 
-  if (loop != null) {
-    repeatCount = loop ? -1 : 0
-  }
+    const loop = overrides?.loop ?? transition?.loop
 
-  if (styleSpecificTransition?.repeat != null) {
-    repeatCount = styleSpecificTransition?.repeat
-  } else if (transition?.repeat != null) {
-    repeatCount = transition.repeat
-  }
+    repeatCount =
+      loop == null ? overrides?.repeat ?? transition.repeat ?? 0 : loop ? -1 : 0
 
-  if (styleSpecificTransition?.repeatReverse != null) {
-    repeatReverse = styleSpecificTransition.repeatReverse
-  } else if (transition?.repeatReverse != null) {
-    repeatReverse = transition.repeatReverse
-  }
+    repeatReverse =
+      overrides?.repeatReverse ?? transition?.repeatReverse ?? true
 
-  // debug({ loop, key, repeatCount, animationType })
+    let configKeys: string[] | undefined
 
-  let config: AnimationConfig = {}
-  let reduceMotion: ReduceMotion = ReduceMotion.System;
-  // so sad, but fix it later :(
-  let animation = (...props: any): any => props
-
-  if (animationType === 'timing') {
-    const duration =
-      (transition?.[key] as WithTimingConfig | undefined)?.duration ??
-      (transition as WithTimingConfig | undefined)?.duration
-
-    const easing =
-      (transition?.[key] as WithTimingConfig | undefined)?.easing ??
-      (transition as WithTimingConfig | undefined)?.easing
-
-    const timingReduceMotion =
-      (transition?.[key] as WithTimingConfig | undefined)?.reduceMotion ??
-      (transition as WithTimingConfig | undefined)?.reduceMotion
-
-    const timingConfig: WithTimingConfig = {}
-    if (easing) timingConfig.easing = easing
-    if (duration != null) timingConfig.duration = duration
-    if (reduceMotion) {
-      reduceMotion = timingReduceMotion ?? reduceMotion
-      timingConfig.reduceMotion = reduceMotion
+    if (transitionType === 'timing') {
+      animation = withTiming
+      configKeys = typedObjectKeys<Omit<WithTimingConfig, 'reduceMotion'>>({
+        duration: true,
+        easing: true,
+      })
+    } else if (transitionType === 'spring') {
+      animation = withSpring
+      configKeys = typedObjectKeys<Omit<WithSpringConfig, 'reduceMotion'>>({
+        clamp: true,
+        damping: true,
+        dampingRatio: true,
+        duration: true,
+        energyThreshold: true,
+        mass: true,
+        overshootClamping: true,
+        stiffness: true,
+        velocity: true,
+      })
+    } else if (transitionType === 'decay') {
+      animation = withDecay
+      configKeys = typedObjectKeys<Omit<WithDecayConfig, 'reduceMotion'>>({
+        clamp: true,
+        deceleration: true,
+        rubberBandEffect: true,
+        rubberBandFactor: true,
+        velocity: true,
+        velocityFactor: true,
+      })
+    } else {
+      repeatCount = 0
     }
 
-    config = timingConfig
-    animation = withTiming
-  } else if (animationType === 'spring') {
-    const springConfig: WithSpringConfig = {}
-
-    for (const configKey of withSpringConfigKeys) {
-      const styleSpecificConfig = transition?.[key]?.[configKey as keyof TransitionConfig]
-      const transitionConfigForKey = transition?.[configKey as keyof TransitionConfig]
-
-      if (configKey === 'reduceMotion') {
-        if (transitionConfigForKey !== undefined) {
-          reduceMotion = transitionConfigForKey as ReduceMotion
-        } else if (styleSpecificConfig !== undefined) {
-          reduceMotion = styleSpecificConfig as ReduceMotion
-        }
+    configKeys?.forEach((configKey) => {
+      const configValue = overrides?.[configKey] ?? transition[configKey]
+      if (configValue !== undefined) {
+        config[configKey] = configValue
       }
+    })
 
-      if (styleSpecificConfig != null) {
-        // @ts-expect-error: index type union
-        springConfig[configKey] = styleSpecificConfig
-      } else if (transitionConfigForKey != null) {
-        // @ts-expect-error: index type union
-        springConfig[configKey] = transitionConfigForKey
-      }
+    if (animation) {
+      // root-level reduceMotion takes precedence
+      reduceMotion =
+        transition?.reduceMotion ??
+        overrides?.reduceMotion ??
+        reduceMotion
     }
-
-    config = springConfig
-    animation = withSpring
-  } else if (animationType === 'decay') {
-    const decayConfig: WithDecayConfig = {}
-    const configKeys: (keyof WithDecayConfig)[] = [
-      'clamp',
-      'velocity',
-      'deceleration',
-      'velocityFactor',
-      'reduceMotion'
-    ]
-
-    for (const configKey of configKeys) {
-      const styleSpecificConfig = (transition as any)[key]?.[configKey];
-      const transitionConfigForKey = (transition as any)[configKey];
-
-      if (configKey === 'reduceMotion') {
-        reduceMotion = transitionConfigForKey || styleSpecificConfig
-      }
-      
-      if (styleSpecificConfig != null) {
-        decayConfig[configKey] = styleSpecificConfig as never
-      } else if (transitionConfigForKey != null) {
-        decayConfig[configKey] = transitionConfigForKey as never
-      }
-    }
-  } else if (animationType === 'no-animation') {
-    animation = (value) => value
-    config = {}
+  } else {
     repeatCount = 0
+    repeatReverse = true
   }
 
   return {
-    animation,
+    animation: animation ?? ((value: any) => value),
     config,
     reduceMotion,
     repeatReverse,
@@ -277,7 +266,7 @@ const getSequenceArray = (
   sequenceArray: SequenceItem<any>[],
   delayMs: number | undefined,
   config: object,
-  animation: (...props: any) => any,
+  animation: AnimationFactory,
   callback: (
     completed: boolean | undefined,
     value: any | undefined,
@@ -301,10 +290,7 @@ const getSequenceArray = (
       let stepValue = step
       let stepReduceMotion = ReduceMotion.System
       let stepConfig = Object.assign({}, config)
-      let stepAnimation = animation as
-        | typeof withTiming
-        | typeof withSpring
-        | typeof withDecay
+      let stepAnimation = animation
       if (typeof step === 'object') {
         // not allowed in Reanimated: { delay, value, ...transition } = step
         const stepTransition = Object.assign({}, step)
@@ -331,7 +317,7 @@ const getSequenceArray = (
 
       const sequenceValue = stepAnimation(
         stepValue,
-        stepConfig as any,
+        stepConfig,
         (completed = false, maybeValue) => {
           'worklet'
           callback(completed, maybeValue, {
@@ -408,14 +394,15 @@ export function useMotify<Animate>({
   )
 
   const style = useAnimatedStyle(() => {
-    const final = {
-      // initializing here fixes reanimated object.__defineProperty bug(?)
-      transform: [] as TransformsStyle['transform'],
+    const final: Record<string, any> & {
+      transform: Transforms[]
+    } = {
+      transform: [],
     }
+
     const variantStyle: Animate & WithTransition = state?.__state?.value || {}
 
     let animateStyle: Animate
-
     if (animateProp && 'value' in animateProp) {
       animateStyle = (animateProp.value || {}) as Animate
     } else {
@@ -432,7 +419,7 @@ export function useMotify<Animate>({
 
     const isExiting = !isPresent && hasExitStyle
 
-    let mergedStyles: Animate = {} as Animate
+    let mergedStyles: Record<string, any> = {}
     if (stylePriority === 'state') {
       mergedStyles = Object.assign({}, animateStyle, variantStyle)
     } else {
@@ -444,13 +431,13 @@ export function useMotify<Animate>({
       !disableInitialAnimation &&
       Object.keys(initialStyle).length
     ) {
-      mergedStyles = initialStyle as Animate
+      mergedStyles = initialStyle
     } else {
       mergedStyles = Object.assign({}, initialStyle, mergedStyles)
     }
 
     if (isExiting && exitStyle) {
-      mergedStyles = Object.assign({}, exitStyle) as any
+      mergedStyles = Object.assign({}, exitStyle)
     }
 
     const exitingStyleProps: Record<string, boolean> = {}
@@ -473,9 +460,11 @@ export function useMotify<Animate>({
     })
 
     // allow shared values as transitions
-    let transition: MotiTransition<Animate> | undefined
+    let transition: MotiTransition | undefined
     if (transitionProp && 'value' in transitionProp) {
       transition = transitionProp.value
+    } else if (typeof transitionProp == 'function') {
+      transition = transitionProp(custom())
     } else {
       transition = transitionProp
     }
@@ -486,7 +475,7 @@ export function useMotify<Animate>({
     }
 
     if (isExiting && exitTransitionProp) {
-      let exitTransition: MotiTransition<Animate> | undefined
+      let exitTransition: MotiTransition | undefined
       if (exitTransitionProp && 'value' in exitTransitionProp) {
         exitTransition = exitTransitionProp.value
       } else if (typeof exitTransitionProp == 'function') {
@@ -499,12 +488,11 @@ export function useMotify<Animate>({
     }
 
     // need to use forEach to work with Hermes...https://github.com/nandorojo/moti/issues/214#issuecomment-1399055535
-    Object.keys(mergedStyles as any).forEach((key) => {
+    Object.keys(mergedStyles).forEach((key) => {
       let value = mergedStyles[key]
 
       let inlineOnDidAnimate: InlineOnDidAnimate<any> | undefined
-
-      if (typeof value === 'object' && value && 'onDidAnimate' in value) {
+      if (hasInlineOnDidAnimate(value)) {
         inlineOnDidAnimate = value.onDidAnimate
         value = value.value
       }
@@ -527,15 +515,10 @@ export function useMotify<Animate>({
         }
       ) => void = (completed = false, recentValue, info) => {
         if (onDidAnimate) {
-          runOnJS(reanimatedOnDidAnimate as any)(
-            key as any,
-            completed,
-            recentValue,
-            {
-              attemptedValue: value,
-              attemptedSequenceItemValue: info?.attemptedSequenceValue,
-            }
-          )
+          runOnJS(reanimatedOnDidAnimate)(key as any, completed, recentValue, {
+            attemptedValue: value,
+            attemptedSequenceItemValue: info?.attemptedSequenceValue,
+          })
         }
         if (inlineOnDidAnimate) {
           runOnJS(inlineOnDidAnimate)(completed, recentValue, {
@@ -569,10 +552,11 @@ export function useMotify<Animate>({
           )
         } else {
           value.forEach((transformObject) => {
-            final['transform'] = final['transform'] || []
-            const transformKey = Object.keys(transformObject)[0]
+            const transformKey = Object.keys(
+              transformObject
+            )[0] as keyof Transforms
             const transformValue = transformObject[transformKey]
-            const transform = {} as any
+            const transform = {} as Transforms
 
             if (Array.isArray(transformValue)) {
               // we have a sequence in this transform...
@@ -599,11 +583,12 @@ export function useMotify<Animate>({
                 transform[transformKey] = finalValue
               }
             } else {
-              if (transition?.[transformKey]?.delay != null) {
-                delayMs = transition?.[transformKey]?.delay
+              const transformConfig = transition?.[transformKey]
+              if (transformConfig?.delay != null) {
+                delayMs = transformConfig.delay
               }
 
-              let configKey = transformKey
+              let configKey: string = transformKey
               if (
                 transition &&
                 'transform' in transition &&
@@ -641,11 +626,8 @@ export function useMotify<Animate>({
               }
             }
 
-            if (
-              Object.keys(transform).length &&
-              Array.isArray(final['transform'])
-            ) {
-              final['transform'].push(transform)
+            if (Object.keys(transform).length) {
+              final.transform.push(transform)
             }
           })
         }
@@ -660,44 +642,32 @@ export function useMotify<Animate>({
           animation,
           callback
         )
-        let finalValue = withSequence(...sequence)
-        if (shouldRepeat) {
-          finalValue = withRepeat(
-            finalValue,
-            repeatCount,
-            repeatReverse,
-            undefined,
-            reduceMotion
-          )
-        }
-
-        if (isTransform(key)) {
-          // we have a sequence of transforms
-          final['transform'] = final['transform'] || []
-
-          if (sequence.length) {
-            const transform = {}
-
-            transform[key] = finalValue
-
-            // @ts-expect-error transform had the wrong type
-            final['transform'].push(transform)
+        if (sequence.length) {
+          let finalValue = withSequence(...sequence)
+          if (shouldRepeat) {
+            finalValue = withRepeat(
+              finalValue,
+              repeatCount,
+              repeatReverse,
+              undefined,
+              reduceMotion
+            )
           }
-        } else {
-          // we have a normal sequence of items
-          // shadows not supported
-          if (sequence.length) {
+
+          if (isTransform(key)) {
+            // we have a sequence of transforms
+            const transform = {} as Transforms
+            transform[key] = finalValue
+            final.transform.push(transform)
+          } else {
+            // we have a normal sequence of items
+            // shadows not supported
             final[key] = finalValue
           }
         }
       } else if (isTransform(key)) {
-        final['transform'] = final['transform'] || []
+        const transform = {} as Transforms
 
-        if (transition?.[key]?.delay != null) {
-          delayMs = transition?.[key]?.delay
-        }
-
-        const transform = {}
         let finalValue = animation(value, config, callback)
         if (shouldRepeat) {
           finalValue = withRepeat(
@@ -708,20 +678,23 @@ export function useMotify<Animate>({
             reduceMotion
           )
         }
+        const transformConfig = transition?.[key]
+        if (transformConfig?.delay != null) {
+          delayMs = transformConfig.delay
+        }
         if (delayMs != null) {
           transform[key] = withDelay(delayMs, finalValue, reduceMotion)
         } else {
           transform[key] = finalValue
         }
 
-        // @ts-expect-error transform had the wrong type
-        final['transform'].push(transform)
+        final.transform.push(transform)
       } else if (typeof value === 'object') {
         // shadows
         final[key] = {}
-        for (const innerStyleKey in value || {}) {
-          let finalValue = animation(value, config, callback)
 
+        for (const innerStyleKey in value) {
+          let finalValue = animation(value[innerStyleKey], config, callback)
           if (shouldRepeat) {
             finalValue = withRepeat(
               finalValue,
@@ -762,12 +735,11 @@ export function useMotify<Animate>({
       }
     })
 
-    if (!final.transform?.length) {
-      delete final.transform
+    if (!final.transform.length) {
+      final.transform = undefined!
     }
 
     return final
-    // @ts-ignore complex union lol...
   }, [
     animateProp,
     custom,

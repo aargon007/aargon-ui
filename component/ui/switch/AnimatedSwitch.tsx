@@ -1,11 +1,17 @@
 import React, { useEffect } from 'react';
 import { Pressable, StyleSheet } from 'react-native';
-import Animated, { interpolate, interpolateColor, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
+import Animated, {
+    interpolate,
+    interpolateColor,
+    useAnimatedStyle,
+    useSharedValue,
+    withTiming
+} from 'react-native-reanimated';
 
 type Props = {
-    onPress: any;
+    onPress: () => void;
     value: boolean;
-    isDisabled: boolean;
+    isDisabled?: boolean;
     duration?: number;
     trackColors?: {
         on: string;
@@ -18,93 +24,108 @@ type Props = {
     borderColors?: {
         on: string;
         off: string;
-    }
+    };
 };
+
+const SWITCH_WIDTH = 60;
+const SWITCH_HEIGHT = 32;
+const SWITCH_PADDING = 4;
 
 const AnimatedSwitch = ({
     onPress,
     value,
-    isDisabled,
-    duration = 150,
-    trackColors = { on: "#0879CC", off: "#111111" },
-    thumbColors = { on: "#FFFFFF", off: "#A3A3A8" },
-    borderColors = { on: "#0879CC", off: "#111111" }
+    isDisabled = false,
+    duration = 200,
+    trackColors = { on: "#0879CC", off: "#767577" },
+    thumbColors = { on: "#FFFFFF", off: "#FFFFFF" },
+    borderColors = { on: "#0879CC", off: "#767577" }
 }: Props) => {
-    const height = useSharedValue(0);
-    const width = useSharedValue(0);
-    const reanimatedValue = useSharedValue(value);
+    const animatedValue = useSharedValue(value ? 1 : 0);
 
-    const trackAnimatedStyle = useAnimatedStyle(() => {
-        const baseValue = Number(reanimatedValue.value);
+    // Calculate thumb travel distance
+    const thumbSize = SWITCH_HEIGHT - (SWITCH_PADDING * 2);
+    const thumbTravel = SWITCH_WIDTH - thumbSize - (SWITCH_PADDING * 2);
 
-        const color = interpolateColor(baseValue, [0, 1], [trackColors.off, trackColors.on]);
-        const borderColor = interpolateColor(baseValue, [0, 1], [borderColors.off, borderColors.on]);
-        const opacity = interpolate(Number(isDisabled), [0, 1], [1, .3]);
+    const trackStyle = useAnimatedStyle(() => {
+        const backgroundColor = interpolateColor(
+            animatedValue.value,
+            [0, 1],
+            [trackColors.off, trackColors.on]
+        );
 
-        const colorValue = withTiming(color, { duration });
-        const borderColorValue = withTiming(borderColor, { duration });
-        const opacityValue = withTiming(opacity, { duration });
+        const borderColor = interpolateColor(
+            animatedValue.value,
+            [0, 1],
+            [borderColors.off, borderColors.on]
+        );
 
         return {
-            backgroundColor: colorValue,
-            borderRadius: height.value / 2,
-            borderColor: borderColorValue,
-            opacity: opacityValue,
+            backgroundColor: withTiming(backgroundColor, { duration }),
+            borderColor: withTiming(borderColor, { duration }),
+            opacity: withTiming(isDisabled ? 0.3 : 1, { duration: duration / 2 }),
         };
     });
 
-    const thumbAnimatedStyle = useAnimatedStyle(() => {
-        const baseValue = Number(reanimatedValue.value);
+    const thumbStyle = useAnimatedStyle(() => {
+        const translateX = interpolate(
+            animatedValue.value,
+            [0, 1],
+            [0, thumbTravel]
+        );
 
-        const moveValue = interpolate(baseValue, [0, 1], [0, width.value - height.value]);
-        const color = interpolateColor(baseValue, [0, 1], [thumbColors.off, thumbColors.on]);
-
-        const colorValue = withTiming(color, { duration });
-        const translateValue = withTiming(moveValue, { duration });
+        const backgroundColor = interpolateColor(
+            animatedValue.value,
+            [0, 1],
+            [thumbColors.off, thumbColors.on]
+        );
 
         return {
-            transform: [{ translateX: translateValue }],
-            backgroundColor: colorValue,
-            borderRadius: height.value / 2,
+            transform: [{ translateX: withTiming(translateX, { duration }) }],
+            backgroundColor: withTiming(backgroundColor, { duration }),
         };
     });
 
     useEffect(() => {
-        reanimatedValue.value = value;
+        animatedValue.value = withTiming(value ? 1 : 0, { duration });
     }, [value]);
 
+    const handlePress = () => {
+        if (!isDisabled) {
+            onPress();
+        }
+    };
+
     return (
-        <Pressable onPress={onPress} disabled={isDisabled}>
-            <Animated.View
-                onLayout={(e) => {
-                    height.value = e.nativeEvent.layout.height;
-                    width.value = e.nativeEvent.layout.width;
-                }}
-                style={[styles.track, styles.switch, trackAnimatedStyle]}
-            >
-                <Animated.View style={[styles.thumb, thumbAnimatedStyle]} />
+        <Pressable onPress={handlePress} disabled={isDisabled}>
+            <Animated.View style={[styles.track, trackStyle]}>
+                <Animated.View style={[styles.thumb, thumbStyle]} />
             </Animated.View>
         </Pressable>
-    )
+    );
 };
 
 const styles = StyleSheet.create({
-    thumb: {
-        height: "100%",
-        maxHeight: 45,
-        aspectRatio: 1,
-    },
     track: {
-        alignItems: 'flex-start',
-        // width: 100,
-        // height: 40,
-        padding: 5,
-    },
-    switch: {
-        width: 60,
-        height: 32,
-        padding: 5,
+        width: SWITCH_WIDTH,
+        height: SWITCH_HEIGHT,
+        borderRadius: SWITCH_HEIGHT / 2,
         borderWidth: 1.5,
+        padding: SWITCH_PADDING,
+        justifyContent: 'center',
+    },
+    thumb: {
+        width: SWITCH_HEIGHT - (SWITCH_PADDING * 2),
+        height: SWITCH_HEIGHT - (SWITCH_PADDING * 2),
+        borderRadius: (SWITCH_HEIGHT - (SWITCH_PADDING * 2)) / 2,
+        backgroundColor: '#FFFFFF',
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.5,
+        elevation: 5,
     },
 });
 
