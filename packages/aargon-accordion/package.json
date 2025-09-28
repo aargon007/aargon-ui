@@ -29,7 +29,7 @@
     "url": "https://github.com/aargon007/aargon-ui",
     "directory": "packages/aargon-accordion"
   },
-  "homepage": "https://github.com/aargon007/aargon-ui#readme",
+  "homepage": "https://github.com/aargon007/aargon-ui/packages/aargon-accordion#readme",
   "bugs": {
     "url": "https://github.com/aargon007/aargon-ui/issues"
   },
