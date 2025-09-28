@@ -1,7 +1,7 @@
 import { View, Text, StyleSheet, ScrollView } from "react-native"
 import ComponentPage from "@/component/common/ComponentPage"
 import { globalStyles } from "@/styles/globalStyles"
-import { AnimatedBadge } from "@/component/ui/badge/AnimatedBadge"
+import { AnimatedBadge } from "aargon-badge"
 
 export default function BadgeComponent() {
     const customTheme = {

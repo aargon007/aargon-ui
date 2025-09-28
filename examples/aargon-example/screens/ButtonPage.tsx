@@ -1,6 +1,6 @@
 import { View, Text, StyleSheet } from "react-native"
 import ComponentPage from "@/component/common/ComponentPage"
-import { AnimatedButton } from "@/component/ui/button/AnimatedButton"
+import { AnimatedButton } from "aargon-button"
 import { globalStyles } from "@/styles/globalStyles"
 import CodeExample from "@/component/common/CodeExample"
 

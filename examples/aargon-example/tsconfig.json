@@ -1,0 +1,12 @@
+{
+    "extends": "expo/tsconfig.base",
+    "compilerOptions": {
+        "strict": true,
+        "verbatimModuleSyntax": true,
+        "moduleResolution": "bundler",
+        "paths": {
+            "@/*": ["./*"]
+        }
+    },
+    "include": ["**/*.ts", "**/*.tsx"]
+}

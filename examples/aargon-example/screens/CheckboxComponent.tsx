@@ -4,7 +4,7 @@ import { useState } from "react"
 import { View, Text, StyleSheet, ScrollView } from "react-native"
 import ComponentPage from "@/component/common/ComponentPage"
 import { globalStyles } from "@/styles/globalStyles"
-import CustomCheckbox from "@/component/ui/checkbox/CustomCheckbox"
+import { AnimatedCheckbox } from "aargon-checkbox"
 
 export default function CheckboxPage() {
     const [isChecked, setIsChecked] = useState(true)
@@ -36,12 +36,12 @@ export default function CheckboxPage() {
                         <View style={styles.section}>
                             <Text style={styles.sectionTitle}>Basic Examples</Text>
                             <View style={styles.checkboxGroup}>
-                                <CustomCheckbox
+                                <AnimatedCheckbox
                                     checked={formState.terms}
                                     onPress={() => handleFormChange("terms")}
                                     label="Accept terms and conditions"
                                 />
-                                <CustomCheckbox
+                                <AnimatedCheckbox
                                     checked={formState.notifications}
                                     onPress={() => handleFormChange("notifications")}
                                     label="Enable notifications"
@@ -49,14 +49,14 @@ export default function CheckboxPage() {
                                     borderColor="#2E7D32"
                                     iconColor="#FFFFFF"
                                 />
-                                <CustomCheckbox
+                                <AnimatedCheckbox
                                     checked={formState.marketing}
                                     onPress={() => handleFormChange("marketing")}
                                     label="Marketing emails"
                                     labelPosition="left"
                                     color="#9C27B0"
                                 />
-                                <CustomCheckbox
+                                <AnimatedCheckbox
                                     checked={formState.premium}
                                     onPress={() => handleFormChange("premium")}
                                     label="Premium feature"
@@ -74,21 +74,21 @@ export default function CheckboxPage() {
                         <View style={styles.section}>
                             <Text style={styles.sectionTitle}>Size Variations</Text>
                             <View style={styles.checkboxGroup}>
-                                <CustomCheckbox
+                                <AnimatedCheckbox
                                     checked={isChecked}
                                     onPress={() => setIsChecked(!isChecked)}
                                     label="Small checkbox"
                                     size="small"
                                     color="#2196F3"
                                 />
-                                <CustomCheckbox
+                                <AnimatedCheckbox
                                     checked={isChecked}
                                     onPress={() => setIsChecked(!isChecked)}
                                     label="Medium checkbox"
                                     size="medium"
                                     color="#FF5722"
                                 />
-                                <CustomCheckbox
+                                <AnimatedCheckbox
                                     checked={isChecked}
                                     onPress={() => setIsChecked(!isChecked)}
                                     label="Large checkbox"

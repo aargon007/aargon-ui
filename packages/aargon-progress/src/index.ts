@@ -1,14 +1,14 @@
 export { default as AnimatedProgressBar } from './AnimatedProgressBar';
 export type {
     AnimatedProgressBarProps,
-    AnimatedProgressBarRef,
+    AnimatedProgressBarRef
+} from './AnimatedProgressBar';
+export type {
     ProgressVariant,
     ProgressSize,
     ProgressColorScheme,
     ProgressAnimationType,
     ProgressShape,
-    ProgressTheme
-} from './AnimatedProgressBar';
-export type {
+    ProgressTheme,
     defaultProgressTheme
 } from './utils';

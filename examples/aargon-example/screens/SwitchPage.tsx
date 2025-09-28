@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { View, Text, StyleSheet } from "react-native"
-import AnimatedSwitch from "@/component/ui/switch/AnimatedSwitch"
+import { AnimatedSwitch } from "aargon-switch"
 import CodeExample from "@/component/common/CodeExample";
-import { switchCode } from "@/component/ui/switch/code";
-import { switchExample } from "@/component/ui/switch/example";
+// Note: These files need to be moved to the package or recreated
+// import { switchCode } from "@/component/ui/switch/code";
+// import { switchExample } from "@/component/ui/switch/example";
 import { globalStyles } from "@/styles/globalStyles";
 import ComponentPage from "@/component/common/ComponentPage";
 
@@ -62,19 +63,18 @@ export default function SwitchDemoPage() {
                 </View>
             </View>
 
-            {/* Code Display */}
-            <CodeExample
+            {/* Code Display - TODO: Add code examples */}
+            {/* <CodeExample
                 title="Code"
                 code={switchCode}
                 filename="AnimatedSwitch.tsx"
             />
 
-            {/* implementation section */}
             <CodeExample
                 title="Implementation"
                 code={switchExample}
                 filename="Example.ts"
-            />
+            /> */}
         </ComponentPage>
     )
 }

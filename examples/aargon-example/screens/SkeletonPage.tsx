@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import AnimatedSkeleton, {
+import {
+    AnimatedSkeleton,
     SkeletonRect,
     SkeletonCircle,
     type SkeletonAnimation,
     type SkeletonSpeed
-} from '@/component/ui/skeleton/AnimatedSkeleton';
+} from 'aargon-skeleton';
 import ComponentPage from '@/component/common/ComponentPage';
 import { globalStyles } from '@/styles/globalStyles';
 

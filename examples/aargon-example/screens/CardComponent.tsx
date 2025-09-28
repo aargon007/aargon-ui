@@ -10,8 +10,8 @@ import {
     Platform,
 } from 'react-native';
 import { Feather } from '@expo/vector-icons';
-import AnimatedCard from '@/component/ui/card/AnimatedCard';
-import type { CardAnimationType, CardColorScheme, CardSize, CardVariant } from '@/component/ui/card/utils';
+import { AnimatedCard } from 'aargon-card';
+import type { CardAnimationType, CardColorScheme, CardSize, CardVariant } from 'aargon-card';
 
 const CardPage = () => {
     // State for interactive examples

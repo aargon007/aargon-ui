@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react'
 import { View, Text, StyleSheet, TouchableOpacity, Dimensions } from 'react-native'
-import { AnimatedProgressBar,type AnimatedProgressBarRef } from '@/component/ui/progress/AnimatedProgressBar'
-import type { ProgressVariant, ProgressSize, ProgressColorScheme, ProgressAnimationType, ProgressShape } from '@/component/ui/progress/utils'
+import { AnimatedProgressBar,type AnimatedProgressBarRef } from 'aargon-progress'
+import type { ProgressVariant, ProgressSize, ProgressColorScheme, ProgressAnimationType, ProgressShape } from 'aargon-progress'
 import ComponentPage from '@/component/common/ComponentPage'
 import { globalStyles } from '@/styles/globalStyles'
 
