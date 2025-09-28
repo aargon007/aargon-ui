@@ -12,6 +12,11 @@
   "scripts": {
     "build": "turbo run build",
     "dev": "turbo run dev",
+    "start": "turbo run start",
+    "android": "turbo run android",
+    "ios": "turbo run ios",
+    "web": "turbo run web",
+    "web:build": "turbo run web:build",
     "lint": "turbo run lint",
     "type-check": "turbo run type-check",
     "test": "turbo run test",
@@ -20,7 +25,7 @@
     "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md}\"",
     "changeset": "changeset",
     "version-packages": "changeset version",
-    "release": "turbo run build --filter=!@aargon-ui/example && changeset publish"
+    "release": "turbo run build --filter=!aargon-ui-example && changeset publish"
   },
   "dependencies": {
     "react": "19.1.0",
@@ -38,7 +43,8 @@
     "eslint-config-universe": "^14.0.0",
     "prettier": "^3.4.2",
     "ts-node": "^10.9.2",
-    "turbo": "^2.3.0",
+    "turbo": "^2.5.8",
     "typescript": "~5.9.2"
-  }
+  },
+  "packageManager": "yarn@1.22.22"
 }

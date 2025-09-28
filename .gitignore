@@ -41,6 +41,14 @@ yarn-error.*
 # typescript
 *.tsbuildinfo
 
+# build outputs
+lib/
+dist/
+build/
+
+# turbo cache
+.turbo/
+
 # lock file
 package-lock.json
 pnpm-lock.yml
