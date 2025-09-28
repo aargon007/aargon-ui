@@ -5,7 +5,23 @@
         "verbatimModuleSyntax": true,
         "moduleResolution": "bundler",
         "paths": {
-            "@/*": ["./*"]
+            "@/*": ["./*"],
+            "@packages/*": ["../../packages/*"],
+            "aargon-accordion": ["../../packages/aargon-accordion/src"],
+            "aargon-badge": ["../../packages/aargon-badge/src"],
+            "aargon-button": ["../../packages/aargon-button/src"],
+            "aargon-card": ["../../packages/aargon-card/src"],
+            "aargon-checkbox": ["../../packages/aargon-checkbox/src"],
+            "aargon-dropdown": ["../../packages/aargon-dropdown/src"],
+            "aargon-input": ["../../packages/aargon-input/src"],
+            "aargon-modal": ["../../packages/aargon-modal/src"],
+            "aargon-progress": ["../../packages/aargon-progress/src"],
+            "aargon-radio": ["../../packages/aargon-radio/src"],
+            "aargon-select": ["../../packages/aargon-select/src"],
+            "aargon-skeleton": ["../../packages/aargon-skeleton/src"],
+            "aargon-snackbar": ["../../packages/aargon-snackbar/src"],
+            "aargon-switch": ["../../packages/aargon-switch/src"],
+            "aargon-toast": ["../../packages/aargon-toast/src"]
         }
     },
     "include": ["**/*.ts", "**/*.tsx"]

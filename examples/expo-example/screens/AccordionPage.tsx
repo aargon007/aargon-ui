@@ -1,7 +1,7 @@
 import { View, Text, StyleSheet, ScrollView } from "react-native"
 import ComponentPage from "@/component/common/ComponentPage"
 import { globalStyles } from "@/styles/globalStyles"
-import { AnimatedAccordion } from "../../../packages/aargon-accordion/src/AnimatedAccordion"
+import { AnimatedAccordion } from "aargon-accordion"
 import { useState } from "react"
 
 export default function AccordionPage() {
