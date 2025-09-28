@@ -2,13 +2,14 @@
   "name": "aargon-radio",
   "version": "1.0.0",
   "description": "Animated radio component for React Native",
-  "main": "lib/index.js",
-  "types": "lib/index.d.ts",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
   "files": [
     "lib/**/*"
   ],
   "scripts": {
     "build": "tsc",
+    "build:watch": "tsc --watch",
     "dev": "tsc --watch",
     "type-check": "tsc --noEmit",
     "lint": "eslint src --ext .ts,.tsx",

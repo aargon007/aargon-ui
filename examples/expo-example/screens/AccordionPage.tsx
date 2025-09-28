@@ -1,7 +1,7 @@
 import { View, Text, StyleSheet, ScrollView } from "react-native"
 import ComponentPage from "@/component/common/ComponentPage"
 import { globalStyles } from "@/styles/globalStyles"
-import { AnimatedAccordion } from "aargon-accordion"
+import { AnimatedAccordion } from "../../../packages/aargon-accordion/src/AnimatedAccordion"
 import { useState } from "react"
 
 export default function AccordionPage() {
@@ -175,8 +175,8 @@ export default function AccordionPage() {
                             <View style={styles.accordionGroup}>
                                 <AnimatedAccordion
                                     title="Custom Icons"
-                                    collapsedIcon="plus"
-                                    expandedIcon="minus"
+                                    // collapsedIcon="plus"
+                                    // expandedIcon="minus"
                                     variant="bordered"
                                 >
                                     {sampleContent}
@@ -185,8 +185,8 @@ export default function AccordionPage() {
                                 <AnimatedAccordion
                                     title="Left Icon Position"
                                     iconPosition="left"
-                                    collapsedIcon="arrow-right"
-                                    expandedIcon="arrow-down"
+                                    // collapsedIcon="arrow-right"
+                                    // expandedIcon="arrow-down"
                                     variant="bordered"
                                 >
                                     {sampleContent}
