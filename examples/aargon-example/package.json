@@ -1,26 +1,22 @@
 {
-  "name": "aargon-ui",
+  "name": "@aargon-ui/example",
   "version": "1.0.0",
-  "description": "A collection of headless UI packages for React Native",
-  "license": "MIT",
-  "author": "Md Muhaiminul",
-  "private": true,
-  "workspaces": [
-    "packages/*",
-    "examples/*"
-  ],
+  "description": "Example app showcasing Aargon UI components",
+  "main": "App.tsx",
   "scripts": {
-    "build": "turbo run build",
-    "dev": "turbo run dev",
-    "lint": "turbo run lint",
-    "type-check": "turbo run type-check",
-    "test": "turbo run test",
-    "clean": "turbo run clean",
-    "publish:packages": "turbo run publish",
-    "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md}\"",
-    "changeset": "changeset",
-    "version-packages": "changeset version",
-    "release": "turbo run build --filter=!@aargon-ui/example && changeset publish"
+    "start": "expo start",
+    "android": "expo start --android",
+    "ios": "expo start --ios",
+    "web": "expo start --web",
+    "web:build": "expo export -p web",
+    "web:preview": "npx serve dist",
+    "ts:check": "tsc",
+    "lint": "eslint . --fix",
+    "clean": "npx expo prebuild --clean",
+    "update": "npx expo install --check",
+    "build:ios": "eas build -p ios --profile production",
+    "submit": "eas submit --platform ios",
+    "format": "prettier --write \"*/**/*.{js,jsx,ts,tsx}\""
   },
   "dependencies": {
     "@babel/plugin-proposal-export-namespace-from": "^7.18.9",
@@ -56,7 +52,6 @@
   },
   "devDependencies": {
     "@babel/core": "^7.26.7",
-    "@changesets/cli": "^2.27.1",
     "@types/color": "^4.2.0",
     "@types/react": "~19.1.10",
     "@types/react-syntax-highlighter": "^15.5.13",
@@ -66,7 +61,7 @@
     "eslint-config-universe": "^14.0.0",
     "prettier": "^3.4.2",
     "ts-node": "^10.9.2",
-    "turbo": "^2.3.0",
     "typescript": "~5.9.2"
-  }
+  },
+  "private": true
 }
