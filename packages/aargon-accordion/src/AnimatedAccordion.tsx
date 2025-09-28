@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { StyleSheet, View, TouchableOpacity, Text, type LayoutChangeEvent, } from 'react-native'
 import Animated, { useAnimatedStyle, useSharedValue, withTiming, withSpring, interpolate, runOnJS, Easing, } from 'react-native-reanimated'
+import { ChevronDown, ChevronUp } from 'lucide-react-native'
 import { getAccordionSizeStyles, getAccordionVariantStyles, type AccordionTheme, type AnimatedAccordionProps } from './utils'
 
 const defaultTheme: AccordionTheme = {
@@ -44,8 +45,6 @@ export const AnimatedAccordion = ({
     variant = "default",
     size = "md",
     disabled = false,
-    collapsedIcon = "chevron-down",
-    expandedIcon = "chevron-up",
     showIcon = true,
     iconPosition = "right",
     theme,
@@ -190,7 +189,6 @@ export const AnimatedAccordion = ({
         opacity: measured ? contentOpacity.value : 0,
     }));
 
-    const currentIcon = isExpanded ? expandedIcon : collapsedIcon;
     const iconColor = isExpanded ? mergedTheme.colors.iconActive : mergedTheme.colors.icon;
     const textColor = isExpanded ? mergedTheme.colors.textActive : mergedTheme.colors.text;
 
@@ -230,9 +228,11 @@ export const AnimatedAccordion = ({
                     {/* Left Icon */}
                     {showIcon && iconPosition === "left" && (
                         <Animated.View style={[styles.iconContainer, animatedIconStyle]}>
-                            <Text style={[styles.iconText, { fontSize: sizeStyles.iconSize, color: iconColor }]}>
-                                {currentIcon === "chevron-down" ? "▼" : currentIcon === "chevron-up" ? "▲" : currentIcon}
-                            </Text>
+                            {isExpanded ? (
+                                <ChevronUp size={sizeStyles.iconSize} color={iconColor} />
+                            ) : (
+                                <ChevronDown size={sizeStyles.iconSize} color={iconColor} />
+                            )}
                         </Animated.View>
                     )}
 
@@ -258,9 +258,11 @@ export const AnimatedAccordion = ({
                     {/* Right Icon */}
                     {showIcon && iconPosition === "right" && (
                         <Animated.View style={[styles.iconContainer, animatedIconStyle]}>
-                            <Text style={[styles.iconText, { fontSize: sizeStyles.iconSize, color: iconColor }]}>
-                                {currentIcon === "chevron-down" ? "▼" : currentIcon === "chevron-up" ? "▲" : currentIcon}
-                            </Text>
+                            {isExpanded ? (
+                                <ChevronUp size={sizeStyles.iconSize} color={iconColor} />
+                            ) : (
+                                <ChevronDown size={sizeStyles.iconSize} color={iconColor} />
+                            )}
                         </Animated.View>
                     )}
                 </Animated.View>
@@ -340,9 +342,8 @@ const styles = StyleSheet.create({
     },
     iconContainer: {
         marginLeft: 8,
-    },
-    iconText: {
-        fontWeight: 'bold',
+        justifyContent: 'center',
+        alignItems: 'center',
     },
     body: {
         overflow: 'hidden',

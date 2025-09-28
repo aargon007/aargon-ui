@@ -44,10 +44,6 @@ export interface AnimatedAccordionProps {
     size?: AccordionSize
     /** Whether the accordion is disabled */
     disabled?: boolean
-    /** Custom icon for collapsed state */
-    collapsedIcon?: string
-    /** Custom icon for expanded state */
-    expandedIcon?: string
     /** Whether to show the expand/collapse icon */
     showIcon?: boolean
     /** Icon position */

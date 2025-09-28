@@ -28,7 +28,9 @@
     "react-native": "0.81.4"
   },
   "dependencies": {
-    "react-native-reanimated": "~4.1.1"
+    "react-native-reanimated": "~4.1.1",
+    "lucide-react-native": "^0.460.0",
+    "react-native-svg": "^15.12.1"
   },
   "devDependencies": {
     "@types/react": "~19.1.10",

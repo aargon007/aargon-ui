@@ -2,9 +2,6 @@ import { useState } from "react";
 import { View, Text, StyleSheet } from "react-native"
 import { AnimatedSwitch } from "aargon-switch"
 import CodeExample from "@/component/common/CodeExample";
-// Note: These files need to be moved to the package or recreated
-// import { switchCode } from "@/component/ui/switch/code";
-// import { switchExample } from "@/component/ui/switch/example";
 import { globalStyles } from "@/styles/globalStyles";
 import ComponentPage from "@/component/common/ComponentPage";
 
