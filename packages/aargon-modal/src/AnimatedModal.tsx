@@ -20,10 +20,23 @@ import Animated, {
     interpolate,
     Extrapolation
 } from 'react-native-reanimated'
-
-export type ModalAnimationType = 'fade' | 'slideUp' | 'slideDown' | 'scale' | 'slideLeft' | 'slideRight'
-export type ModalVariant = 'default' | 'outline' | 'filled'
-export type ModalSize = 'sm' | 'md' | 'lg' | 'xl' | 'full'
+import { Gesture, GestureDetector, type PanGestureHandlerEventPayload } from 'react-native-gesture-handler'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import {
+    type ModalAnimationType,
+    type ModalVariant,
+    type ModalSize,
+    type ModalPosition,
+    getAnimationConfig,
+    getInitialTransform,
+    getFinalTransform,
+    getModalSizeStyles,
+    getModalTheme,
+    getPositionStyles,
+    createShadowStyle,
+    createBackdropBlurStyle,
+    MODAL_CONSTANTS
+} from './utils'
 
 export interface AnimatedModalProps {
     /** Whether the modal is visible */
@@ -32,6 +45,8 @@ export interface AnimatedModalProps {
     onClose: () => void
     /** Callback when modal is opened */
     onOpen?: () => void
+    /** Callback when modal is dismissed (backdrop tap or gesture) */
+    onDismiss?: () => void
     /** Modal content */
     children: React.ReactNode
     /** Animation type */
@@ -40,12 +55,16 @@ export interface AnimatedModalProps {
     variant?: ModalVariant
     /** Modal size */
     size?: ModalSize
+    /** Modal position */
+    position?: ModalPosition
     /** Modal title */
     title?: string
     /** Whether to show close button */
     showCloseButton?: boolean
     /** Whether modal can be dismissed by tapping backdrop */
     dismissOnBackdropPress?: boolean
+    /** Whether modal can be dismissed by gesture */
+    dismissOnGesture?: boolean
     /** Whether to handle back button on Android */
     handleBackButton?: boolean
     /** Custom backdrop color */
@@ -56,6 +75,8 @@ export interface AnimatedModalProps {
     contentStyle?: ViewStyle
     /** Custom title styles */
     titleStyle?: TextStyle
+    /** Whether to avoid keyboard */
+    avoidKeyboard?: boolean
     /** Test ID for testing */
     testID?: string
 }
@@ -66,117 +87,94 @@ export interface AnimatedModalRef {
     toggle: () => void
 }
 
-const getSizeStyles = (size: ModalSize) => {
-    switch (size) {
-        case 'sm':
-            return { width: '80%', maxWidth: 400 }
-        case 'md':
-            return { width: '90%', maxWidth: 500 }
-        case 'lg':
-            return { width: '95%', maxWidth: 600 }
-        case 'xl':
-            return { width: '98%', maxWidth: 800 }
-        case 'full':
-            return { width: '100%', height: '100%' }
-        default:
-            return { width: '90%', maxWidth: 500 }
-    }
-}
-
-const getInitialTransform = (animationType: ModalAnimationType) => {
-    switch (animationType) {
-        case 'fade':
-            return { opacity: 0, scale: 1, translateY: 0 }
-        case 'slideUp':
-            return { opacity: 1, scale: 1, translateY: 300 }
-        case 'slideDown':
-            return { opacity: 1, scale: 1, translateY: -300 }
-        case 'scale':
-            return { opacity: 0, scale: 0.8, translateY: 0 }
-        case 'slideLeft':
-            return { opacity: 1, scale: 1, translateX: -300, translateY: 0 }
-        case 'slideRight':
-            return { opacity: 1, scale: 1, translateX: 300, translateY: 0 }
-        default:
-            return { opacity: 0, scale: 1, translateY: 0 }
-    }
-}
-
-const getFinalTransform = () => {
-    return { opacity: 1, scale: 1, translateX: 0, translateY: 0 }
-}
-
 export const AnimatedModal = forwardRef<AnimatedModalRef, AnimatedModalProps>(({
     visible,
     onClose,
     onOpen,
+    onDismiss,
     children,
     animationType = 'fade',
     variant = 'default',
     size = 'md',
+    position = 'center',
     title,
     showCloseButton = true,
     dismissOnBackdropPress = true,
+    dismissOnGesture = true,
     handleBackButton = true,
     backdropColor,
     modalStyle,
     contentStyle,
     titleStyle,
+    avoidKeyboard = true,
     testID
 }, ref) => {
+    const insets = useSafeAreaInsets()
+
     // Animation values
     const backdropOpacity = useSharedValue(0)
     const modalOpacity = useSharedValue(0)
     const modalScale = useSharedValue(0.8)
     const modalTranslateX = useSharedValue(0)
     const modalTranslateY = useSharedValue(0)
+    const modalRotateY = useSharedValue(0)
+    const gestureTranslateY = useSharedValue(0)
 
     // Get configurations
-    const sizeStyles = getSizeStyles(size)
+    const animationConfig = getAnimationConfig(animationType)
+    const theme = getModalTheme(variant)
+    const sizeStyles = getModalSizeStyles(size)
+    const positionStyles = getPositionStyles(position)
+    const shadowStyles = createShadowStyle(theme)
+    const backdropBlurStyles = createBackdropBlurStyle(variant)
 
     // Initialize animation values
     const initializeValues = () => {
         const initialTransform = getInitialTransform(animationType)
         modalOpacity.value = initialTransform.opacity
         modalScale.value = initialTransform.scale
-        modalTranslateX.value = initialTransform.translateX || 0
-        modalTranslateY.value = initialTransform.translateY || 0
+        modalTranslateX.value = initialTransform.translateX
+        modalTranslateY.value = initialTransform.translateY
+        modalRotateY.value = parseFloat(initialTransform.rotateY)
+        gestureTranslateY.value = 0
     }
 
     // Show modal animation
     const showModal = () => {
         const finalTransform = getFinalTransform()
         const config = {
-            damping: 15,
-            stiffness: 300,
-            mass: 0.8
+            damping: animationConfig.damping,
+            stiffness: animationConfig.stiffness,
+            mass: animationConfig.mass
         }
 
-        backdropOpacity.value = withTiming(1, { duration: 200 })
+        backdropOpacity.value = withTiming(1, { duration: animationConfig.duration })
         modalOpacity.value = withSpring(finalTransform.opacity, config)
         modalScale.value = withSpring(finalTransform.scale, config)
         modalTranslateX.value = withSpring(finalTransform.translateX, config)
         modalTranslateY.value = withSpring(finalTransform.translateY, config)
+        modalRotateY.value = withSpring(parseFloat(finalTransform.rotateY), config)
     }
 
     // Hide modal animation
     const hideModal = (callback?: () => void) => {
         const initialTransform = getInitialTransform(animationType)
         const config = {
-            damping: 15,
-            stiffness: 300,
-            mass: 0.8
+            damping: animationConfig.damping,
+            stiffness: animationConfig.stiffness,
+            mass: animationConfig.mass
         }
 
-        backdropOpacity.value = withTiming(0, { duration: 200 })
+        backdropOpacity.value = withTiming(0, { duration: animationConfig.duration })
         modalOpacity.value = withSpring(initialTransform.opacity, config)
         modalScale.value = withSpring(initialTransform.scale, config)
-        modalTranslateX.value = withSpring(initialTransform.translateX || 0, config)
-        modalTranslateY.value = withSpring(initialTransform.translateY || 0, config, (finished) => {
+        modalTranslateX.value = withSpring(initialTransform.translateX, config)
+        modalTranslateY.value = withSpring(initialTransform.translateY, config, (finished) => {
             if (finished && callback) {
                 runOnJS(callback)()
             }
         })
+        modalRotateY.value = withSpring(parseFloat(initialTransform.rotateY), config)
     }
 
     // Handle modal show/hide
@@ -205,26 +203,70 @@ export const AnimatedModal = forwardRef<AnimatedModalRef, AnimatedModalProps>(({
         return () => backHandler.remove()
     }, [visible, handleBackButton, onClose])
 
+    // Gesture handler for swipe to dismiss
+    const panGesture = Gesture.Pan()
+        .onStart(() => {
+            // Store initial position - nothing needed here for basic implementation
+        })
+        .onUpdate((event) => {
+            if (dismissOnGesture && (animationType === 'slideUp' || position === 'bottom')) {
+                gestureTranslateY.value = Math.max(0, event.translationY)
+            }
+        })
+        .onEnd((event) => {
+            if (dismissOnGesture && (animationType === 'slideUp' || position === 'bottom')) {
+                if (event.translationY > MODAL_CONSTANTS.GESTURE_THRESHOLD) {
+                    // Dismiss modal
+                    gestureTranslateY.value = withSpring(500, MODAL_CONSTANTS.SPRING_CONFIG, (finished) => {
+                        if (finished) {
+                            runOnJS(onClose)()
+                        }
+                    })
+                } else {
+                    // Snap back
+                    gestureTranslateY.value = withSpring(0, MODAL_CONSTANTS.SPRING_CONFIG)
+                }
+            }
+        })
+
     // Animated styles
     const backdropAnimatedStyle = useAnimatedStyle(() => ({
         opacity: backdropOpacity.value
     }))
 
     const modalAnimatedStyle = useAnimatedStyle(() => {
+        const totalTranslateY = modalTranslateY.value + gestureTranslateY.value
+
         return {
             opacity: modalOpacity.value,
             transform: [
                 { scale: modalScale.value },
                 { translateX: modalTranslateX.value },
-                { translateY: modalTranslateY.value }
+                { translateY: totalTranslateY },
+                { rotateY: `${modalRotateY.value}deg` }
             ]
         }
+    })
+
+    // Backdrop gesture opacity
+    const backdropGestureStyle = useAnimatedStyle(() => {
+        if (dismissOnGesture && gestureTranslateY.value > 0) {
+            const opacity = interpolate(
+                gestureTranslateY.value,
+                [0, MODAL_CONSTANTS.GESTURE_THRESHOLD * 2],
+                [1, 0],
+                Extrapolation.CLAMP
+            )
+            return { opacity }
+        }
+        return {}
     })
 
     // Imperative methods
     useImperativeHandle(ref, () => ({
         show: () => {
             if (!visible) {
+                // This would typically trigger a state change in parent
                 onOpen?.()
             }
         },
@@ -253,7 +295,7 @@ export const AnimatedModal = forwardRef<AnimatedModalRef, AnimatedModalProps>(({
             onRequestClose={onClose}
             testID={testID}
         >
-            <View style={styles.container}>
+            <View style={[styles.container, positionStyles]}>
                 {/* Backdrop */}
                 <TouchableWithoutFeedback
                     onPress={dismissOnBackdropPress ? onClose : undefined}
@@ -262,58 +304,64 @@ export const AnimatedModal = forwardRef<AnimatedModalRef, AnimatedModalProps>(({
                         style={[
                             styles.backdrop,
                             backdropAnimatedStyle,
-                            { backgroundColor: backdropColor || 'rgba(0, 0, 0, 0.5)' }
+                            backdropGestureStyle,
+                            backdropBlurStyles,
+                            { backgroundColor: backdropColor || theme.colors.backdrop }
                         ]}
                     />
                 </TouchableWithoutFeedback>
 
                 {/* Modal Content */}
-                <Animated.View
-                    style={[
-                        styles.modal,
-                        sizeStyles,
-                        modalAnimatedStyle,
-                        {
-                            backgroundColor: '#FFFFFF',
-                            borderRadius: variant === 'outline' ? 12 : 8,
-                            borderWidth: variant === 'outline' ? 2 : 0,
-                            borderColor: variant === 'outline' ? '#E5E7EB' : 'transparent'
-                        },
-                        modalStyle
-                    ]}
-                >
-                    {/* Header */}
-                    {(title || showCloseButton) && (
-                        <View style={styles.header}>
-                            {title && (
-                                <Text
-                                    style={[
-                                        styles.title,
-                                        titleStyle
-                                    ]}
-                                >
-                                    {title}
-                                </Text>
-                            )}
-                            {showCloseButton && (
-                                <TouchableOpacity
-                                    style={styles.closeButton}
-                                    onPress={onClose}
-                                    hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-                                >
-                                    <Text style={styles.closeButtonText}>
-                                        ✕
+                <GestureDetector gesture={panGesture}>
+                    <Animated.View
+                        style={[
+                            styles.modal,
+                            sizeStyles,
+                            shadowStyles,
+                            modalAnimatedStyle,
+                            {
+                                backgroundColor: theme.colors.background,
+                                borderColor: theme.colors.border,
+                                borderRadius: theme.borderRadius,
+                                borderWidth: variant === 'outline' ? 2 : 0
+                            },
+                            modalStyle
+                        ]}
+                    >
+                        {/* Header */}
+                        {(title || showCloseButton) && (
+                            <View style={styles.header}>
+                                {title && (
+                                    <Text
+                                        style={[
+                                            styles.title,
+                                            { color: theme.colors.text },
+                                            titleStyle
+                                        ]}
+                                    >
+                                        {title}
                                     </Text>
-                                </TouchableOpacity>
-                            )}
-                        </View>
-                    )}
+                                )}
+                                {showCloseButton && (
+                                    <TouchableOpacity
+                                        style={styles.closeButton}
+                                        onPress={onClose}
+                                        hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+                                    >
+                                        <Text style={[styles.closeButtonText, { color: theme.colors.text }]}>
+                                            ✕
+                                        </Text>
+                                    </TouchableOpacity>
+                                )}
+                            </View>
+                        )}
 
-                    {/* Content */}
-                    <View style={[styles.content, contentStyle]}>
-                        {children}
-                    </View>
-                </Animated.View>
+                        {/* Content */}
+                        <View style={[styles.content, contentStyle]}>
+                            {children}
+                        </View>
+                    </Animated.View>
+                </GestureDetector>
             </View>
         </Modal>
     )
@@ -322,9 +370,7 @@ export const AnimatedModal = forwardRef<AnimatedModalRef, AnimatedModalProps>(({
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: 'transparent',
-        justifyContent: 'center',
-        alignItems: 'center'
+        backgroundColor: 'transparent'
     },
     backdrop: {
         ...StyleSheet.absoluteFillObject,
@@ -334,15 +380,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#FFFFFF',
         borderRadius: 12,
         overflow: 'hidden',
-        maxHeight: '90%',
-        shadowColor: '#000',
-        shadowOffset: {
-            width: 0,
-            height: 4,
-        },
-        shadowOpacity: 0.25,
-        shadowRadius: 8,
-        elevation: 8,
+        maxHeight: '90%'
     },
     header: {
         flexDirection: 'row',
@@ -378,5 +416,3 @@ const styles = StyleSheet.create({
 })
 
 AnimatedModal.displayName = 'AnimatedModal'
-
-export default AnimatedModal;

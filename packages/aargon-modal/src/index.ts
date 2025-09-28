@@ -1,8 +1,3 @@
-export { default as AnimatedModal } from './AnimatedModal';
-export type { 
-    AnimatedModalProps, 
-    AnimatedModalRef,
-    ModalAnimationType, 
-    ModalVariant, 
-    ModalSize 
-} from './AnimatedModal';
+export { AnimatedModal } from './AnimatedModal'
+export type { AnimatedModalProps, AnimatedModalRef } from './AnimatedModal'
+export * from './utils'

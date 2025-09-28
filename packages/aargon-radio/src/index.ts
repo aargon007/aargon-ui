@@ -1,15 +1,3 @@
-export { default as AnimatedRadio } from './AnimatedRadio';
-export type { 
-    AnimatedRadioProps, 
-    AnimatedRadioRef,
-    RadioVariant, 
-    RadioSize, 
-    RadioColorScheme, 
-    RadioAnimationType,
-    RadioLabelPosition
-} from './AnimatedRadio';
-export type { 
-    RadioColors, 
-    RadioSizes, 
-    RadioAnimationConfig 
-} from './utils';
+export { AnimatedRadio } from './AnimatedRadio'
+export type { AnimatedRadioProps, AnimatedRadioRef } from './AnimatedRadio'
+export * from './utils'

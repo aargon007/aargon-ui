@@ -1,11 +1,4 @@
-export { default as AnimatedSelect } from './AnimatedSelect';
-export { SelectOptionComponent } from './SelectOption';
-export type {
-    AnimatedSelectProps,
-    SelectRef,
-    SelectOption,
-    SelectVariant,
-    SelectSize,
-    SelectColorScheme,
-    SelectAnimationType
-} from './AnimatedSelect';
+export { AnimatedSelect } from './AnimatedSelect'
+export { SelectOptionComponent } from './SelectOption'
+export type { AnimatedSelectProps, SelectRef } from './AnimatedSelect'
+export * from './utils'
