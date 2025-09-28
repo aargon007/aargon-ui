@@ -5,4 +5,4 @@ export type {
     BadgeSize, 
     BadgeAnimation,
     BadgeTheme 
-} from './AnimatedBadge';
+} from './utils';

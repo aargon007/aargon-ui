@@ -1,5 +1,4 @@
 // utils.ts
-import { Feather } from "@expo/vector-icons"
 import { type ViewStyle, type TextStyle } from 'react-native'
 
 export type AccordionVariant = "default" | "bordered" | "filled" | "ghost"
@@ -46,9 +45,9 @@ export interface AnimatedAccordionProps {
     /** Whether the accordion is disabled */
     disabled?: boolean
     /** Custom icon for collapsed state */
-    collapsedIcon?: keyof typeof Feather.glyphMap
+    collapsedIcon?: string
     /** Custom icon for expanded state */
-    expandedIcon?: keyof typeof Feather.glyphMap
+    expandedIcon?: string
     /** Whether to show the expand/collapse icon */
     showIcon?: boolean
     /** Icon position */

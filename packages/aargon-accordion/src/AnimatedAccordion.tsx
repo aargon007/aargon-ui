@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react'
 import { StyleSheet, View, TouchableOpacity, Text, type LayoutChangeEvent, } from 'react-native'
 import Animated, { useAnimatedStyle, useSharedValue, withTiming, withSpring, interpolate, runOnJS, Easing, } from 'react-native-reanimated'
 import { getAccordionSizeStyles, getAccordionVariantStyles, type AccordionTheme, type AnimatedAccordionProps } from './utils'
-import { Feather } from "@expo/vector-icons"
 
 const defaultTheme: AccordionTheme = {
     colors: {
@@ -26,7 +25,6 @@ const springConfig = {
     stiffness: 250,
     mass: 0.6,
 };
-
 
 const bounceConfig = {
     damping: 25,
@@ -232,11 +230,9 @@ export const AnimatedAccordion = ({
                     {/* Left Icon */}
                     {showIcon && iconPosition === "left" && (
                         <Animated.View style={[styles.iconContainer, animatedIconStyle]}>
-                            <Feather
-                                name={currentIcon}
-                                size={sizeStyles.iconSize}
-                                color={iconColor}
-                            />
+                            <Text style={[styles.iconText, { fontSize: sizeStyles.iconSize, color: iconColor }]}>
+                                {currentIcon === "chevron-down" ? "▼" : currentIcon === "chevron-up" ? "▲" : currentIcon}
+                            </Text>
                         </Animated.View>
                     )}
 
@@ -262,11 +258,9 @@ export const AnimatedAccordion = ({
                     {/* Right Icon */}
                     {showIcon && iconPosition === "right" && (
                         <Animated.View style={[styles.iconContainer, animatedIconStyle]}>
-                            <Feather
-                                name={currentIcon}
-                                size={sizeStyles.iconSize}
-                                color={iconColor}
-                            />
+                            <Text style={[styles.iconText, { fontSize: sizeStyles.iconSize, color: iconColor }]}>
+                                {currentIcon === "chevron-down" ? "▼" : currentIcon === "chevron-up" ? "▲" : currentIcon}
+                            </Text>
                         </Animated.View>
                     )}
                 </Animated.View>
@@ -347,6 +341,9 @@ const styles = StyleSheet.create({
     iconContainer: {
         marginLeft: 8,
     },
+    iconText: {
+        fontWeight: 'bold',
+    },
     body: {
         overflow: 'hidden',
         width: '100%',
@@ -365,3 +362,5 @@ const styles = StyleSheet.create({
         elevation: 5,
     },
 })
+
+export default AnimatedAccordion;
