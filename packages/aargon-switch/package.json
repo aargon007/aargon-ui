@@ -1,5 +1,5 @@
 {
-    "name": "aargon-switch",
+    "name": "@aargon-ui/switch",
     "version": "1.0.0",
     "description": "Animated switch component for React Native",
     "main": "lib/index.js",

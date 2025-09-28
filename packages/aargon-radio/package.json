@@ -1,5 +1,5 @@
 {
-  "name": "aargon-radio",
+  "name": "@aargon-ui/radio",
   "version": "1.0.0",
   "description": "Animated radio component for React Native",
   "main": "lib/index.js",

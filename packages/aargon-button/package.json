@@ -1,5 +1,5 @@
 {
-  "name": "aargon-button",
+  "name": "@aargon-ui/button",
   "version": "1.0.0",
   "description": "Animated button component for React Native",
   "main": "lib/index.js",

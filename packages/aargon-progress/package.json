@@ -1,5 +1,5 @@
 {
-  "name": "aargon-progress",
+  "name": "@aargon-ui/progress",
   "version": "1.0.0",
   "description": "Animated progress component for React Native",
   "main": "lib/index.js",

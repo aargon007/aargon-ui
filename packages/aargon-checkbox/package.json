@@ -1,5 +1,5 @@
 {
-  "name": "aargon-checkbox",
+  "name": "@aargon-ui/checkbox",
   "version": "1.0.0",
   "description": "Animated checkbox component for React Native",
   "main": "lib/index.js",

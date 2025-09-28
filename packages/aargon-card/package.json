@@ -1,5 +1,5 @@
 {
-  "name": "aargon-card",
+  "name": "@aargon-ui/card",
   "version": "1.0.0",
   "description": "Animated card component for React Native",
   "main": "lib/index.js",

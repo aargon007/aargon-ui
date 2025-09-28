@@ -1,5 +1,5 @@
 {
-  "name": "aargon-accordion",
+  "name": "@aargon-ui/accordion",
   "version": "1.0.0",
   "description": "Animated accordion component for React Native",
   "main": "lib/index.js",

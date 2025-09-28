@@ -1,5 +1,5 @@
 {
-  "name": "aargon-select",
+  "name": "@aargon-ui/select",
   "version": "1.0.0",
   "description": "Animated select component for React Native",
   "main": "lib/index.js",

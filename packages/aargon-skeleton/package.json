@@ -1,5 +1,5 @@
 {
-  "name": "aargon-skeleton",
+  "name": "@aargon-ui/skeleton",
   "version": "1.0.0",
   "description": "Animated skeleton component for React Native",
   "main": "lib/index.js",

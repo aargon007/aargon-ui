@@ -1,5 +1,5 @@
 {
-  "name": "aargon-badge",
+  "name": "@aargon-ui/badge",
   "version": "1.0.0",
   "description": "Animated badge component for React Native",
   "main": "lib/index.js",

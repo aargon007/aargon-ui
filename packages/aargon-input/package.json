@@ -1,5 +1,5 @@
 {
-    "name": "aargon-input",
+    "name": "@aargon-ui/input",
     "version": "1.0.0",
     "description": "Animated input component for React Native",
     "main": "lib/index.js",

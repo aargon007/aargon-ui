@@ -1,5 +1,5 @@
 {
-  "name": "aargon-modal",
+  "name": "@aargon-ui/modal",
   "version": "1.0.0",
   "description": "Animated modal component for React Native",
   "main": "lib/index.js",

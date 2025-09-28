@@ -1,5 +1,5 @@
 {
-  "name": "aargon-toast",
+  "name": "@aargon-ui/toast",
   "version": "1.0.0",
   "description": "Animated toast component for React Native",
   "main": "lib/index.js",

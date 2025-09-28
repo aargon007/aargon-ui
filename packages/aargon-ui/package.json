@@ -1,0 +1,142 @@
+{
+    "name": "aargon-ui",
+    "version": "1.0.0",
+    "description": "A collection of headless UI packages for React Native",
+    "main": "lib/index.js",
+    "types": "lib/index.d.ts",
+    "files": [
+        "lib/**/*"
+    ],
+    "scripts": {
+        "build": "tsc",
+        "build:watch": "tsc --watch",
+        "dev": "tsc --watch",
+        "type-check": "tsc --noEmit",
+        "lint": "eslint src --ext .ts,.tsx",
+        "clean": "rm -rf lib"
+    },
+    "keywords": [
+        "react-native",
+        "ui",
+        "components",
+        "animated",
+        "headless",
+        "accordion",
+        "button",
+        "card",
+        "input",
+        "modal",
+        "dropdown",
+        "checkbox",
+        "radio",
+        "switch",
+        "toast",
+        "snackbar",
+        "skeleton",
+        "progress",
+        "badge",
+        "select"
+    ],
+    "author": "Md Muhaiminul",
+    "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/aargon007/aargon-ui"
+    },
+    "homepage": "https://github.com/aargon007/aargon-ui#readme",
+    "bugs": {
+        "url": "https://github.com/aargon007/aargon-ui/issues"
+    },
+    "peerDependencies": {
+        "react": ">=18.0.0",
+        "react-native": "0.81.4"
+    },
+    "dependencies": {
+        "@aargon-ui/accordion": "workspace:*",
+        "@aargon-ui/badge": "workspace:*",
+        "@aargon-ui/button": "workspace:*",
+        "@aargon-ui/card": "workspace:*",
+        "@aargon-ui/checkbox": "workspace:*",
+        "@aargon-ui/dropdown": "workspace:*",
+        "@aargon-ui/input": "workspace:*",
+        "@aargon-ui/modal": "workspace:*",
+        "@aargon-ui/progress": "workspace:*",
+        "@aargon-ui/radio": "workspace:*",
+        "@aargon-ui/select": "workspace:*",
+        "@aargon-ui/skeleton": "workspace:*",
+        "@aargon-ui/snackbar": "workspace:*",
+        "@aargon-ui/switch": "workspace:*",
+        "@aargon-ui/toast": "workspace:*"
+    },
+    "devDependencies": {
+        "@types/react": "~19.1.10",
+        "@types/react-native": "^0.72.8",
+        "typescript": "~5.9.2"
+    },
+    "exports": {
+        ".": {
+            "types": "./lib/index.d.ts",
+            "default": "./lib/index.js"
+        },
+        "./accordion": {
+            "types": "./lib/accordion.d.ts",
+            "default": "./lib/accordion.js"
+        },
+        "./badge": {
+            "types": "./lib/badge.d.ts",
+            "default": "./lib/badge.js"
+        },
+        "./button": {
+            "types": "./lib/button.d.ts",
+            "default": "./lib/button.js"
+        },
+        "./card": {
+            "types": "./lib/card.d.ts",
+            "default": "./lib/card.js"
+        },
+        "./checkbox": {
+            "types": "./lib/checkbox.d.ts",
+            "default": "./lib/checkbox.js"
+        },
+        "./dropdown": {
+            "types": "./lib/dropdown.d.ts",
+            "default": "./lib/dropdown.js"
+        },
+        "./input": {
+            "types": "./lib/input.d.ts",
+            "default": "./lib/input.js"
+        },
+        "./modal": {
+            "types": "./lib/modal.d.ts",
+            "default": "./lib/modal.js"
+        },
+        "./progress": {
+            "types": "./lib/progress.d.ts",
+            "default": "./lib/progress.js"
+        },
+        "./radio": {
+            "types": "./lib/radio.d.ts",
+            "default": "./lib/radio.js"
+        },
+        "./select": {
+            "types": "./lib/select.d.ts",
+            "default": "./lib/select.js"
+        },
+        "./skeleton": {
+            "types": "./lib/skeleton.d.ts",
+            "default": "./lib/skeleton.js"
+        },
+        "./snackbar": {
+            "types": "./lib/snackbar.d.ts",
+            "default": "./lib/snackbar.js"
+        },
+        "./switch": {
+            "types": "./lib/switch.d.ts",
+            "default": "./lib/switch.js"
+        },
+        "./toast": {
+            "types": "./lib/toast.d.ts",
+            "default": "./lib/toast.js"
+        }
+    }
+}

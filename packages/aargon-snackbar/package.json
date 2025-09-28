@@ -1,5 +1,5 @@
 {
-  "name": "aargon-snackbar",
+  "name": "@aargon-ui/snackbar",
   "version": "1.0.0",
   "description": "Animated snackbar component for React Native",
   "main": "lib/index.js",

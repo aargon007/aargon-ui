@@ -1,5 +1,5 @@
 {
-  "name": "aargon-dropdown",
+  "name": "@aargon-ui/dropdown",
   "version": "1.0.0",
   "description": "Animated dropdown component for React Native",
   "main": "lib/index.js",
