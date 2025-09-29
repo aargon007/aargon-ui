@@ -27,15 +27,15 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/aargon007/aargon-ui",
-    "directory": "packages/aargon-accordion"
+    "directory": "packages/accordion"
   },
-  "homepage": "https://github.com/aargon007/aargon-ui/packages/aargon-accordion#readme",
+  "homepage": "https://github.com/aargon007/aargon-ui/packages/accordion#readme",
   "bugs": {
     "url": "https://github.com/aargon007/aargon-ui/issues"
   },
   "peerDependencies": {
     "react": ">=18.0.0",
-    "react-native": "0.81.4"
+    "react-native": ">=0.81.0"
   },
   "dependencies": {
     "react-native-reanimated": "~4.1.1",
