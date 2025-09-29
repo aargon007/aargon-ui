@@ -21,7 +21,7 @@ git clone https://github.com/aargon007/aargon-ui.git
 cd aargon-ui
 ```
 
-### 2. Set up Development Environment
+### 2. Set Up Development Environment
 
 ```bash
 # Install dependencies
@@ -40,6 +40,105 @@ yarn dev:all
 git checkout -b feature/amazing-feature
 # or
 git checkout -b fix/bug-fix
+```
+
+## 🛠️ Development
+
+This is a Turbo monorepo with individual packages. Each package can be developed and published independently.
+
+### Prerequisites
+
+- Node.js 18+
+- Yarn 1.22.22+
+- React Native 0.81.4
+- Expo ~54.0.10
+- React Native Reanimated 4.1.0+
+
+### Getting Started
+
+```bash
+# Clone the repository
+git clone https://github.com/aargon007/aargon-ui.git
+cd aargon-ui
+
+# Install dependencies
+yarn install
+
+# Build all packages
+yarn build
+
+# Run example app (source mode - no build needed)
+yarn dev:source
+
+# Run example app (with package builds)
+yarn dev:all
+
+# Develop a specific package
+yarn dev --filter=aargon-button
+```
+
+### Development Modes
+
+#### Source Development (Recommended)
+
+```bash
+yarn dev:source
+```
+
+- Uses TypeScript source files directly
+- Instant hot reload
+- No compilation step needed
+- Fastest development experience
+
+#### Build Development
+
+```bash
+yarn dev:all
+```
+
+- Compiles packages to JavaScript
+- Tests production-like behavior
+- Slower but more accurate
+
+### Package Structure
+
+Each package follows this structure:
+
+```
+packages/aargon-[component]/
+├── src/
+│   ├── Animated[Component].tsx    # Main component
+│   ├── index.ts                   # Exports
+│   └── utils.ts                   # Utilities and types
+├── lib/                          # Compiled output
+├── package.json                  # Package configuration
+├── tsconfig.json                 # TypeScript config
+├── README.md                     # Package documentation
+├── CHANGELOG.md                  # Version history
+└── LICENSE                       # MIT License
+```
+
+### Available Scripts
+
+```bash
+# Development
+yarn dev:source          # Run example with source files
+yarn dev:all            # Run example with built packages
+yarn dev:packages       # Build packages in watch mode
+yarn dev:example        # Run example only
+
+# Building
+yarn build              # Build all packages
+yarn build:watch        # Build packages in watch mode
+
+# Publishing
+yarn publish:packages   # Publish all packages
+yarn release           # Build and publish
+
+# Utilities
+yarn lint              # Lint all packages
+yarn type-check        # Type check all packages
+yarn clean             # Clean all build outputs
 ```
 
 ## Development Guidelines
@@ -191,6 +290,8 @@ For new features, please include:
 4. **Include examples** in the example app
 5. **Add to the main README** packages list
 6. **Update CHANGELOG** with new component
+7. **Update unified package** (`packages/aargon-ui`) to include the new component
+8. **Test both individual and unified package** installations
 
 ### Testing Guidelines
 
@@ -231,14 +332,51 @@ We follow [Semantic Versioning](https://semver.org/):
 - **MAJOR** version for incompatible API changes
 - **MINOR** version for backwards-compatible functionality
 - **PATCH** version for backwards-compatible bug fixes
+- **BETA** versions for pre-release testing (e.g., `1.0.0-beta.1`)
 
 ### Publishing
+
+#### Individual Packages
 
 1. **Create changeset** with `yarn changeset`
 2. **Version packages** with `yarn version-packages`
 3. **Publish packages** with `yarn release`
 4. **Update documentation** if needed
 5. **Create release notes** on GitHub
+
+#### Unified Package (Beta)
+
+The unified `aargon-ui` package is published separately and includes all individual components:
+
+1. **Build the unified package**:
+
+    ```bash
+    cd packages/aargon-ui
+    npm run build
+    ```
+
+2. **Update version** in `packages/aargon-ui/package.json`:
+
+    ```json
+    {
+        "version": "1.0.0-beta.X"
+    }
+    ```
+
+3. **Publish beta version**:
+
+    ```bash
+    npm publish --tag beta
+    ```
+
+4. **Update documentation** to reflect new beta version
+
+### Beta Release Guidelines
+
+- **Beta versions** are for testing and feedback
+- **Breaking changes** are allowed between beta versions
+- **Documentation** should clearly indicate beta status
+- **Feedback** should be collected and addressed before stable release
 
 ## Getting Help
 

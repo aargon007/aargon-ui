@@ -21,9 +21,9 @@ yarn add aargon-ui
 
 ## Requirements
 
-- React >= 18.0.0
+- React >= 19.0.0
 - React Native >= 0.81.0
-- React Native Reanimated >= 4.1.1
+- React Native Reanimated >= 3.0.0
 
 ## Quick Start
 

@@ -1,69 +1,74 @@
 // import React from 'react';
-// import { View, Text } from 'react-native';
-
-// // Pattern 1: Import from unified package
+// import { View, Text, StyleSheet } from 'react-native';
 // import {
 //     AnimatedButton,
-//     AnimatedAccordion,
 //     AnimatedCard,
 //     AnimatedInput,
-//     AnimatedModal,
-//     AnimatedDropdown,
+//     AnimatedAccordion,
+//     AnimatedBadge,
 //     AnimatedCheckbox,
-//     AnimatedRadio,
 //     AnimatedSwitch,
-//     AnimatedSkeleton,
-//     AnimatedSnackbar,
-//     ToastApp
+//     AnimatedToast
 // } from 'aargon-ui';
-
-// // Pattern 2: Import individual components from unified package
-// import { AnimatedButton as ButtonFromUnified } from 'aargon-ui/button';
-// import { AnimatedAccordion as AccordionFromUnified } from 'aargon-ui/accordion';
-// import { AnimatedCard as CardFromUnified } from 'aargon-ui/card';
-
-// // Pattern 3: Import from individual packages (existing)
-// import { AnimatedButton as IndividualButton } from 'aargon-button';
-// import { AnimatedAccordion as IndividualAccordion } from 'aargon-accordion';
-// import { AnimatedCard as IndividualCard } from 'aargon-card';
 
 // export default function UnifiedImportExample() {
 //     return (
-//         <View style={{ padding: 20 }}>
-//             <Text style={{ fontSize: 24, fontWeight: 'bold', marginBottom: 20 }}>
-//                 Aargon UI - Unified Import Example
-//             </Text>
+//         <View style={styles.container}>
+//             <AnimatedCard style={styles.card}>
+//                 <Text style={styles.title}>Aargon UI Components</Text>
 
-//             <Text style={{ fontSize: 18, marginBottom: 10 }}>
-//                 All three import patterns work:
-//             </Text>
+//                 <AnimatedInput
+//                     placeholder="Enter your name"
+//                     style={styles.input}
+//                 />
 
-//             <Text style={{ marginBottom: 5 }}>
-//                 ✓ Unified package: aargon-ui
-//             </Text>
-//             <Text style={{ marginBottom: 5 }}>
-//                 ✓ Individual from unified: aargon-ui/button
-//             </Text>
-//             <Text style={{ marginBottom: 20 }}>
-//                 ✓ Individual packages: aargon-button
-//             </Text>
+//                 <AnimatedButton
+//                     title="Click Me!"
+//                     variant="primary"
+//                     style={styles.button}
+//                 />
 
-//             <Text style={{ fontSize: 16, marginBottom: 10 }}>
-//                 Available components:
-//             </Text>
+//                 <View style={styles.row}>
+//                     <AnimatedCheckbox />
+//                     <AnimatedSwitch />
+//                     <AnimatedBadge text="New" />
+//                 </View>
 
-//             <Text style={{ marginBottom: 5 }}>• AnimatedButton</Text>
-//             <Text style={{ marginBottom: 5 }}>• AnimatedAccordion</Text>
-//             <Text style={{ marginBottom: 5 }}>• AnimatedCard</Text>
-//             <Text style={{ marginBottom: 5 }}>• AnimatedInput</Text>
-//             <Text style={{ marginBottom: 5 }}>• AnimatedModal</Text>
-//             <Text style={{ marginBottom: 5 }}>• AnimatedDropdown</Text>
-//             <Text style={{ marginBottom: 5 }}>• AnimatedCheckbox</Text>
-//             <Text style={{ marginBottom: 5 }}>• AnimatedRadio</Text>
-//             <Text style={{ marginBottom: 5 }}>• AnimatedSwitch</Text>
-//             <Text style={{ marginBottom: 5 }}>• AnimatedSkeleton</Text>
-//             <Text style={{ marginBottom: 5 }}>• AnimatedSnackbar</Text>
-//             <Text style={{ marginBottom: 5 }}>• ToastApp</Text>
+//                 <AnimatedAccordion title="More Components">
+//                     <Text>This accordion contains more components!</Text>
+//                     <AnimatedToast message="Toast notification" />
+//                 </AnimatedAccordion>
+//             </AnimatedCard>
 //         </View>
 //     );
 // }
+
+// const styles = StyleSheet.create({
+//     container: {
+//         flex: 1,
+//         padding: 20,
+//         backgroundColor: '#f5f5f5',
+//     },
+//     card: {
+//         padding: 20,
+//         marginBottom: 20,
+//     },
+//     title: {
+//         fontSize: 24,
+//         fontWeight: 'bold',
+//         marginBottom: 20,
+//         textAlign: 'center',
+//     },
+//     input: {
+//         marginBottom: 15,
+//     },
+//     button: {
+//         marginBottom: 15,
+//     },
+//     row: {
+//         flexDirection: 'row',
+//         justifyContent: 'space-around',
+//         alignItems: 'center',
+//         marginBottom: 15,
+//     },
+// });

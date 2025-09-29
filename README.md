@@ -2,7 +2,9 @@
 
 Aargon UI is a collection of headless, animated UI components for **React Native**, built using **Reanimated** and **Moti** for smooth and visually stunning UI effects. Each component is published as an individual package for maximum flexibility and tree-shaking.
 
-[![npm version](https://badge.fury.io/js/aargon-accordion.svg)](https://www.npmjs.com/package/aargon-accordion)
+> 🚀 **Beta Available!** The unified `aargon-ui` package is now available in beta with all components bundled together for easier installation and usage.
+
+[![npm version](https://badge.fury.io/js/aargon-ui.svg)](https://www.npmjs.com/package/aargon-ui)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 
@@ -17,6 +19,46 @@ Aargon UI is a collection of headless, animated UI components for **React Native
 - **Optimized performance** - Built with Reanimated 4
 - **Accessibility** - Full accessibility support with ARIA attributes
 - **Customizable** - Complete theming and styling system
+
+## 📦 Installation Options
+
+### Option 1: Unified Package (Beta) 🚀
+
+Install all components at once with the unified package:
+
+```bash
+# Install beta version
+npm install aargon-ui@beta
+
+# Or with yarn
+yarn add aargon-ui@beta
+```
+
+**Benefits:**
+
+- ✅ Single package installation
+- ✅ All components included
+- ✅ Simplified imports
+- ✅ Consistent versioning
+
+### Option 2: Individual Packages 📦
+
+Install only the components you need:
+
+```bash
+# Install specific components
+npm install aargon-accordion aargon-button aargon-input
+
+# Or with yarn
+yarn add aargon-accordion aargon-button aargon-input
+```
+
+**Benefits:**
+
+- ✅ Smaller bundle size
+- ✅ Tree-shaking friendly
+- ✅ Granular control
+- ✅ Independent versioning
 
 ## 📦 Packages
 
@@ -63,19 +105,27 @@ Aargon UI is a collection of headless, animated UI components for **React Native
 
 ## 🚀 Quick Start
 
-### Installation
+### Using the Unified Package (Beta)
 
-Install individual packages as needed:
+```tsx
+import React from 'react';
+import { View, Text } from 'react-native';
+import { AnimatedAccordion, AnimatedButton } from 'aargon-ui';
 
-```bash
-# Install published packages
-npm install aargon-accordion
+export default function App() {
+    return (
+        <View>
+            <AnimatedAccordion title="Click to expand">
+                <Text>This is the accordion content!</Text>
+            </AnimatedAccordion>
 
-# Or with yarn
-yarn add aargon-accordion
+            <AnimatedButton onPress={() => console.log('Pressed!')}>Click me!</AnimatedButton>
+        </View>
+    );
+}
 ```
 
-### Basic Usage
+### Using Individual Packages
 
 ```tsx
 import React from 'react';
@@ -89,105 +139,6 @@ export default function App() {
         </AnimatedAccordion>
     );
 }
-```
-
-## 🛠️ Development
-
-This is a Turbo monorepo with individual packages. Each package can be developed and published independently.
-
-### Prerequisites
-
-- Node.js 18+
-- Yarn 1.22.22+
-- React Native 0.81.4
-- Expo ~54.0.10
-- React Native Reanimated 4.1.1+
-
-### Getting Started
-
-```bash
-# Clone the repository
-git clone https://github.com/aargon007/aargon-ui.git
-cd aargon-ui
-
-# Install dependencies
-yarn install
-
-# Build all packages
-yarn build
-
-# Run example app (source mode - no build needed)
-yarn dev:source
-
-# Run example app (with package builds)
-yarn dev:all
-
-# Develop a specific package
-yarn dev --filter=aargon-button
-```
-
-### Development Modes
-
-#### Source Development (Recommended)
-
-```bash
-yarn dev:source
-```
-
-- Uses TypeScript source files directly
-- Instant hot reload
-- No compilation step needed
-- Fastest development experience
-
-#### Build Development
-
-```bash
-yarn dev:all
-```
-
-- Compiles packages to JavaScript
-- Tests production-like behavior
-- Slower but more accurate
-
-### Package Structure
-
-Each package follows this structure:
-
-```
-packages/aargon-[component]/
-├── src/
-│   ├── Animated[Component].tsx    # Main component
-│   ├── index.ts                   # Exports
-│   └── utils.ts                   # Utilities and types
-├── lib/                          # Compiled output
-├── package.json                  # Package configuration
-├── tsconfig.json                 # TypeScript config
-├── README.md                     # Package documentation
-├── CHANGELOG.md                  # Version history
-└── LICENSE                       # MIT License
-```
-
-### Available Scripts
-
-```bash
-# Development
-yarn dev:source          # Run example with source files
-yarn dev:all            # Run example with built packages
-yarn dev:packages       # Build packages in watch mode
-yarn dev:example        # Run example only
-
-# Building
-yarn build              # Build all packages
-yarn build:watch        # Build packages in watch mode
-
-# Publishing
-yarn publish:packages   # Publish all packages
-yarn release           # Build and publish
-
-# Utilities
-yarn lint              # Lint all packages
-yarn type-check        # Type check all packages
-yarn clean             # Clean all build outputs
 ```
 
 ## 🤝 Contributing
