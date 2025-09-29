@@ -4,7 +4,7 @@ import { useState } from "react"
 import { View, Text, StyleSheet, ScrollView } from "react-native"
 import ComponentPage from "@/component/common/ComponentPage"
 import { globalStyles } from "@/styles/globalStyles"
-import { AnimatedCheckbox } from "aargon-checkbox"
+import { AnimatedCheckbox } from "@aargon-ui/checkbox"
 
 export default function CheckboxPage() {
     const [isChecked, setIsChecked] = useState(true)

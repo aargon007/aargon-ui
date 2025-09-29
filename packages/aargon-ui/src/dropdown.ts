@@ -4,4 +4,4 @@ export type {
     DropdownVariant,
     DropdownSize,
     DropdownAnimationType
-} from '@aargon-ui/dropdown';
+} from '@aargon-ui/dropdown'; 

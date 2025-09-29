@@ -10,8 +10,8 @@ import {
     Platform,
 } from 'react-native';
 import { Feather } from '@expo/vector-icons';
-import { AnimatedCard } from 'aargon-card';
-import type { CardAnimationType, CardColorScheme, CardSize, CardVariant } from 'aargon-card';
+import { AnimatedCard } from '@aargon-ui/card';
+import type { CardAnimationType, CardColorScheme, CardSize, CardVariant } from '@aargon-ui/card';
 
 const CardPage = () => {
     // State for interactive examples
@@ -25,10 +25,10 @@ const CardPage = () => {
     const [counter, setCounter] = useState(0);
 
     // Available options
-    const variants: CardVariant[] = ['default', 'elevated', 'outlined', 'filled', 'glass', 'gradient'];
+    const variants: CardVariant[] = ['default', 'elevated', 'outlined', 'filled'];
     const sizes: CardSize[] = ['sm', 'md', 'lg', 'xl'];
     const colorSchemes: CardColorScheme[] = ['default', 'primary', 'secondary', 'success', 'error'];
-    const animations: CardAnimationType[] = ['none', 'scale', 'lift', 'tilt', 'glow', 'bounce', 'flip', 'slide'];
+    const animations: CardAnimationType[] = ['none', 'scale', 'lift', 'bounce'];
 
     // Option selector component
     const OptionSelector = <T extends string>({
@@ -230,14 +230,14 @@ const CardPage = () => {
             {/* Glass Card */}
             <AnimatedCard
                 title="Glass Card"
-                subtitle="Card with glass morphism effect"
-                variant="glass"
+                subtitle="Card with elevated effect"
+                variant="elevated"
                 colorScheme="error"
-                animationType="glow"
+                animationType="scale"
             >
                 <Text style={styles.cardContent}>
-                    This card uses the glass variant with an error color scheme.
-                    It has a glow animation when pressed.
+                    This card uses the elevated variant with an error color scheme.
+                    It has a scale animation when pressed.
                     {Platform.OS === 'ios' ? ' The backdrop blur works best on iOS.' : ''}
                 </Text>
             </AnimatedCard>
@@ -245,14 +245,14 @@ const CardPage = () => {
             {/* Gradient Card */}
             <AnimatedCard
                 title="Gradient Card"
-                subtitle="Card with gradient background"
-                variant="gradient"
+                subtitle="Card with filled background"
+                variant="filled"
                 colorScheme="primary"
-                animationType="tilt"
+                animationType="lift"
             >
                 <Text style={[styles.cardContent, { color: 'white' }]}>
-                    This card uses the gradient variant with a primary color scheme.
-                    It has a tilt animation when pressed.
+                    This card uses the filled variant with a primary color scheme.
+                    It has a lift animation when pressed.
                 </Text>
             </AnimatedCard>
 
@@ -277,7 +277,7 @@ const CardPage = () => {
             {/* Card with Icons */}
             <AnimatedCard
                 variant="outlined"
-                animationType="slide"
+                animationType="bounce"
                 showDivider
             >
                 <View style={styles.iconCardHeader}>

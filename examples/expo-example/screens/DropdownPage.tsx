@@ -7,7 +7,7 @@ import {
     SafeAreaView,
     Alert,
 } from 'react-native'
-import { AnimatedDropdown, type DropdownRef } from 'aargon-dropdown'
+import { AnimatedDropdown, type DropdownRef } from '@aargon-ui/dropdown'
 import {
     createSampleItems,
     type DropdownItem,
@@ -15,7 +15,7 @@ import {
     type DropdownSize,
     type DropdownColorScheme,
     type DropdownAnimationType,
-} from 'aargon-dropdown'
+} from '@aargon-ui/dropdown'
 import ComponentPage from '@/component/common/ComponentPage'
 import { globalStyles } from '@/styles/globalStyles'
 

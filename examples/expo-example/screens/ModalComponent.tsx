@@ -7,8 +7,8 @@ import {
     TextInput,
     Alert
 } from 'react-native'
-import { AnimatedModal, type AnimatedModalRef } from 'aargon-modal'
-import type { ModalAnimationType, ModalVariant, ModalSize, ModalPosition } from 'aargon-modal'
+import { AnimatedModal, type AnimatedModalRef } from '@aargon-ui/modal'
+import type { ModalAnimationType, ModalVariant, ModalSize, ModalPosition } from '@aargon-ui/modal'
 import ComponentPage from '@/component/common/ComponentPage'
 import { globalStyles } from '@/styles/globalStyles'
 

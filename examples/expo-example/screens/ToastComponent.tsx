@@ -1,7 +1,7 @@
 import React from 'react'
 import { View, Text, StyleSheet } from 'react-native'
-import { StackedToastProvider } from 'aargon-toast'
-import { ToastApp } from 'aargon-toast'
+import { StackedToastProvider } from '@aargon-ui/toast'
+import { ToastApp } from '@aargon-ui/toast'
 import ComponentPage from '@/component/common/ComponentPage'
 import { globalStyles } from '@/styles/globalStyles'
 

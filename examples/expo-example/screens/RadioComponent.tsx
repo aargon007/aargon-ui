@@ -1,8 +1,8 @@
 import React, { useState, useRef } from 'react'
-import { View, Text, StyleSheet,  Alert } from 'react-native'
+import { View, Text, StyleSheet, Alert } from 'react-native'
 import ComponentPage from '@/component/common/ComponentPage'
 import { globalStyles } from '@/styles/globalStyles'
-import { AnimatedRadio, type AnimatedRadioRef } from 'aargon-radio'
+import { AnimatedRadio, type AnimatedRadioRef } from '@aargon-ui/radio'
 
 export default function RadioPage() {
     // State for different radio groups
