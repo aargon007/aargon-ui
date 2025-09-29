@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { View, Text, StyleSheet } from "react-native"
-import { AnimatedSwitch } from "aargon-switch"
+import { AnimatedSwitch } from "@aargon-ui/switch"
 import CodeExample from "@/component/common/CodeExample";
 import { globalStyles } from "@/styles/globalStyles";
 import ComponentPage from "@/component/common/ComponentPage";

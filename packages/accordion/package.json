@@ -1,0 +1,47 @@
+{
+  "name": "@aargon-ui/accordion",
+  "version": "1.0.0",
+  "description": "Animated accordion component for React Native",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "files": [
+    "lib/**/*"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "build:watch": "tsc --watch",
+    "dev": "tsc --watch",
+    "type-check": "tsc --noEmit",
+    "lint": "eslint src --ext .ts,.tsx",
+    "clean": "rm -rf lib"
+  },
+  "keywords": [
+    "react-native",
+    "accordion",
+    "animated",
+    "ui",
+    "component"
+  ],
+  "author": "Md Muhaiminul",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/aargon007/aargon-ui",
+    "directory": "packages/accordion"
+  },
+  "homepage": "https://github.com/aargon007/aargon-ui/packages/accordion#readme",
+  "bugs": {
+    "url": "https://github.com/aargon007/aargon-ui/issues"
+  },
+  "peerDependencies": {
+    "react": ">=19.0.0",
+    "react-native": ">=0.81.0",
+    "react-native-reanimated": ">=3.0.0",
+    "@expo/vector-icons": "^15.0.2"
+  },
+  "devDependencies": {
+    "@types/react": "~19.1.10",
+    "@types/react-native": "^0.72.8",
+    "typescript": "~5.9.2"
+  }
+}

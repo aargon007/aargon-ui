@@ -1,0 +1,134 @@
+{
+    "name": "aargon-ui",
+    "version": "1.0.0-beta.2",
+    "description": "A collection of animated UI components for React Native",
+    "main": "lib/index.js",
+    "types": "lib/index.d.ts",
+    "exports": {
+        ".": {
+            "types": "./lib/index.d.ts",
+            "default": "./lib/index.js"
+        },
+        "./accordion": {
+            "types": "./lib/accordion.d.ts",
+            "default": "./lib/accordion.js"
+        },
+        "./badge": {
+            "types": "./lib/badge.d.ts",
+            "default": "./lib/badge.js"
+        },
+        "./button": {
+            "types": "./lib/button.d.ts",
+            "default": "./lib/button.js"
+        },
+        "./card": {
+            "types": "./lib/card.d.ts",
+            "default": "./lib/card.js"
+        },
+        "./checkbox": {
+            "types": "./lib/checkbox.d.ts",
+            "default": "./lib/checkbox.js"
+        },
+        "./dropdown": {
+            "types": "./lib/dropdown.d.ts",
+            "default": "./lib/dropdown.js"
+        },
+        "./input": {
+            "types": "./lib/input.d.ts",
+            "default": "./lib/input.js"
+        },
+        "./modal": {
+            "types": "./lib/modal.d.ts",
+            "default": "./lib/modal.js"
+        },
+        "./progress": {
+            "types": "./lib/progress.d.ts",
+            "default": "./lib/progress.js"
+        },
+        "./radio": {
+            "types": "./lib/radio.d.ts",
+            "default": "./lib/radio.js"
+        },
+        "./select": {
+            "types": "./lib/select.d.ts",
+            "default": "./lib/select.js"
+        },
+        "./skeleton": {
+            "types": "./lib/skeleton.d.ts",
+            "default": "./lib/skeleton.js"
+        },
+        "./snackbar": {
+            "types": "./lib/snackbar.d.ts",
+            "default": "./lib/snackbar.js"
+        },
+        "./switch": {
+            "types": "./lib/switch.d.ts",
+            "default": "./lib/switch.js"
+        },
+        "./toast": {
+            "types": "./lib/toast.d.ts",
+            "default": "./lib/toast.js"
+        }
+    },
+    "files": [
+        "lib/**/*"
+    ],
+    "scripts": {
+        "build": "tsc",
+        "build:watch": "tsc --watch",
+        "dev": "tsc --watch",
+        "type-check": "tsc --noEmit",
+        "lint": "eslint src --ext .ts,.tsx",
+        "clean": "rm -rf lib"
+    },
+    "keywords": [
+        "react-native",
+        "ui",
+        "components",
+        "animated",
+        "typescript",
+        "mobile"
+    ],
+    "author": "Md Muhaiminul",
+    "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/aargon007/aargon-ui",
+        "directory": "packages/aargon-ui"
+    },
+    "homepage": "https://github.com/aargon007/aargon-ui#readme",
+    "bugs": {
+        "url": "https://github.com/aargon007/aargon-ui/issues"
+    },
+    "peerDependencies": {
+        "react": ">=19.0.0",
+        "react-native": ">=0.81.0"
+    },
+    "dependencies": {
+        "@aargon-ui/accordion": "*",
+        "@aargon-ui/badge": "*",
+        "@aargon-ui/button": "*",
+        "@aargon-ui/card": "*",
+        "@aargon-ui/checkbox": "*",
+        "@aargon-ui/dropdown": "*",
+        "@aargon-ui/input": "*",
+        "@aargon-ui/modal": "*",
+        "@aargon-ui/progress": "*",
+        "@aargon-ui/radio": "*",
+        "@aargon-ui/select": "*",
+        "@aargon-ui/skeleton": "*",
+        "@aargon-ui/snackbar": "*",
+        "@aargon-ui/switch": "*",
+        "@aargon-ui/toast": "*",
+        "react-native-reanimated": "~4.1.1",
+        "react-native-svg": "^15.12.1",
+        "@expo/vector-icons": "^15.0.2",
+        "react-native-safe-area-context": "~5.6.0",
+        "react-native-gesture-handler": "~2.28.0"
+    },
+    "devDependencies": {
+        "@types/react": "~19.1.10",
+        "@types/react-native": "^0.72.8",
+        "typescript": "~5.9.2"
+    }
+}

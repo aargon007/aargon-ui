@@ -1,8 +1,8 @@
 import React, { useState } from 'react'
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native'
-import { SnackbarProvider } from 'aargon-snackbar'
-import { useSnackbar } from 'aargon-snackbar'
-import type { SnackbarType, SnackbarVariant, SnackbarPosition, SnackbarAnimation } from 'aargon-snackbar'
+import { SnackbarProvider } from '@aargon-ui/snackbar'
+import { useSnackbar } from '@aargon-ui/snackbar'
+import type { SnackbarType, SnackbarVariant, SnackbarPosition, SnackbarAnimation } from '@aargon-ui/snackbar'
 import ComponentPage from '@/component/common/ComponentPage'
 import { globalStyles } from '@/styles/globalStyles'
 

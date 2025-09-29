@@ -6,7 +6,7 @@ import {
     SkeletonCircle,
     type SkeletonAnimation,
     type SkeletonSpeed
-} from 'aargon-skeleton';
+} from '@aargon-ui/skeleton';
 import ComponentPage from '@/component/common/ComponentPage';
 import { globalStyles } from '@/styles/globalStyles';
 

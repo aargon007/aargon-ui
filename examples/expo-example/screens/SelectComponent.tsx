@@ -7,8 +7,8 @@ import {
     SafeAreaView,
     Alert,
 } from 'react-native'
-import { AnimatedSelect, type SelectRef } from 'aargon-select'
-import type { SelectOption } from 'aargon-select'
+import { AnimatedSelect, type SelectRef } from '@aargon-ui/select'
+import type { SelectOption } from '@aargon-ui/select'
 import ComponentPage from '@/component/common/ComponentPage'
 import { globalStyles } from '@/styles/globalStyles'
 

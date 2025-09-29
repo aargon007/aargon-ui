@@ -1,7 +1,7 @@
 import { View, Text, StyleSheet, ScrollView } from "react-native"
 import ComponentPage from "@/component/common/ComponentPage"
 import { globalStyles } from "@/styles/globalStyles"
-import { AnimatedInput } from "aargon-input"
+import { AnimatedInput } from "@aargon-ui/input"
 import { useState } from "react"
 
 export default function InputPage() {
