@@ -1,4 +1,4 @@
-export { default as AnimatedAccordion } from './AnimatedAccordion';
+export { AnimatedAccordion } from './AnimatedAccordion';
 export type {
     AnimatedAccordionProps,
     AccordionVariant,

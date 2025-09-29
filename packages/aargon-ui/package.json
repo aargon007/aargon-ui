@@ -101,7 +101,7 @@
         "url": "https://github.com/aargon007/aargon-ui/issues"
     },
     "peerDependencies": {
-        "react": ">=18.0.0",
+        "react": ">=19.0.0",
         "react-native": ">=0.81.0"
     },
     "dependencies": {
