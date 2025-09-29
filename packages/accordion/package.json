@@ -39,8 +39,7 @@
   },
   "dependencies": {
     "react-native-reanimated": "~4.1.1",
-    "lucide-react-native": "^0.460.0",
-    "react-native-svg": "^15.12.1"
+    "@expo/vector-icons": "^15.0.2"
   },
   "devDependencies": {
     "@types/react": "~19.1.10",
