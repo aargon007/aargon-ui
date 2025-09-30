@@ -1,8 +1,8 @@
-# Aargon Accordion
+# @aargon-ui/accordion
 
 A highly customizable, animated accordion component for React Native with smooth animations and modern design.
 
-[![npm version](https://badge.fury.io/js/aargon-accordion.svg)](https://www.npmjs.com/package/aargon-accordion)
+[![npm version](https://badge.fury.io/js/@aargon-ui%2Faccordion.svg)](https://www.npmjs.com/package/@aargon-ui/accordion)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 ## Features
@@ -20,9 +20,9 @@ A highly customizable, animated accordion component for React Native with smooth
 ## Installation
 
 ```bash
-npm install aargon-accordion
+npm install @aargon-ui/accordion
 # or
-yarn add aargon-accordion
+yarn add @aargon-ui/accordion
 ```
 
 ### Peer Dependencies
@@ -30,7 +30,7 @@ yarn add aargon-accordion
 Make sure you have the required peer dependencies installed:
 
 ```bash
-npm install react react-native react-native-reanimated lucide-react-native react-native-svg
+npm install react react-native react-native-reanimated @expo/vector-icons
 ```
 
 ## Quick Start
@@ -38,7 +38,7 @@ npm install react react-native react-native-reanimated lucide-react-native react
 ```tsx
 import React from 'react';
 import { View, Text } from 'react-native';
-import { AnimatedAccordion } from 'aargon-accordion';
+import { AnimatedAccordion } from '@aargon-ui/accordion';
 
 export default function App() {
     return (
@@ -290,11 +290,10 @@ The accordion component includes full accessibility support:
 
 ## Requirements
 
-- React Native 0.81.4+
-- React 18.0.0+
-- react-native-reanimated 4.1.1+
-- lucide-react-native 0.460.0+
-- react-native-svg 15.12.1+
+- React Native 0.81.0+
+- React 19.0.0+
+- react-native-reanimated 3.0.0+
+- @expo/vector-icons 15.0.2+
 
 ## Contributing
 

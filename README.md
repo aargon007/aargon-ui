@@ -47,10 +47,10 @@ Install only the components you need:
 
 ```bash
 # Install specific components
-npm install aargon-accordion aargon-button aargon-input
+npm install @aargon-ui/accordion @aargon-ui/button @aargon-ui/input
 
 # Or with yarn
-yarn add aargon-accordion aargon-button aargon-input
+yarn add @aargon-ui/accordion @aargon-ui/button @aargon-ui/input
 ```
 
 **Benefits:**
@@ -60,48 +60,26 @@ yarn add aargon-accordion aargon-button aargon-input
 - ✅ Granular control
 - ✅ Independent versioning
 
-## 📦 Packages
+## Package Versions
 
-### Core Components
-
-| Package                                     | Description                                      | npm                                                                                                       | Status         |
-| ------------------------------------------- | ------------------------------------------------ | --------------------------------------------------------------------------------------------------------- | -------------- |
-| [**aargon-button**](packages/aargon-button) | Animated button component with multiple variants | [![npm version](https://badge.fury.io/js/aargon-button.svg)](https://www.npmjs.com/package/aargon-button) | 🚧 Coming Soon |
-| [**aargon-input**](packages/aargon-input)   | Animated input component with floating labels    | [![npm version](https://badge.fury.io/js/aargon-input.svg)](https://www.npmjs.com/package/aargon-input)   | 🚧 Coming Soon |
-| [**aargon-modal**](packages/aargon-modal)   | Animated modal component with backdrop           | [![npm version](https://badge.fury.io/js/aargon-modal.svg)](https://www.npmjs.com/package/aargon-modal)   | 🚧 Coming Soon |
-| [**aargon-card**](packages/aargon-card)     | Animated card component with shadows             | [![npm version](https://badge.fury.io/js/aargon-card.svg)](https://www.npmjs.com/package/aargon-card)     | 🚧 Coming Soon |
-| [**aargon-switch**](packages/aargon-switch) | Animated switch component                        | [![npm version](https://badge.fury.io/js/aargon-switch.svg)](https://www.npmjs.com/package/aargon-switch) | 🚧 Coming Soon |
-
-### Form Components
-
-| Package                                         | Description                 | npm                                                                                                           | Status         |
-| ----------------------------------------------- | --------------------------- | ------------------------------------------------------------------------------------------------------------- | -------------- |
-| [**aargon-checkbox**](packages/aargon-checkbox) | Animated checkbox component | [![npm version](https://badge.fury.io/js/aargon-checkbox.svg)](https://www.npmjs.com/package/aargon-checkbox) | 🚧 Coming Soon |
-| [**aargon-radio**](packages/aargon-radio)       | Animated radio component    | [![npm version](https://badge.fury.io/js/aargon-radio.svg)](https://www.npmjs.com/package/aargon-radio)       | 🚧 Coming Soon |
-| [**aargon-select**](packages/aargon-select)     | Animated select component   | [![npm version](https://badge.fury.io/js/aargon-select.svg)](https://www.npmjs.com/package/aargon-select)     | 🚧 Coming Soon |
-| [**aargon-dropdown**](packages/aargon-dropdown) | Animated dropdown component | [![npm version](https://badge.fury.io/js/aargon-dropdown.svg)](https://www.npmjs.com/package/aargon-dropdown) | 🚧 Coming Soon |
-
-### Layout Components
-
-| Package                                           | Description                  | npm                                                                                                             | Status         |
-| ------------------------------------------------- | ---------------------------- | --------------------------------------------------------------------------------------------------------------- | -------------- |
-| [**aargon-accordion**](packages/aargon-accordion) | Animated accordion component | [![npm version](https://badge.fury.io/js/aargon-accordion.svg)](https://www.npmjs.com/package/aargon-accordion) | ✅ Published   |
-| [**aargon-badge**](packages/aargon-badge)         | Animated badge component     | [![npm version](https://badge.fury.io/js/aargon-badge.svg)](https://www.npmjs.com/package/aargon-badge)         | 🚧 Coming Soon |
-| [**aargon-progress**](packages/aargon-progress)   | Animated progress component  | [![npm version](https://badge.fury.io/js/aargon-progress.svg)](https://www.npmjs.com/package/aargon-progress)   | 🚧 Coming Soon |
-| [**aargon-skeleton**](packages/aargon-skeleton)   | Animated skeleton component  | [![npm version](https://badge.fury.io/js/aargon-skeleton.svg)](https://www.npmjs.com/package/aargon-skeleton)   | 🚧 Coming Soon |
-
-### Feedback Components
-
-| Package                                         | Description                 | npm                                                                                                           | Status         |
-| ----------------------------------------------- | --------------------------- | ------------------------------------------------------------------------------------------------------------- | -------------- |
-| [**aargon-snackbar**](packages/aargon-snackbar) | Animated snackbar component | [![npm version](https://badge.fury.io/js/aargon-snackbar.svg)](https://www.npmjs.com/package/aargon-snackbar) | 🚧 Coming Soon |
-| [**aargon-toast**](packages/aargon-toast)       | Animated toast component    | [![npm version](https://badge.fury.io/js/aargon-toast.svg)](https://www.npmjs.com/package/aargon-toast)       | 🚧 Coming Soon |
-
-### Status Legend
-
-- ✅ **Published** - Available on npm
-- 🚧 **Coming Soon** - In development
-- 🔄 **In Progress** - Currently being worked on
+| Name                                       | Latest Version                                                                                                            |
+| ------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------- |
+| [@aargon-ui/accordion](packages/accordion) | [![npm version](https://badge.fury.io/js/@aargon-ui%2Faccordion.svg)](https://www.npmjs.com/package/@aargon-ui/accordion) |
+| [@aargon-ui/badge](packages/badge)         | [![npm version](https://badge.fury.io/js/@aargon-ui%2Fbadge.svg)](https://www.npmjs.com/package/@aargon-ui/badge)         |
+| [@aargon-ui/button](packages/button)       | [![npm version](https://badge.fury.io/js/@aargon-ui%2Fbutton.svg)](https://www.npmjs.com/package/@aargon-ui/button)       |
+| [@aargon-ui/card](packages/card)           | [![npm version](https://badge.fury.io/js/@aargon-ui%2Fcard.svg)](https://www.npmjs.com/package/@aargon-ui/card)           |
+| [@aargon-ui/checkbox](packages/checkbox)   | [![npm version](https://badge.fury.io/js/@aargon-ui%2Fcheckbox.svg)](https://www.npmjs.com/package/@aargon-ui/checkbox)   |
+| [@aargon-ui/dropdown](packages/dropdown)   | [![npm version](https://badge.fury.io/js/@aargon-ui%2Fdropdown.svg)](https://www.npmjs.com/package/@aargon-ui/dropdown)   |
+| [@aargon-ui/input](packages/input)         | [![npm version](https://badge.fury.io/js/@aargon-ui%2Finput.svg)](https://www.npmjs.com/package/@aargon-ui/input)         |
+| [@aargon-ui/modal](packages/modal)         | [![npm version](https://badge.fury.io/js/@aargon-ui%2Fmodal.svg)](https://www.npmjs.com/package/@aargon-ui/modal)         |
+| [@aargon-ui/progress](packages/progress)   | [![npm version](https://badge.fury.io/js/@aargon-ui%2Fprogress.svg)](https://www.npmjs.com/package/@aargon-ui/progress)   |
+| [@aargon-ui/radio](packages/radio)         | [![npm version](https://badge.fury.io/js/@aargon-ui%2Fradio.svg)](https://www.npmjs.com/package/@aargon-ui/radio)         |
+| [@aargon-ui/select](packages/select)       | [![npm version](https://badge.fury.io/js/@aargon-ui%2Fselect.svg)](https://www.npmjs.com/package/@aargon-ui/select)       |
+| [@aargon-ui/skeleton](packages/skeleton)   | [![npm version](https://badge.fury.io/js/@aargon-ui%2Fskeleton.svg)](https://www.npmjs.com/package/@aargon-ui/skeleton)   |
+| [@aargon-ui/snackbar](packages/snackbar)   | [![npm version](https://badge.fury.io/js/@aargon-ui%2Fsnackbar.svg)](https://www.npmjs.com/package/@aargon-ui/snackbar)   |
+| [@aargon-ui/switch](packages/switch)       | [![npm version](https://badge.fury.io/js/@aargon-ui%2Fswitch.svg)](https://www.npmjs.com/package/@aargon-ui/switch)       |
+| [@aargon-ui/toast](packages/toast)         | [![npm version](https://badge.fury.io/js/@aargon-ui%2Ftoast.svg)](https://www.npmjs.com/package/@aargon-ui/toast)         |
+| [aargon-ui](packages/aargon-ui)            | [![npm version](https://badge.fury.io/js/aargon-ui.svg)](https://www.npmjs.com/package/aargon-ui)                         |
 
 ## 🚀 Quick Start
 
@@ -130,7 +108,7 @@ export default function App() {
 ```tsx
 import React from 'react';
 import { View, Text } from 'react-native';
-import { AnimatedAccordion } from 'aargon-accordion';
+import { AnimatedAccordion } from '@aargon-ui/accordion';
 
 export default function App() {
     return (

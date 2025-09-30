@@ -14,7 +14,7 @@
     "type-check": "tsc --noEmit",
     "lint": "eslint src --ext .ts,.tsx",
     "clean": "rm -rf lib",
-    "publish": "npm publish --otp=$OTP --access public"
+    "publish": "npm publish"
   },
   "keywords": [
     "react-native",
