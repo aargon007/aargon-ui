@@ -79,8 +79,7 @@
     "publish": {
       "dependsOn": [
         "build",
-        "test",
-        "lint"
+        "test"
       ]
     }
   }

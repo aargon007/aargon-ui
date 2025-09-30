@@ -1,6 +1,6 @@
 {
   "name": "@aargon-ui/toast",
-  "version": "1.0.0",
+  "version": "1.0.0-beta.1",
   "description": "Animated toast component for React Native",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -13,7 +13,8 @@
     "dev": "tsc --watch",
     "type-check": "tsc --noEmit",
     "lint": "eslint src --ext .ts,.tsx",
-    "clean": "rm -rf lib"
+    "clean": "rm -rf lib",
+    "publish": "npm publish --otp=$OTP"
   },
   "keywords": [
     "react-native",
@@ -24,6 +25,15 @@
   ],
   "author": "Md Muhaiminul",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/aargon007/aargon-ui",
+    "directory": "packages/toast"
+  },
+  "homepage": "https://github.com/aargon007/aargon-ui/packages/toast#readme",
+  "bugs": {
+    "url": "https://github.com/aargon007/aargon-ui/issues"
+  },
   "peerDependencies": {
     "react": ">=19.0.0",
     "react-native": ">=0.81.0",
