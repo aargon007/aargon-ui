@@ -18,7 +18,7 @@ foreach ($package in $packages) {
     
     try {
         Set-Location "packages\$package"
-        npm publish --otp=$OTP
+        npm publish --otp=$OTP --access public
         Write-Host "✅ Successfully published @aargon-ui/$package" -ForegroundColor Green
         Set-Location "../.."
     }

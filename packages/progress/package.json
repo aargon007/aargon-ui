@@ -14,7 +14,7 @@
     "type-check": "tsc --noEmit",
     "lint": "eslint src --ext .ts,.tsx",
     "clean": "rm -rf lib",
-    "publish": "npm publish --otp=$OTP"
+    "publish": "npm publish"
   },
   "keywords": [
     "react-native",
@@ -27,7 +27,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/aargon007/aargon-ui",
+    "url": "git+https://github.com/aargon007/aargon-ui.git",
     "directory": "packages/progress"
   },
   "homepage": "https://github.com/aargon007/aargon-ui/packages/progress#readme",
